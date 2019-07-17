@@ -15,3 +15,5 @@ Description: This package contains functions to
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
+URL: https://github.com/ptaconet/getData
+BugReports: https://github.com/ptaconet/getData/issues
