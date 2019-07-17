@@ -1,8 +1,10 @@
 ---
-title: "aa-exploration"
+title: "Efficient extraction of environmental/climatic spatial-temporal series over small-scale areas"
+author: "Paul Taconet"
+date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{aa-exploration}
+  %\VignetteIndexEntry{Efficient extraction of environmental/climatic spatial-temporal series over small-scale areas}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -13,6 +15,22 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 ```
+
+## Objectives
+
+In this vignette we show how to efficiently extract time-space statistics of various climatic / environmental variables at given dates and locations with the R packages `getData`, `purrr` and `furrr`.
+
+The overall objective is to extract : within a given **buffer size** (e.g. 1000 m) around a given **point location** (e.g. lat -10.5, lon -5.2) at a given **date** (e.g. 2017-05-01), a **summary** (e.g. mean) of a given **variable** (e.g. land surface temperature). This workflow enables to set as input parameters : 
+
+- Various {dates, locations} couples ;
+- Various buffer sizes ;
+- Various climatic / environmental data sources (e.g NASA MODIS products, GPM, ERA-5, etc.) ;
+- A laglength (i.e. number of days before the dates of interest for which also to extract the variable)
+
+Example : 
+
+Given the following set of {dates, locations} :
+
 
 ```{r setup}
 library(getData)

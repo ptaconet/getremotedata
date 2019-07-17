@@ -16,9 +16,6 @@
 #' }
 #'
 #'
-#' @family
-#'
-#'
 #' @examples
 #'
 #' sources<-getAvailableDataSources()
@@ -29,6 +26,6 @@
 
 
 getAvailableDataSources<-function(){
-  df_AvailableDataSources<-read.csv(system.file("extdata/data_collections.csv", package = "getData"))
+  df_AvailableDataSources<-utils::read.csv(system.file("extdata/data_collections.csv", package = "getData"))
   return(df_AvailableDataSources)
 }

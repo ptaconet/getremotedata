@@ -50,7 +50,8 @@ devtools::install()
 ## To build a website with home and vignettes
 usethis::use_package_doc()
 usethis::use_tibble()
+devtools::document()
 pkgdown::build_site()
 ## Manual step : go to the settings of the package on the github page, then under "github page" put "master branch /docs folder"
 
-devtools::document()
+

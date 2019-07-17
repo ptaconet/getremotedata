@@ -29,4 +29,3 @@ sources
 \author{
 Paul Taconet, \email{paul.taconet@ird.fr}
 }
-\concept{}
