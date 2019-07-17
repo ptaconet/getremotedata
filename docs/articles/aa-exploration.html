@@ -5,11 +5,11 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Efficient extraction of environmental/climatic spatial-temporal series over small-scale areas • getData</title>
+<title>Efficient extraction of spatial-temporal series over small-scale areas • getData</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Efficient extraction of environmental/climatic spatial-temporal series over small-scale areas">
+<script src="../pkgdown.js"></script><meta property="og:title" content="Efficient extraction of spatial-temporal series over small-scale areas">
 <meta property="og:description" content="">
 <meta name="twitter:card" content="summary">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -53,7 +53,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/aa-exploration.html">Efficient extraction of environmental/climatic spatial-temporal series over small-scale areas</a>
+      <a href="../articles/aa-exploration.html">Efficient extraction of spatial-temporal series over small-scale areas</a>
     </li>
   </ul>
 </li>
@@ -77,7 +77,7 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1>Efficient extraction of environmental/climatic spatial-temporal series over small-scale areas</h1>
+      <h1>Efficient extraction of spatial-temporal series over small-scale areas</h1>
                         <h4 class="author">Paul Taconet</h4>
             
             <h4 class="date">2019-07-17</h4>
@@ -95,14 +95,153 @@
 <p>In this vignette we show how to efficiently extract time-space statistics of various climatic / environmental variables at given dates and locations with the R packages <code>getData</code>, <code>purrr</code> and <code>furrr</code>.</p>
 <p>The overall objective is to extract : within a given <strong>buffer size</strong> (e.g. 1000 m) around a given <strong>point location</strong> (e.g. lat -10.5, lon -5.2) at a given <strong>date</strong> (e.g. 2017-05-01), a <strong>summary</strong> (e.g. mean) of a given <strong>variable</strong> (e.g. land surface temperature). This workflow enables to set as input parameters :</p>
 <ul>
-<li>Various {dates, locations} couples ;</li>
-<li>Various buffer sizes ;</li>
-<li>Various climatic / environmental data sources (e.g NASA MODIS products, GPM, ERA-5, etc.) ;</li>
-<li>A laglength (i.e. number of days before the dates of interest for which also to extract the variable)</li>
+<li>various {dates, locations} couples ;</li>
+<li>various buffer sizes ;</li>
+<li>various climatic / environmental data sources (e.g NASA MODIS products, GPM, ERA-5, etc.) ;</li>
+<li>a laglength (i.e. number of days before the dates of interest for which also to extract the variable).</li>
 </ul>
 <p>Example :</p>
 <p>Given the following set of {dates, locations} :</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(getData)</a></code></pre></div>
+<pre><code>#&gt;       id       date longitude latitude
+#&gt; 1  1BAP1 2016-10-02 -5.668395 9.236691
+#&gt; 2  1BAP2 2016-10-02 -5.667802 9.236155
+#&gt; 3  1BAP3 2016-10-02 -5.668484 9.237798
+#&gt; 4  1BAP4 2016-10-02 -5.668780 9.237231
+#&gt; 5  1FEL1 2016-10-08 -5.471727 9.450405
+#&gt; 6  1FEL2 2016-10-08 -5.472009 9.449934
+#&gt; 7  1FEL3 2016-10-08 -5.470124 9.448971
+#&gt; 8  1FEL4 2016-10-08 -5.470300 9.449943
+#&gt; 9  1FLA1 2016-09-28 -5.610585 9.294448
+#&gt; 10 1FLA2 2016-09-28 -5.609751 9.296192</code></pre>
+<p>(where <em>id</em> is a unique identifier for each row), we want to extract for each row the daily land surface temperature (from MODIS collections) and rainfall (from GPM collections) over two buffer sizes (1km and 2km) for each <em>latitude/longitude</em> and for each day starting 40 days before the <em>date</em> .</p>
+<p>Output :</p>
+<p>The workflow tries to optimize the performance at each processing step :</p>
+<ul>
+<li>
+<code>getData</code> enables to optimize the data download process by retrieving the data strictly over the region of interest (e.g. download a 1° square area of interest instead of a whole 10° square MODIS tile).</li>
+<li>
+<code>purrr</code> and <code>furrr</code> enable parallel data download and processing</li>
+</ul>
+<p>Most of the data sources implemented in <code>getData</code> are open, free, and available at global scale, making the workflow reusable at any location(s) worldwide. Some sources (e.g. MODIS or GPM) require to sign-up towards the data provider. Details on the data sources implemented within the <code>getData</code> package can be found with :</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">dataSources&lt;-getData<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/getData/topics/getAvailableDataSources">getAvailableDataSources</a></span>()</a></code></pre></div>
+</div>
+<div id="worflow-setup" class="section level2">
+<h2 class="hasAnchor">
+<a href="#worflow-setup" class="anchor"></a>Worflow setup</h2>
+<div id="load-packages" class="section level3">
+<h3 class="hasAnchor">
+<a href="#load-packages" class="anchor"></a>Load packages</h3>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(getData)</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(raster)</a>
+<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="co">#&gt; Le chargement a nécessité le package : sp</span></a>
+<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="co">#&gt; Attachement du package : 'raster'</span></a>
+<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="co">#&gt; The following object is masked from 'package:dplyr':</span></a>
+<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="co">#&gt;     select</span></a>
+<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(sp)</a>
+<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">require</a></span>(sf)</a>
+<a class="sourceLine" id="cb3-11" data-line-number="11"><span class="co">#&gt; Le chargement a nécessité le package : sf</span></a>
+<a class="sourceLine" id="cb3-12" data-line-number="12"><span class="co">#&gt; Linking to GEOS 3.7.0, GDAL 2.3.2, PROJ 5.2.0</span></a>
+<a class="sourceLine" id="cb3-13" data-line-number="13"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">require</a></span>(tidyverse)</a>
+<a class="sourceLine" id="cb3-14" data-line-number="14"><span class="co">#&gt; Le chargement a nécessité le package : tidyverse</span></a>
+<a class="sourceLine" id="cb3-15" data-line-number="15"><span class="co">#&gt; ── Attaching packages ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.2.1 ──</span></a>
+<a class="sourceLine" id="cb3-16" data-line-number="16"><span class="co">#&gt; ✔ ggplot2 3.1.0     ✔ readr   1.3.1</span></a>
+<a class="sourceLine" id="cb3-17" data-line-number="17"><span class="co">#&gt; ✔ tibble  2.1.3     ✔ purrr   0.3.2</span></a>
+<a class="sourceLine" id="cb3-18" data-line-number="18"><span class="co">#&gt; ✔ tidyr   0.8.2     ✔ stringr 1.4.0</span></a>
+<a class="sourceLine" id="cb3-19" data-line-number="19"><span class="co">#&gt; ✔ ggplot2 3.1.0     ✔ forcats 0.3.0</span></a>
+<a class="sourceLine" id="cb3-20" data-line-number="20"><span class="co">#&gt; ── Conflicts ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──</span></a>
+<a class="sourceLine" id="cb3-21" data-line-number="21"><span class="co">#&gt; ✖ tidyr::extract()         masks raster::extract()</span></a>
+<a class="sourceLine" id="cb3-22" data-line-number="22"><span class="co">#&gt; ✖ dplyr::filter()          masks stats::filter()</span></a>
+<a class="sourceLine" id="cb3-23" data-line-number="23"><span class="co">#&gt; ✖ kableExtra::group_rows() masks dplyr::group_rows()</span></a>
+<a class="sourceLine" id="cb3-24" data-line-number="24"><span class="co">#&gt; ✖ dplyr::lag()             masks stats::lag()</span></a>
+<a class="sourceLine" id="cb3-25" data-line-number="25"><span class="co">#&gt; ✖ raster::select()         masks dplyr::select()</span></a>
+<a class="sourceLine" id="cb3-26" data-line-number="26"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">require</a></span>(httr)</a>
+<a class="sourceLine" id="cb3-27" data-line-number="27"><span class="co">#&gt; Le chargement a nécessité le package : httr</span></a>
+<a class="sourceLine" id="cb3-28" data-line-number="28"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">require</a></span>(furrr)</a>
+<a class="sourceLine" id="cb3-29" data-line-number="29"><span class="co">#&gt; Le chargement a nécessité le package : furrr</span></a>
+<a class="sourceLine" id="cb3-30" data-line-number="30"><span class="co">#&gt; Le chargement a nécessité le package : future</span></a>
+<a class="sourceLine" id="cb3-31" data-line-number="31"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb3-32" data-line-number="32"><span class="co">#&gt; Attachement du package : 'future'</span></a>
+<a class="sourceLine" id="cb3-33" data-line-number="33"><span class="co">#&gt; The following object is masked from 'package:raster':</span></a>
+<a class="sourceLine" id="cb3-34" data-line-number="34"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb3-35" data-line-number="35"><span class="co">#&gt;     values</span></a>
+<a class="sourceLine" id="cb3-36" data-line-number="36"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">require</a></span>(rgeos)</a>
+<a class="sourceLine" id="cb3-37" data-line-number="37"><span class="co">#&gt; Le chargement a nécessité le package : rgeos</span></a>
+<a class="sourceLine" id="cb3-38" data-line-number="38"><span class="co">#&gt; rgeos version: 0.4-2, (SVN revision 581)</span></a>
+<a class="sourceLine" id="cb3-39" data-line-number="39"><span class="co">#&gt;  GEOS runtime version: 3.7.0-CAPI-1.11.0 </span></a>
+<a class="sourceLine" id="cb3-40" data-line-number="40"><span class="co">#&gt;  Linking to sp version: 1.3-1 </span></a>
+<a class="sourceLine" id="cb3-41" data-line-number="41"><span class="co">#&gt;  Polygon checking: TRUE</span></a>
+<a class="sourceLine" id="cb3-42" data-line-number="42"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">require</a></span>(lubridate)</a>
+<a class="sourceLine" id="cb3-43" data-line-number="43"><span class="co">#&gt; Le chargement a nécessité le package : lubridate</span></a>
+<a class="sourceLine" id="cb3-44" data-line-number="44"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb3-45" data-line-number="45"><span class="co">#&gt; Attachement du package : 'lubridate'</span></a>
+<a class="sourceLine" id="cb3-46" data-line-number="46"><span class="co">#&gt; The following object is masked from 'package:base':</span></a>
+<a class="sourceLine" id="cb3-47" data-line-number="47"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb3-48" data-line-number="48"><span class="co">#&gt;     date</span></a></code></pre></div>
+</div>
+<div id="setup-input-parameters" class="section level3">
+<h3 class="hasAnchor">
+<a href="#setup-input-parameters" class="anchor"></a>Setup input parameters</h3>
+<p>In this section we provide the input parameters. The parameters are :</p>
+<ul>
+<li>Path to the local folder where the data will be downloaded (NB : make sure the path has writing permissions) ;</li>
+<li>Path to the file containing the credentials to your EarthData account (needed to retrieve MODIS and GPM data) ;</li>
+<li>Path to the csv file containing the locations and dates of interest (i.e. date and lat/lon for which you are interested in downloading the data and extract statistics) ;</li>
+<li>Data sources / collections to download, either as time series or</li>
+</ul>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="co">## Setup path to the working directory (i.e. where all the data to downloaded will be stored)</span></a>
+<a class="sourceLine" id="cb4-2" data-line-number="2">path_to_working_directory&lt;-<span class="st">"/home/ptaconet/Documents/react/data_CIV"</span>  </a>
+<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="co">## Setup the path to the file containing the EarthData credentials (for NASA datasets). See example at system.file("example-data/credentials_earthdata.txt", package = "getData")</span></a>
+<a class="sourceLine" id="cb4-4" data-line-number="4">path_to_earthdata_credentials&lt;-<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/file.path">file.path</a></span>(path_to_working_directory,<span class="st">"credentials_earthdata.txt"</span>)</a>
+<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="co">## Setup the path to the input dataset of dates, latitudes and longitudes of interest</span></a>
+<a class="sourceLine" id="cb4-6" data-line-number="6">path_to_input_dates_loc&lt;-<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="st">"extdata/CIV_df_dates_loc.csv"</span>, <span class="dt">package =</span> <span class="st">"getData"</span>)</a>
+<a class="sourceLine" id="cb4-7" data-line-number="7"><span class="co">## Setup the data collections to download (NB : To get data.frame of the data sources / collections implemented : getData::getAvailableDataSources() )</span></a>
+<a class="sourceLine" id="cb4-8" data-line-number="8"><span class="co"># a) as time series : setup collections and maximum lag time (in number of days) </span></a>
+<a class="sourceLine" id="cb4-9" data-line-number="9">dataSources_timeSeries&lt;-<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"MOD11A1.006"</span>,<span class="st">"MYD11A1.006"</span>,<span class="st">"MOD13Q1.006"</span>,<span class="st">"MYD13Q1.006"</span>,<span class="st">"MOD16A2.006"</span>,<span class="st">"MYD16A2.006"</span>,<span class="st">"GPM_3IMERGDF"</span>,<span class="st">"TAMSAT"</span>)</a>
+<a class="sourceLine" id="cb4-10" data-line-number="10">lagTime_timeSeries&lt;-<span class="dv">40</span></a>
+<a class="sourceLine" id="cb4-11" data-line-number="11"><span class="co"># b) for the dates of interest only : setup collections and - only for the data with hourly or half-hourly time resolutions (e.g. GPM_3IMERGHH or ERA5 ) - starting and ending times :</span></a>
+<a class="sourceLine" id="cb4-12" data-line-number="12">dataSources_Dday&lt;-<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"GPM_3IMERGHH"</span>,<span class="st">"ERA5"</span>,<span class="st">"MIRIADE"</span>,<span class="st">"VIIRS DNB"</span>)</a>
+<a class="sourceLine" id="cb4-13" data-line-number="13">hourStart_Dday&lt;-<span class="st">"18"</span></a>
+<a class="sourceLine" id="cb4-14" data-line-number="14">hourEnd_Dday&lt;-<span class="st">"08"</span></a>
+<a class="sourceLine" id="cb4-15" data-line-number="15"><span class="co">## Setup buffer sizes in meters (i.e. buffers within which the statistics will be calculated)</span></a>
+<a class="sourceLine" id="cb4-16" data-line-number="16">buffer_sizes&lt;-<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">500</span>,<span class="dv">1000</span>,<span class="dv">2000</span>)</a>
+<a class="sourceLine" id="cb4-17" data-line-number="17"><span class="co">## GPM, TAMSAT and ERA-5 data are originally provided at approx. respectively 10km, 4km and 27km spatial resolutions. Resample them spatially ? If TRUE, resample with use bilinear interpolation</span></a>
+<a class="sourceLine" id="cb4-18" data-line-number="18">gpm_resample&lt;-<span class="ot">TRUE</span></a>
+<a class="sourceLine" id="cb4-19" data-line-number="19">tamsat_resample&lt;-<span class="ot">TRUE</span></a>
+<a class="sourceLine" id="cb4-20" data-line-number="20">era5_resample&lt;-<span class="ot">TRUE</span></a>
+<a class="sourceLine" id="cb4-21" data-line-number="21"><span class="co"># Spatial resolution for output resampled data. Must be setup only if xxx_resample is set to TRUE</span></a>
+<a class="sourceLine" id="cb4-22" data-line-number="22">gpm_resample_output_res&lt;-<span class="dv">250</span></a>
+<a class="sourceLine" id="cb4-23" data-line-number="23">tamsat_resample_output_res&lt;-<span class="dv">250</span></a>
+<a class="sourceLine" id="cb4-24" data-line-number="24">era5_resample_output_res&lt;-<span class="dv">250</span></a></code></pre></div>
+</div>
+</div>
+<div id="workflow-preparation" class="section level2">
+<h2 class="hasAnchor">
+<a href="#workflow-preparation" class="anchor"></a>Workflow preparation</h2>
+<p>We first read the credentials to EarthData for further download of MODIS and GPM data.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">earthdata_credentials&lt;-<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/readLines">readLines</a></span>(path_to_earthdata_credentials)</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2">username_EarthData&lt;-<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/strsplit">strsplit</a></span>(earthdata_credentials,<span class="st">"="</span>)[[<span class="dv">1</span>]][<span class="dv">2</span>]</a>
+<a class="sourceLine" id="cb5-3" data-line-number="3">password_EarthData&lt;-<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/strsplit">strsplit</a></span>(earthdata_credentials,<span class="st">"="</span>)[[<span class="dv">2</span>]][<span class="dv">2</span>]</a>
+<a class="sourceLine" id="cb5-4" data-line-number="4">httr<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/httr/topics/set_config">set_config</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/httr/topics/authenticate">authenticate</a></span>(<span class="dt">user=</span>username_EarthData, <span class="dt">password=</span>password_EarthData, <span class="dt">type =</span> <span class="st">"basic"</span>))</a></code></pre></div>
+<p>Then we open the dataset that contains the dates and locations of interest.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">hlc_dates_loc&lt;-<span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/read.table">read.csv</a></span>(path_to_input_dates_loc,<span class="dt">stringsAsFactors =</span> F)</a>
+<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/raster/topics/headtail">head</a></span>(hlc_dates_loc)</a>
+<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="co">#&gt;      id       date longitude latitude</span></a>
+<a class="sourceLine" id="cb6-4" data-line-number="4"><span class="co">#&gt; 1 1BAP1 2016-10-02 -5.668395 9.236691</span></a>
+<a class="sourceLine" id="cb6-5" data-line-number="5"><span class="co">#&gt; 2 1BAP2 2016-10-02 -5.667802 9.236155</span></a>
+<a class="sourceLine" id="cb6-6" data-line-number="6"><span class="co">#&gt; 3 1BAP3 2016-10-02 -5.668484 9.237798</span></a>
+<a class="sourceLine" id="cb6-7" data-line-number="7"><span class="co">#&gt; 4 1BAP4 2016-10-02 -5.668780 9.237231</span></a>
+<a class="sourceLine" id="cb6-8" data-line-number="8"><span class="co">#&gt; 5 1FEL1 2016-10-08 -5.471727 9.450405</span></a>
+<a class="sourceLine" id="cb6-9" data-line-number="9"><span class="co">#&gt; 6 1FEL2 2016-10-08 -5.472009 9.449934</span></a></code></pre></div>
+<p>From this file we create the area of interest (i.e. bounding box of all our observations) as a <code>sf</code> object. Whenever possible, the data will be downloaded strictly over this bounding box.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="co">## Get ROI as sf object. Extend a bit the size of the bbox (of the max of the buffer size + 0.05°)</span></a>
+<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="co">#bbox_4326&lt;-SpatialPointsDataFrame(coords=data.frame(hlc_dates_loc$longitude,hlc_dates_loc$latitude),data=hlc_dates_loc,proj4string=CRS("+init=epsg:4326")) %&gt;% bbox</span></a>
+<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="co">#bbox_4326[,1]=bbox_4326[,1]-0.05-getData::convertMetersToDegrees(max(buffer_sizes),mean(bbox_4326[2,])) # mean_latitude = mean(bbox_4326[2,])</span></a>
+<a class="sourceLine" id="cb7-4" data-line-number="4"><span class="co">#bbox_4326[,2]=bbox_4326[,2]+0.05+getData::convertMetersToDegrees(max(buffer_sizes),mean(bbox_4326[2,]))</span></a>
+<a class="sourceLine" id="cb7-5" data-line-number="5"><span class="co">#roi&lt;-rgeos::bbox2SP(bbox_4326[2,2],bbox_4326[2,1],bbox_4326[1,1],bbox_4326[1,2],proj4string=CRS("+init=epsg:4326")) %&gt;% </span></a>
+<a class="sourceLine" id="cb7-6" data-line-number="6"><span class="co">#  sf::st_as_sf</span></a></code></pre></div>
+<p>```</p>
 </div>
   </div>
 
@@ -112,6 +251,8 @@
 <a href="#tocnav" class="anchor"></a>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
 <li><a href="#objectives">Objectives</a></li>
+      <li><a href="#worflow-setup">Worflow setup</a></li>
+      <li><a href="#workflow-preparation">Workflow preparation</a></li>
       </ul>
 </div>
       </div>
