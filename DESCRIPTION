@@ -6,14 +6,16 @@ Authors@R:
            family = "Taconet",
            role = c("aut", "cre"),
            email = "paul.taconet@ird.fr")
-Description: This package contains functions to
-    download and pre-process public domain data, eventually containing
-    spatial and temporal components.  Particularly, when web-services are implemented by the data
-    provider, it enables to download the data for a specific
-    region of interest and/or time frame, hence speeding up the overall downloading and
-    pre-processing of data on relatively small regions of interest.
+Description: This package contains functions to download
+    and pre-process public domain data, eventually containing spatial and
+    temporal components.  Particularly, when web-services are implemented
+    by the data provider, it enables to download the data for a specific
+    region of interest and/or time frame, hence speeding up the overall
+    downloading and pre-processing of data on relatively small regions of
+    interest.
 License: GPL-3
-Encoding: UTF-8
-LazyData: true
 URL: https://github.com/ptaconet/getData
 BugReports: https://github.com/ptaconet/getData/issues
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.1
