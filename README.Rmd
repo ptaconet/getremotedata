@@ -17,28 +17,28 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of getData is to ...
+The goal of getRemoteData is to ...
 
 ## Installation
 
-You can install the released version of getData from [CRAN](https://CRAN.R-project.org) with:
+You can install the released version of getRemoteData from [CRAN](https://CRAN.R-project.org) with:
 
 ``` r
-install.packages("getData")
+install.packages("getRemoteData")
 ```
 
 And the development version from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("ptaconet/getData")
+devtools::install_github("ptaconet/getRemoteData")
 ```
 ## Example
 
 This is a basic example which shows you how to solve a common problem:
 
 ```{r example}
-library(getData)
+library(getRemoteData)
 ## basic example code
 ```
 

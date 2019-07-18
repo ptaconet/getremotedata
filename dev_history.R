@@ -7,7 +7,7 @@ require(pkgdown)
 ## and video here : http://www.user2019.fr/static/pres/t257651.zip
 
 ## create the package
-usethis::create_package("/home/ptaconet/getData")
+usethis::create_package("/home/ptaconet/getRemoteData")
 ## Manual step : Create a dev_history.R file that archives all the package history steps. Then copy it to the package folder.
 ## Then proceed :
 usethis::use_build_ignore("dev_history.R")

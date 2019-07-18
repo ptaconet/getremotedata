@@ -1,28 +1,28 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# getData
+# getRemoteData
 
 <!-- badges: start -->
 
 <!-- badges: end -->
 
-The goal of getData is to …
+The goal of getRemoteData is to …
 
 ## Installation
 
-You can install the released version of getData from
+You can install the released version of getRemoteData from
 [CRAN](https://CRAN.R-project.org) with:
 
 ``` r
-install.packages("getData")
+install.packages("getRemoteData")
 ```
 
 And the development version from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("ptaconet/getData")
+devtools::install_github("ptaconet/getRemoteData")
 ```
 
 ## Example
@@ -30,7 +30,7 @@ devtools::install_github("ptaconet/getData")
 This is a basic example which shows you how to solve a common problem:
 
 ``` r
-library(getData)
+library(getRemoteData)
 ## basic example code
 ```
 
