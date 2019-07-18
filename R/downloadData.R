@@ -4,7 +4,8 @@
 #' @description This function enables to download datasets, enventually parallelizing the download.
 #' @export
 #'
-#'
+#' @import parallel
+
 downloadData<-function(df_to_dl,username=NULL,password=NULL,parallelDL=FALSE){
 
   # check which data is already downloaded

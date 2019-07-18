@@ -66,8 +66,7 @@ getData_modis<-function(time_range=as.Date(c("2010-01-01","2010-01-30")), # mand
                         username=NULL, # EarthData username
                         password=NULL, # EarthData password
                         download=FALSE, # TRUE will download the file and return a dataframe with : the URL, the path to the output file, a boolean wether the dataset was properly downloaded or not. FALSE will return a list with the URL only
-                        ...
-                        ){
+                        ... ){
 
   OpenDAPServerUrl="https://opendap.cr.usgs.gov/opendap/hyrax"
   TimeVectorName="time"
@@ -91,22 +90,22 @@ getData_modis<-function(time_range=as.Date(c("2010-01-01","2010-01-30")), # mand
 
   # Calculate modisTile if not provided
   if(is.null(modisTile)){
-    modisTile<-getData::getMODIStileNames(roi)
+    modisTile<-getRemoteData::getMODIStileNames(roi)
   }
 
   OpenDAPURL<-paste0(OpenDAPServerUrl,"/",OpenDAPCollection,"/",modisTile,".ncml")
 
   # Calculate TimeVector if not provided
   if(is.null(timeVector)){
-    timeVector<-getData::getOpenDAPvector(OpenDAPURL,TimeVectorName)
+    timeVector<-getRemoteData::getOpenDAPvector(OpenDAPURL,TimeVectorName)
   }
   # Calculate XVector if not provided
   if(is.null(XVector) & is.null(roiSpatialIndexBound)){
-    XVector<-getData::getOpenDAPvector(OpenDAPURL,SpatialXVectorName)
+    XVector<-getRemoteData::getOpenDAPvector(OpenDAPURL,SpatialXVectorName)
   }
   # Calculate YVector if not provided
   if(is.null(YVector) & is.null(roiSpatialIndexBound)){
-    YVector<-getData::getOpenDAPvector(OpenDAPURL,SpatialYVectorName)
+    YVector<-getRemoteData::getOpenDAPvector(OpenDAPURL,SpatialYVectorName)
   }
   # Calculate roiSpatialIndexBound if not provided
   if(is.null(roiSpatialIndexBound)){
@@ -128,7 +127,7 @@ getData_modis<-function(time_range=as.Date(c("2010-01-01","2010-01-30")), # mand
   revisit_time<-timeVector[2]-timeVector[1]
 
   timeIndices_of_interest<-seq(time_range[2],time_range[1],-revisit_time) %>%
-    map(~getData::getOpenDAPtimeIndex_modis(.,timeVector)) %>%
+    map(~getRemoteData::getOpenDAPtimeIndex_modis(.,timeVector)) %>%
     do.call(rbind.data.frame,.) %>%
     set_names("ideal_date","date_closest_to_ideal_date","days_sep_from_ideal_date","index_opendap_closest_to_date") %>%
     mutate(ideal_date=as.Date(ideal_date,origin="1970-01-01")) %>%
@@ -137,7 +136,7 @@ getData_modis<-function(time_range=as.Date(c("2010-01-01","2010-01-30")), # mand
   # Build URL to download data in NetCDF format
 
   table_urls<-timeIndices_of_interest %>%
-    mutate(dimensions_url=map(.x=index_opendap_closest_to_date,.f=~getData::getOpenDapURL_dimensions(dimensionsToRetrieve,.x,roiSpatialIndexBound,TimeVectorName,SpatialXVectorName,SpatialYVectorName))) %>%
+    mutate(dimensions_url=map(.x=index_opendap_closest_to_date,.f=~getRemoteData::getOpenDapURL_dimensions(dimensionsToRetrieve,.x,roiSpatialIndexBound,TimeVectorName,SpatialXVectorName,SpatialYVectorName))) %>%
     mutate(url=paste0(OpenDAPURL,".nc4?",gridDimensionName,",",dimensions_url))
 
 
@@ -151,7 +150,7 @@ getData_modis<-function(time_range=as.Date(c("2010-01-01","2010-01-30")), # mand
 
   if (download){
     cat("Downloading the data...\n")
-    res<-getData::downloadData(res,username,password,parallelDL)
+    res<-getRemoteData::downloadData(res,username,password, ...)
   }
 
   #return(list(name=names,url=urls,destfile=destfiles))
