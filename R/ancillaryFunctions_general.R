@@ -1,10 +1,12 @@
-#' @name ancillaryFunctions
-#' @aliases ancillaryFunctions
+#' @name ancillaryFunctions_general
+#' @aliases ancillaryFunctions_general
 #' @title A set of ancillary functions
 #' @description A set of ancillary functions
 #' @export convertMetersToDegrees getUTMepsg getMODIStileNames getSRTMtileNames
 #'
 #' @param roi sf polygon object. a region of interest
+#'
+#' @import sf dplyr stringr geojsonsf
 #'
 #' @author Paul Taconet, \email{paul.taconet@@ird.fr}
 #'

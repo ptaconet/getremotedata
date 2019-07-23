@@ -2,35 +2,33 @@
 % Please edit documentation in R/getData_modis.R
 \name{getData_modis}
 \alias{getData_modis}
-\title{Download MODIS time series date}
+\title{Download MODIS time series data}
 \usage{
-getData_modis(time_range = as.Date(c("2010-01-01", "2010-01-30")),
+getData_modis(timeRange = as.Date(c("2010-01-01", "2010-01-30")),
   roi = st_read(system.file("extdata/ROI_example.kml", package =
-  "getData"), quiet = T), OpenDAPCollection = "MOD11A1.006",
-  destFolder = getwd(), modisTile = NULL,
-  dimensionsToRetrieve = c("LST_Day_1km", "LST_Night_1km"),
-  timeVector = NULL, XVector = NULL, YVector = NULL,
-  roiSpatialIndexBound = NULL, username = NULL, password = NULL,
-  download = FALSE, ...)
+  "getDat a"), quiet = T), collection = "MOD11A1.006",
+  dimensions = c("LST_Day_1km", "LST_Night_1km"), modisTile = NULL,
+  OpenDAPtimeVector = NULL, OpenDAPXVector = NULL,
+  OpenDAPYVector = NULL, roiSpatialIndexBound = NULL,
+  username = NULL, password = NULL, download = FALSE,
+  destFolder = getwd(), ...)
 }
 \arguments{
-\item{time_range}{Date(s) of interest. Mandatory. Either a single date (e.g. \code{as.Date("2017-01-01"))} or time frame provided with two bounding dates ( e.g. \code{as.Date(c("2010-01-01","2010-01-30"))})}
+\item{timeRange}{Date(s) of interest. Mandatory. Either a single date (e.g. \code{as.Date("2017-01-01"))} or time frame provided with two bounding dates ( e.g. \code{as.Date(c("2010-01-01","2010-01-30"))})}
 
-\item{roi}{sf . The region of interest (point or polygon)}
+\item{roi}{sf POINT or POLYGON. The region of interest in EPSG 4326}
 
-\item{OpenDAPCollection}{The MODIS collection of interest}
+\item{collection}{The MODIS collection of interest}
 
-\item{destFolder}{string. Mandatory if \code{download} is set to TRUE. The destination folder (i.e. folder where the data will be downloaded)}
+\item{dimensions}{string vector. Names of the dimensions to retrieve fot the MODIS collection of interest.}
 
 \item{modisTile}{string. Optional. The MODIS tile name.}
 
-\item{dimensionsToRetrieve}{string vector. Names of the dimensions to retrieve fot the MODIS collection of interest.}
+\item{OpenDAPtimeVector}{numeric vector. Optional. The OpenDAP time dimension vector.}
 
-\item{timeVector}{numeric vector. Optional. The OpenDAP time dimension vector.}
+\item{OpenDAPXVector}{numeric vector. Optional. The OpenDAP X (longitude) dimension vector.}
 
-\item{XVector}{numeric vector. Optional. The OpenDAP X (longitude) dimension vector.}
-
-\item{YVector}{numeric vector. Optional. The OpenDAP Y (latitude) dimension vector.}
+\item{OpenDAPYVector}{numeric vector. Optional. The OpenDAP Y (latitude) dimension vector.}
 
 \item{roiSpatialIndexBound}{numeric vector. Optional.}
 
@@ -39,6 +37,8 @@ getData_modis(time_range = as.Date(c("2010-01-01", "2010-01-30")),
 \item{password}{string. EarthData password}
 
 \item{download}{logical. Download data ?}
+
+\item{destFolder}{string. Mandatory if \code{download} is set to TRUE. The destination folder (i.e. folder where the data will be downloaded)}
 }
 \value{
 a data.frame with 3 columns :
@@ -54,25 +54,31 @@ If \code{download} is set to TRUE, the data are downloaded to \code{destFolder}
 This function enables to retrieve URLs of MODIS datasets for a given ROI and time frame, and eventually download the data
 }
 \details{
-Parameters \code{modisTile}, \code{timeVector}, \code{XVector}, \code{YVector} and \code{roiSpatialIndexBound} are optional. They are automatically calculated from the other input parameters if not provided. However, providing them optimizes the performances (i.e. fasten the processing time).
+Arguments \code{modisTile}, \code{OpenDAPtimeVector}, \code{OpenDAPXVector}, \code{OpenDAPYVector} and \code{roiSpatialIndexBound} are optional. They are automatically calculated from the other input parameters if not provided. However, providing them optimizes the performances (i.e. fasten the processing time).
 It might be particularly useful to provide them when looping with the function over the same ROI.
 }
 \examples{
 
 # Read ROI as sf object
 roi=sf::st_read(system.file("extdata/ROI_example.kml", package = "getData"),quiet=T)
-time_range<-c("2017-01-01","2017-01-30") \%>\% as.Date()
+timeRange<-c("2017-01-01","2017-01-30") \%>\% as.Date()
 
 \dontrun{
-getData_modis(time_range=time_range,
+getData_modis(timeRange=timeRange,
 roi=roi,
-OpenDAPCollection="MOD11A1.006",
-dimensionsToRetrieve=c("LST_Day_1km","LST_Night_1km"),
-username="my.eartdata.username",
-password="my.eartdata.pw",
+collection="MOD11A1.006",
+dimensions=c("LST_Day_1km","LST_Night_1km"),
+username="my.earthdata.username",
+password="my.earthdata.pw",
 download=FALSE
 )
 }
+}
+\seealso{
+Other getData: \code{\link{getData_gpm}},
+  \code{\link{getData_imcce}},
+  \code{\link{getData_tamsat}},
+  \code{\link{getData_viirsDnb}}
 }
 \author{
 Paul Taconet, IRD \email{paul.taconet@ird.fr}

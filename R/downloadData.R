@@ -4,13 +4,13 @@
 #' @description This function enables to download datasets, enventually parallelizing the download.
 #' @export
 #'
-#' @import parallel
+#' @import parallel dplyr httr
 
 downloadData<-function(df_to_dl,username=NULL,password=NULL,parallelDL=FALSE){
 
   # check which data is already downloaded
   data_dl<-df_to_dl %>%
-    mutate(fileDl=map_lgl(destfiles,file.exists)) %>%
+    mutate(fileDl=map_lgl(destfile,file.exists)) %>%
     mutate(dlStatus=ifelse(fileDl==TRUE,3,NA))
 
   # data already downloaded
@@ -22,7 +22,7 @@ downloadData<-function(df_to_dl,username=NULL,password=NULL,parallelDL=FALSE){
     filter(fileDl==FALSE)
 
   # Create directories if they do not exist
-  unique(dirname(data_to_download$destfiles)) %>%
+  unique(dirname(data_to_download$destfile)) %>%
     lapply(dir.create,recursive = TRUE, mode = "0777", showWarnings = FALSE)
 
   # download data
@@ -47,7 +47,7 @@ downloadData<-function(df_to_dl,username=NULL,password=NULL,parallelDL=FALSE){
   }
 
   data_dl<-data_to_download %>%
-    mutate(fileDl=map_lgl(destfiles,file.exists)) %>%
+    mutate(fileDl=map_lgl(destfile,file.exists)) %>%
     mutate(dlStatus=ifelse(fileDl==TRUE,1,2))  %>%
     rbind(data_already_exist)
 

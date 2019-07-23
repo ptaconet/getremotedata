@@ -1,9 +1,10 @@
-#' @name ancillaryFunctions_getDataFromOpenDAP
-#' @aliases ancillaryFunctions_getDataFromOpenDAP
+#' @name ancillaryFunctions_oPeNDAP
+#' @aliases ancillaryFunctions_oPeNDAP
 #' @title A set of ancillary functions to retrieve data using OpenDAP
 #' @description A set of ancillary functions to retrieve data using OpenDAP
 #' @export convertMetersToDegrees getOpenDAPvector getOpenDapURL_dimensions getOpenDAPtimeIndex_modis
 #'
+#' @import httr purrr
 #'
 #' @author Paul Taconet, \email{paul.taconet@@ird.fr}
 #'

@@ -1,5 +1,5 @@
 ---
-title: "Efficient extraction of spatial-temporal series over small-scale areas"
+title: "Efficient extraction of spatial-temporal environmental statistics over small to medium spatial scales"
 author: "Paul Taconet"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -20,69 +20,88 @@ knitr::opts_chunk$set(
 
 ```{r call_lib , include = FALSE}
 library(dplyr)
-library(kableExtra)
+library(DT)
+library(sf)
+library(mapview)
 ```
 
-## Objectives
+## Objectives and presentation of the case-study
 
-In this vignette we show how to efficiently extract time-space statistics of various climatic / environmental variables at given dates and locations with the R packages `getData`, `purrr` and `furrr`.
+The objective of our work is to extract a set of time-space statistics of various climatic / environmental variables at provided dates and geographic locations. We showcase how we optimize the overall processing performance with the R packages `getRemoteData`, `purrr` and `furrr`.
 
-The overall objective is to extract : within a given **buffer size** (e.g. 1000 m) around a given **point location** (e.g. lat -10.5, lon -5.2) at a given **date** (e.g. 2017-05-01), a **summary** (e.g. mean) of a given **variable** (e.g. land surface temperature). This workflow enables to set as input parameters : 
+Technically speaking, we need to extract : within a given **buffer size** (e.g. 1000 m) around a given **point location** (e.g. lat -10.5, lon -5.2) at a given **date** (e.g. 2017-05-12), a **summary** (e.g. mean) of a given **variable** (e.g. land surface temperature). More realistically, we are interested in extracting these data for : 
 
-- various {dates, locations} couples ;
-- various buffer sizes ;
-- various climatic / environmental data sources (e.g NASA MODIS products, GPM, ERA-5, etc.) ;
-- a laglength (i.e. number of days before the dates of interest for which also to extract the variable).
+- several {dates, locations} couples ;
+- several buffer sizes ;
+- several climatic / environmental parameters (e.g LST, precipitation, vegetation indices, etc.) ;
+- several days prior to the dates of interest.
 
-Example : 
+We illustrate the method in this vignette with a classical case study from the epidemiological world. The final objective is to model the presence and abundance of several species of malaria vector mosquitoes using various climatic, environmental and other covariates. For this we have counts of mosquitoes collected in 32 villages in a rural area of Côte d'Ivoire. The mosquitoes have been collected in each village at 4 different sampling points and for 8 nights using the Human Landing Catch (HLC) method. 
+The data analysis workflow consists in : 
 
-Given the following set of {dates, locations} :
+- importing, tidying and summarizing the various climatic and environmental data for the dates and region of interest ;
+- create explicative / predictive models of the presence and abundance of each species.
 
-```{r df_dates_loc, echo=F}
-head(read.csv(system.file("extdata/CIV_df_dates_loc.csv", package = "getData")),row.names = F,10)
+Here we present how we automatize the first step (data import, tidy and summarize) using R. More specifically, the workflow includes : 
+- the downloading and pre-processing of heterogeneous data ; 
+- the calculatation of a summary of each covariate around each sampling point for various buffers sizes ; 
+- for some covariates (e.g. temperature or precipitation), we want to reapeat those operations for a set of days prior to the date of HLC, to study how environmental conditions influence the presence / development of the mosquitoes ;
+
+The locations and dates for our case study are provided in the table below.
+
+```{r, echo=F}
+head(read.csv(system.file("extdata/CIV_df_dates_loc.csv", package = "getRemoteData")),row.names = F,10)
+# *id* is a unique identifier for each sampling {location; date}. 
 ```
 
-(where *id* is a unique identifier for each row), we want to extract for each row the daily land surface temperature (from MODIS collections) and rainfall (from GPM collections) over two buffer sizes (1km and 2km) for each *latitude/longitude* and for each day starting 40 days before the *date* .
+```{r, echo=F}
+points<-read.csv(system.file("extdata/CIV_df_dates_loc.csv", package = "getRemoteData")) %>%
+  st_as_sf(coords = c("longitude", "latitude"), crs = 4326)
+```
 
+```{r, echo=F, eval=T}
+mapview(points)
+```
 
-Output : 
+We want to extract the following environmental covariates over 3 different buffer sizes (0.5km, 1km, 2km) at each location and for 40 days prior to each HLC dates : 
 
-The workflow tries to optimize the performance at each processing step : 
+- Land Surface Temperature (daily, from [MODIS LST](https://lpdaac.usgs.gov/products/mod11a1v006/)) ;
+- Evapotranspiration (8-days, from [MODIS ET](https://dx.doi.org/10.5067/MODIS/MOD16A2.006)) ;
+- Vegetation indices (8-days, from [MODIS VI](https://dx.doi.org/10.5067/MODIS/MOD13Q1.006)) ;
+- Precipitation (daily, from [GPM](https://doi.org/10.5067/GPM/IMERGDF/DAY/06)) ;
 
-- `getData` enables to optimize the data download process by retrieving the data strictly over the region of interest (e.g. download a 1° square area of interest instead of a whole 10° square MODIS tile). 
-- `purrr` and `furrr` enable parallel data download and processing
+In addition, we want to extract the following covariates for each HLC night : 
 
+- Wind direction and speed (hourly, from [ERA-5](https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels?tab=overview));
+- Rainfall (half-hourly, from [GPM](https://doi.org/10.5067/GPM/IMERGDF/DAY/06)); 
+- Apparent magnitude of the moon (daily, from [GPM](https://doi.org/10.5067/GPM/IMERGDF/DAY/06)); 
+- Nighttime lights (monthly, from [VIIRS DNB](https://ngdc.noaa.gov/eog/viirs/download_dnb_composites.html));
 
-Most of the data sources implemented in `getData` are open, free, and available at global scale, making the workflow reusable at any location(s) worldwide. Some sources (e.g. MODIS or GPM) require to sign-up towards the data provider. Details on the data sources implemented within the `getData` package can be found with : 
+Below is the header of the output table : 
+
+```{r, echo=F}
+head(read.csv(system.file("extdata/stats_output_example.csv", package = "getRemoteData")),row.names = F,10)
+```
+
+Within the workflow we optimize the performance at each processing step : 
+
+- `getRemoteData` enables to optimize the data download process by retrieving the data strictly over the region of interest (e.g. download a 1° square area of interest instead of a whole 10° square MODIS tile) ;
+- `purrr` and `furrr` enable parallel data download and processing.
+
+Most of the data sources implemented in `getRemoteData` are open, free, and available at global scale, making the workflow reusable at (almost) any place worldwide. Some sources (e.g. MODIS or GPM) require to sign-up towards the data provider. Details on the data sources implemented within the `getRemoteData` package can be found with : 
 
 ```{r getAvailableDataSources_call, eval = TRUE, echo=T}
-dataSources<-getData::getAvailableDataSources()
+dataSources<-getRemoteData::getAvailableDataSources()
 ```
 ```{r getAvailableDataSources_eval, eval = FALSE, echo=F}
-knitr::kable(dataSources) %>%
-  kable_styling() %>%
-  scroll_box(width = "100%", height = "500px")
+datatable(dataSources, rownames = FALSE, filter="top", options = list(pageLength = 5, scrollX=T) )
 ```
 
 ## Worflow setup
 
-### Load packages
-```{r setup, eval = TRUE, echo=T, results='hide'}
-library(getData)
-library(raster)
-library(sp)
-require(sf)
-require(tidyverse)
-require(httr)
-require(furrr)
-require(rgeos)
-require(lubridate)
-```
-
-
 ### Setup input parameters 
 
-We first provide the input parameters. The parameters are : 
+We first provide the input parameters : 
 
 - Path to the local folder where the data will be downloaded (NB : make sure the folder has writing permissions) ;
 - Path to the file containing the credentials to your EarthData account (needed to retrieve MODIS and GPM data) ;
@@ -92,11 +111,11 @@ We first provide the input parameters. The parameters are :
 ```{r input_param, eval=T, echo=T, results='hide'}
 ## Setup path to the working directory (i.e. where all the data to downloaded will be stored)
 path_to_working_directory<-"/home/ptaconet/Documents/react/data_CIV"  
-## Setup the path to the file containing the EarthData credentials (for NASA datasets). See example at system.file("example-data/credentials_earthdata.txt", package = "getData")
+## Setup the path to the file containing the EarthData credentials (for NASA datasets). See example at system.file("example-data/credentials_earthdata.txt", package = "getRemoteData")
 path_to_earthdata_credentials<-file.path(path_to_working_directory,"credentials_earthdata.txt")
 ## Setup the path to the input dataset of dates, latitudes and longitudes of interest
-path_to_input_dates_loc<-system.file("extdata/CIV_df_dates_loc.csv", package = "getData")
-## Setup the data collections to download (NB : To get data.frame of the data sources / collections implemented : getData::getAvailableDataSources() )
+path_to_input_dates_loc<-system.file("extdata/CIV_df_dates_loc.csv", package = "getRemoteData")
+## Setup the data collections to download (NB : To get data.frame of the data sources / collections implemented : getRemoteData::getAvailableDataSources() )
 # a) as time series : setup collections and maximum lag time (in number of days) 
 dataSources_timeSeries<-c("MOD11A1.006","MYD11A1.006","MOD13Q1.006","MYD13Q1.006","MOD16A2.006","MYD16A2.006","GPM_3IMERGDF","TAMSAT")
 lagTime_timeSeries<-40
@@ -117,9 +136,94 @@ era5_resample_output_res<-250
 ```
 
 
-## Workflow preparation
+### Load packages
+```{r setup, eval = TRUE, echo=T, results='hide'}
+library(getRemoteData)
+library(raster)
+library(sp)
+require(sf)
+require(tidyverse)
+require(httr)
+require(furrr)
+require(rgeos)
+require(lubridate)
+require(reticulate)
+```
 
-We first read the credentials to EarthData for further download of MODIS and GPM data.
+### Setup functions
+
+We setup some functions that will be used all throughout the workflow to process multiple dates / times series at once.
+
+```{r , eval=T}
+# Reshaping of list to get a data.frame of data to download, used as input of the getRemoteData::downloadData function.
+getDftoDl<-function(data_md){
+  DftoDl<- data_md %>%
+   flatten %>%
+   do.call(rbind,.) %>%
+   distinct %>%
+   set_names("name","url","destfile")
+  return(DftoDl)
+}
+
+# Get the names of the time-series rasters to use for each date
+getRastersNames_timeSeries<-function(df_dates_loc,xxxData_md,dataCollection){
+  rastsNames<-map(df_dates_loc$date_numeric,~pluck(xxxData_md,as.character(.))) %>%
+    map(.,pluck(dataCollection)) %>%
+    map(.,pluck("names")) %>%
+    map(.,as.character)
+  return(rastsNames)
+}
+
+# Get the path of local rasters
+getRastersPaths<-function(xxxData_md,dataCollection){
+  path<-modify(xxxData_md,dataCollection) %>%
+    map(~list_modify(.,"urls" = NULL)) %>%
+    map(data.frame) %>%
+    reduce(bind_rows) %>%
+    dplyr::select(names,destfiles) %>%
+    unique
+  return(path)
+}
+
+extractVar_singleBuff<-function(rasts,names_rasts_to_use,spPoints,buffer_size){
+  
+  res<-rasts[names_rasts_to_use] %>%  # filter only the rasters of the time series
+    map_dfr(~raster::extract(.,spTransform(spPoints,proj4string(.)),buffer=buffer_size,fun=mean, na.rm=TRUE, small=TRUE)) %>% # for each raster, calculate the stats
+    #set_names(origin_date-as.numeric(names(.))) %>% ## to name by the number of days separating the date of interest from the the day of the data
+    set_names(seq(0,ncol(.)-1,1)) %>%   ## to name by the lag index 
+    mutate(id=as.character(spPoints$id)) %>%
+    mutate(buffer=buffer_size) %>%
+    gather(time_lag,val,-c(id,buffer)) %>%
+    mutate(time_lag=as.numeric(time_lag))
+  
+  return(res) # to put in wide format : res <- res %>% unite(var,var,time_lag)) %>% spread(key=var,value=val)
+}
+
+
+extractVar<-function(buffer_sizes,df_dates_loc,names_rasts_to_use,rasters,var_name){
+  
+  res<-buffer_sizes %>% # for each buffer, calculate stats
+    set_names %>%
+    future_map_dfr(~pmap_dfr(list(names_rasts_to_use,df_dates_loc$sp_points,.),
+                             ~extractVar_singleBuff(rasters,..1,..2,..3)))  %>%
+    #mutate(var=var_name) %>%
+    dplyr::select(id,buffer,time_lag,val)
+  # to put in wide format : lst_min <- lst_min %>% unite(var,var,time_lag) %>% spread(key=var,value=val)
+  
+  return(res)
+}
+
+resampleProd<-function(rast,resample_output_res){
+  resample_output_res<-getRemoteData::convertMetersToDegrees(resample_output_res,latitude_4326=mean(c(extent(rast)[3],extent(rast)[4])))
+  r<-rast
+  res(r)<-resample_output_res
+  rast<-raster::resample(rast,r,method='bilinear')
+}
+```
+
+### Workflow preparation
+
+Read the credentials to EarthData for further download of MODIS and GPM data.
 
 ```{r , eval=T, echo=T, results='hide'}
 earthdata_credentials<-readLines(path_to_earthdata_credentials)
@@ -128,25 +232,25 @@ password_EarthData<-strsplit(earthdata_credentials,"=")[[2]][2]
 httr::set_config(authenticate(user=username_EarthData, password=password_EarthData, type = "basic"))
 ```
 
-Then we open the dataset that contains the dates and locations of interest.
+Open the dataset that contains the dates and locations of interest.
 
 ```{r, eval=T, echo=T, message = FALSE}
 hlc_dates_loc<-read_csv(path_to_input_dates_loc)
 hlc_dates_loc
 ```
 
-From this file we create the area of interest (i.e. bounding box of all our observations) as a `sf` object.
-Whenever possible, the data will be downloaded strictly over this bounding box.
+From this file we create the area of interest (i.e. bounding box of all our observations) as a `sf` polygon object.
+Whenever possible, the data will be downloaded strictly over this bounding box, hence speeding-up the downloading time.
 
 ```{r, eval=T, echo=T}
 roi<-sf::st_as_sf(hlc_dates_loc, coords = c("longitude", "latitude"), crs = 4326) %>% 
   sf::st_bbox()
 
 mean_roi_latitude<-mean(c(roi$ymin,roi$ymax))
-roi[1]<-roi[1]-0.05-getData::convertMetersToDegrees(max(buffer_sizes),mean_roi_latitude) #xmin
-roi[2]<-roi[2]-0.05-getData::convertMetersToDegrees(max(buffer_sizes),mean_roi_latitude) #ymin
-roi[3]<-roi[3]+0.05-getData::convertMetersToDegrees(max(buffer_sizes),mean_roi_latitude) #xmin
-roi[4]<-roi[4]+0.05-getData::convertMetersToDegrees(max(buffer_sizes),mean_roi_latitude) #ymin
+roi[1]<-roi[1]-0.05-getRemoteData::convertMetersToDegrees(max(buffer_sizes),mean_roi_latitude) #xmin
+roi[2]<-roi[2]-0.05-getRemoteData::convertMetersToDegrees(max(buffer_sizes),mean_roi_latitude) #ymin
+roi[3]<-roi[3]+0.05-getRemoteData::convertMetersToDegrees(max(buffer_sizes),mean_roi_latitude) #xmin
+roi[4]<-roi[4]+0.05-getRemoteData::convertMetersToDegrees(max(buffer_sizes),mean_roi_latitude) #ymin
 
 roi<-roi %>% 
   sf::st_as_sfc() %>% 
@@ -156,7 +260,7 @@ roi<-roi %>%
 We group the dataset by date of interest. Output is a tibble whose observations (i.e. rows) are, for each date of interest, a `SpatialPointsDataFrame` object with all the locations of interest for that date.
 
 ```{r, eval=T, echo=T}
-dates_loc<-hlc_dates_loc %>% 
+df_dates_loc<-hlc_dates_loc %>% 
   mutate(date=as.Date(date)) %>%
   group_by(date) %>%
   arrange(date) %>%
@@ -166,12 +270,12 @@ dates_loc<-hlc_dates_loc %>%
   dplyr::select(-coords) %>%
   mutate(date_numeric=as.integer(date_date))  %>%
   mutate(lagTime_timeSeries=lagTime_timeSeries)
-dates_loc
+df_dates_loc
 
-datesDday<-dates_loc$date_date
+datesDday<-df_dates_loc$date_date
 head(datesDday)
 
-datesTimesSeries<-dates_loc$date_date %>%
+datesTimesSeries<-df_dates_loc$date_date %>%
   map(~seq(.,.-lagTime_timeSeries,-1)) %>%
   unlist %>%
   unique %>%
@@ -180,32 +284,42 @@ datesTimesSeries<-dates_loc$date_date %>%
 head(datesTimesSeries)
 ```
 
-
-## 1/ Process MODIS products
-
-We process all the MODIS collections in one single shot. `getData` uses the [OpenDAP protocol](https://en.wikipedia.org/wiki/OPeNDAP) to access MODIS data. In few words, OpenDAP enables to subset  the dataset to download (hence making the downloaded dataset lighter).
-
-### 1.1/ Download MODIS products
-
-First transform the CRS of the ROI from orginal (EPSG 4326) to the specific MODIS CRS
+Prepare parallel computing with the `furrr` package 
 
 ```{r, eval=T, echo=T}
-modisCrs="+proj=sinu +lon_0=0 +x_0=0 +y_0=0 +a=6371007.181 +b=6371007.181 +units=m +no_defs"
-modisTile<-getData::getMODIStileNames(roi)
+plan(multiprocess)
+options(future.globals.maxSize= 10000*1024^2) # 10 GB for the max size to be exported for the furrr future expression (https://stackoverflow.com/questions/40536067/how-to-adjust-future-global-maxsize-in-r)
+```
+
+## 1/ LST, VI and ET with MODIS data
+
+We download all the MODIS collections of interest in one single shot. Within `getRemoteData` we use the standard [OpenDAP protocol](https://en.wikipedia.org/wiki/OPeNDAP) to access MODIS data. In few words, OpenDAP enables to subset the dataset at the download (hence making the downloaded dataset lighter).
+
+The MODIS OpeNDAP server is located [here](https://opendap.cr.usgs.gov/opendap/hyrax/)
+
+Then we extract the statistics of each variable (LST, VI, ET) separately.
+
+### 1.1/ Import
+
+MODIS data come with a specific CRS. We first need to transform the CRS of the ROI from EPSG 4326 to the specific MODIS CRS.
+
+```{r, eval=T, echo=T}
+modisCrs<-"+proj=sinu +lon_0=0 +x_0=0 +y_0=0 +a=6371007.181 +b=6371007.181 +units=m +no_defs"
+modisTile<-getRemoteData::getMODIStileNames(roi)
 roi_bbox<-sf::st_bbox(sf::st_transform(roi,modisCrs))
 ```
 
-Get Time and Space vectors of OpenDAP servers for each collection + spatial indices corresponding to the ROI boundaries
+We retrieve a set of parameters that will be parsed in the `getData_modis` function. If not provided, these parameters are automatically calculated within the function. However, providing them all at once makes the process faster.
 
-```{r, eval=T, echo=T}
-cat("Retrieving information to download MODIS data on the OpenDap servers...\n")
+```{r, eval=F, echo=T}
+cat("Retrieving information to download MODIS data on the OpeNDAP servers...\n")
 modisOpenDAP_md<-dataSources_timeSeries[which(dataSources_timeSeries %in% c("MOD11A1.006","MYD11A1.006","MOD11A2.006","MYD11A2.006","MOD13Q1.006","MYD13Q1.006","MOD16A2.006","MYD16A2.006"))] %>% 
   data.frame(stringsAsFactors = F) %>%
   set_names("source") %>%
   mutate(OpendapURL=paste0("https://opendap.cr.usgs.gov/opendap/hyrax","/",source,"/",modisTile,".ncml")) %>%
-                  mutate(Opendap_timeVector=map(OpendapURL,~getData::getOpenDAPvector(.,"time"))) %>%
-                  mutate(Opendap_xVector=map(OpendapURL,~getData::getOpenDAPvector(.,"XDim"))) %>%
-                  mutate(Opendap_yVector=map(OpendapURL,~getData::getOpenDAPvector(.,"YDim"))) %>%
+                  mutate(Opendap_timeVector=map(OpendapURL,~getRemoteData::getOpenDAPvector(.,"time"))) %>%
+                  mutate(Opendap_xVector=map(OpendapURL,~getRemoteData::getOpenDAPvector(.,"XDim"))) %>%
+                  mutate(Opendap_yVector=map(OpendapURL,~getRemoteData::getOpenDAPvector(.,"YDim"))) %>%
                   mutate(Opendap_minLon=map(Opendap_xVector,.f=~which.min(abs(.x-roi_bbox$xmin))-1)) %>%
                   mutate(Opendap_maxLon=map(Opendap_xVector,.f=~which.min(abs(.x-roi_bbox$xmax))-1)) %>%
                   mutate(Opendap_minLat=map(Opendap_yVector,.f=~which.min(abs(.x-roi_bbox$ymax))-1)) %>%
@@ -219,18 +333,514 @@ modisOpenDAP_md<-dataSources_timeSeries[which(dataSources_timeSeries %in% c("MOD
 
 ```
 
-```{r, eval=T, echo=T}
+Then we retrieve the URLs of the datasets to download using the `getData_modis` function. 
+
+```{r, eval=F, echo=T}
 ## Build list of datasets to DL for all MODIS collection and for all dates
-modisData_md<-dates %>%
+modisData_md<-datesDday %>%
   set_names(as.numeric(.)) %>% # names will be numeric format of the dates (days since 1970-01-01)
   map(~pmap(list(.,pluck(modisOpenDAP_md,"source"),pluck(modisOpenDAP_md,"destFolder"),pluck(modisOpenDAP_md,"dimensionsToRetrieve"),pluck(modisOpenDAP_md,"Opendap_timeVector"),pluck(modisOpenDAP_md,"roiSpatialIndexBound")),
-            ~getData::getData_modis(time_range = c(..1-lagTime_timeSeries,..1),
-                           OpenDAPCollection=..2,
+            ~getRemoteData::getData_modis(timeRange = c(..1-lagTime_timeSeries,..1),
+                           collection=..2,
                            destFolder=..3,
                            modisTile=modisTile,
-                           dimensionsToRetrieve=unlist(..4),
-                           timeVector=unlist(..5),
+                           dimensions=unlist(..4),
+                           OpenDAPtimeVector=unlist(..5),
                            roiSpatialIndexBound=unlist(..6),
                            download = F)) %>%
         set_names(pluck(modisOpenDAP_md,"source")))
 ```
+
+We finally download the data, parrallelizing it with the `parallelDL` argument set to `TRUE`.
+
+```{r modis_dl, eval=F, echo=T}
+DftoDl<-getDftoDl(modisData_md)
+Dl_res<-downloadData(DftoDl,username_EarthData,password_EarthData,parallelDL=TRUE)
+# Check if the datasets were downloaded
+head(file.exists(DftoDl$destfile))
+```
+
+### 1.2/ Tidy, transform
+
+The data are downloaded. We now process each MODIS collection to extract the statistics on :
+
+- the land surface temperature
+- the vegetation indices
+- the evapotranspiration
+
+#### 1.2.1 / LST
+
+We extract two variables within each buffer : the average **daily maximum** (lstMax) and **daily minimum** (LstMin) surface temperatures, using the MODIS LST 1km/1day products (MOD11A1.006 and MYD11A1.006 collections).
+
+The data processing workflow for the extraction of the maximum (resp. minimum) daily temperatures is the following : 
+
+- Create a multi-layer raster with Terra (MOD11A1) and Aqua (MYD11A1) products, using the band *LST_Day_1km* (resp. *LST_Night_1km*) ; 
+- take the highest (resp. lowest) available value for each pixel ;
+- extract the average temperature value within each buffer (with the `extract` function of the `raster` package);
+- NAs : fill by repeating this set of operation using the MODIS LST 1km/8days products (MOD11A2.006 and MYD11A2.006 collections) ;
+- NAs : fill by taking the average between the two days that frame the NA day
+
+```{r modis_lst, eval=F, echo=T}
+# For each date of interest, get the related time-series rasters names (i.e. the whole set of 40 days rasters)
+rastsNames_LST<-getRastersNames_timeSeries(df_dates_loc,modisData_md,"MOD11A1.006")
+# head(rastsNames_modLst)
+# Build the path to the Terra (MOD) and Aqua (MYD) products
+path_to_mod<-getRastersPaths(modisData_md,"MOD11A1.006")
+path_to_myd<-getRastersPaths(modisData_md,"MYD11A1.006")
+path_to_mod_myd<-merge(path_to_mod,path_to_myd,by="names",suffixes = c("_mod","_myd"))
+
+# Pre-process LstMin
+rasts_LstMin<-path_to_mod_myd %>%
+    mutate(rast_mod=map(destfiles_nmod,~getRemoteData::prepareData_modis(.,"LST_Night_1km"))) %>%
+    mutate(rast_myd=map(destfiles_myd,~getRemoteData::prepareData_modis(.,"LST_Night_1km"))) %>%
+    mutate(rast=map2(rast_mod,rast_myd,~min(.x,.y,na.rm = T))) %>%
+    mutate(rast=map(rast,~.-273.15)) %>%
+    pluck("rast") %>%
+    set_names(path_to_mod_myd$names)
+
+# Pre-process LstMax
+rasts_LstMax<-path_to_mod_myd %>%
+    mutate(rast_mod=map(destfiles_mod,~getRemoteData::prepareData_modis(.,"LST_Day_1km"))) %>%
+    mutate(rast_myd=map(destfiles_myd,~getRemoteData::prepareData_modis(.,"LST_Day_1km"))) %>%
+    mutate(rast=map2(rast_mod,rast_myd,~max(.x,.y,na.rm = T))) %>%
+    mutate(rast=map(rast,~.-273.15)) %>%
+    pluck("rast") %>%
+    set_names(path_to_mod_myd$names)
+   
+# Extract the variables 
+cat("Extracting LstMin...\n")
+lstMin<-extractVar(buffer_sizes,df_dates_loc,rastsNames_LST,rasts_LstMin) # to put in wide format : lstMin <- lstMin %>% unite(var,var,time_lag) %>% spread(key=var,value=val)
+lstMin$var<-"lstMin"
+cat("Extracting LstMax...\n")
+lstMax<-extractVar(buffer_sizes,df_dates_loc,rastsNames_LST,rasts_LstMax)
+lstMax$var<-"lstMax"
+#head(lstMin)
+# Remove the huge Raster lists
+rm(rasts_modLstMin,rasts_modLstMax)
+```
+
+#### 1.2.2 / VI
+
+We extract two variables within each buffer : the average **Normalized Difference Vegetation Indice ** (NDVI) and **Enhanced Vegetation Indice** (EVI), using the MODIS VI 250m/16days products (MOD13Q1.006 and MYD13Q1.006 collections).
+
+The data processing workflow for the extraction of the NDVI (resp. EVI) variables is the following : 
+
+- Extract the *_250m_16_days_NDVI* (resp. *_250m_16_days_EVI*) bands from Terra (MOD13Q1) and Aqua (MYD13Q1) products. Terra and Aqua products are phased, enabling to have a 8-days temporal resolution ; 
+- extract the average values of NDVI (resp. EVI) indice within each buffer ;
+
+Contrary to the LST, there are very few NAs in the VI products, as the temporal resolution is 16 days.
+
+```{r modis_vi, eval=F, echo=T}
+
+# For each date of interest, get the related time-series rasters names (i.e. the whole set of 40 days rasters)
+rastsNames_VI<-map2(getRastersNames_timeSeries(df_dates_loc,modisData_md,"MOD13Q1.006"),getRastersNames_timeSeries(df_dates_loc,modisData_md,"MYD13Q1.006"),c) %>%
+  map(as.numeric) %>%
+  map(~sort(.,decreasing=TRUE)) %>%
+  map(as.character)
+   
+# Build the path to the Terra (MOD) and Aqua (MYD) products
+path_to_mod<-getRastersPaths(modisData_md,"MOD13Q1.006")
+path_to_myd<-getRastersPaths(modisData_md,"MYD13Q1.006")
+path_to_mod_myd<-rbind(path_to_mod,path_to_myd) %>% arrange(names)
+   
+# Pre-process NDVI
+rasts_ndvi<-path_to_mod_myd %>%
+     mutate(rast=map(destfiles,~getRemoteData::prepareData_modis(.,"_250m_16_days_NDVI"))) %>%
+     pluck("rast") %>%
+     set_names(path_to_mod_myd$names) 
+ 
+# Pre-process EVI
+rasts_evi<-path_to_mod_myd %>%
+     mutate(rast=map(destfiles,~getRemoteData::prepareData_modis(.,"_250m_16_days_EVI"))) %>%
+     pluck("rast") %>%
+     set_names(path_to_mod_myd$names) 
+     
+# Extract the variables 
+cat("Extracting ndvi...\n")
+ndvi<-extractVar(buffer_sizes,df_dates_loc,rastsNames_VI,rasts_ndvi)
+ndvi$var<-"ndvi"
+cat("Extracting evi...\n")
+evi<-extractVar(buffer_sizes,df_dates_loc,rastsNames_VI,rasts_evi)
+evi$var<-"evi" 
+rm(rasts_modNdvi,rasts_modEvi)
+```
+
+#### 1.2.2 / ET
+
+We extract one variable within each buffer : the **Evapotranspiration** (ET), using the MODIS ET 500m/8days products (MOD16A2.006 and MYD16A2.006 collections).
+
+The data processing workflow for the extraction of the ET variable is the following : 
+
+- Create a multi-layer raster with Terra (MOD16A2) and Aqua (MYD16A2) products, using the band *ET_500m* ; 
+- Extract the average temperature value within each buffer ;
+
+
+```{r modis_et, eval=F, echo=T}
+
+# For each date of interest, get the related time-series rasters names (i.e. the whole set of 40 days rasters)
+rastsNames_Et<-getRastersNames_timeSeries(df_dates_loc,modisData_md,"MOD16A2.006")
+   
+# Build paths to data
+path_to_mod<-getRastersPaths(modisData_md,"MOD16A2.006")
+path_to_myd<-getRastersPaths(modisData_md,"MYD16A2.006")
+path_to_mod_myd<-merge(path_to_mod,path_to_myd,by="names",suffixes = c("_mod","_myd"))
+   
+# Pre-process
+rasts_Et<-path_to_mod_myd %>%
+     mutate(rast_mod=map(destfiles_mod,~getRemoteData::prepareData_modis(.,"ET_500m"))) %>%
+     mutate(rast_myd=map(destfiles_myd,~getRemoteData::prepareData_modis(.,"ET_500m"))) %>%
+     mutate(rast_mod=map(rast_mod,~clamp(.x,upper=32760,useValues=FALSE))) %>% ## Set pixel values >= 32760 (quality pixel values) to NA 
+     mutate(rast_myd=map(rast_myd,~clamp(.x,upper=32760,useValues=FALSE))) %>% ## Set pixel values >= 32760 (quality pixel values) to NA 
+     mutate(rast=map2(rast_mod,rast_myd,~mean(.x,.y,na.rm = T))) %>%
+     pluck("rast") %>%
+     set_names(path_to_mod_myd$names)
+     
+# Extract
+cat("Extracting et...\n")
+et<-extractVar(buffer_sizes,df_dates_loc,rastsNames_Et,rasts_Et)
+et$var<-"et"
+rm(rasts_Et)
+```
+
+## 2/ Precipitation with GPM data
+
+As for the MODIS products with `getData_modis`, `getData_gpm` internally uses the OpeNDAP protocol to download the GPM data produced by the USGS.
+The GPM OpeNDAP server is located [here](https://gpm1.gesdisc.eosdis.nasa.gov/opendap/GPM_L3/)
+
+### 2.1/ Import 
+
+For the GPM data we download two collections : the daily and the half-hourly precipitations. Daily precipitations will be useful to study the influence of precipitations for the development and abundance of the mosquitoes, while half-hourly precipitations will be used only over the night of catch.
+
+```{r, eval=F, echo=T}
+roi_bbox<-st_bbox(roi)
+cat("Retrieving information to download GPM data on the OpeNDAP servers...\n")
+gpmOpenDAP_md<-c("GPM_3IMERGDF.06","GPM_3IMERGHH.06") %>% 
+     data.frame(stringsAsFactors = F) %>%
+     set_names("source") %>%
+     mutate(OpendapURL="https://gpm1.gesdisc.eosdis.nasa.gov/opendap/GPM_L3/GPM_3IMERGHH.06/2016/001/3B-HHR.MS.MRG.3IMERG.20160101-S000000-E002959.0000.V06B.HDF5") %>%
+     mutate(Opendap_xVector=map(OpendapURL,~getOpenDAPvector(.,"lon"))) %>%
+     mutate(Opendap_yVector=map(OpendapURL,~getOpenDAPvector(.,"lat"))) %>%
+     mutate(Opendap_minLon=map(Opendap_xVector,.f=~which.min(abs(.x-roi_bbox$xmin))-4)) %>%
+     mutate(Opendap_maxLon=map(Opendap_xVector,.f=~which.min(abs(.x-roi_bbox$xmax))+4)) %>%
+     mutate(Opendap_minLat=map(Opendap_yVector,.f=~which.min(abs(.x-roi_bbox$ymin))-4)) %>% ## careful, this line is not the same as for Modis. ymax has become ymin.
+     mutate(Opendap_maxLat=map(Opendap_yVector,.f=~which.min(abs(.x-roi_bbox$ymax))+4)) %>%
+     mutate(roiSpatialIndexBound=pmap(list(Opendap_minLat,Opendap_maxLat,Opendap_minLon,Opendap_maxLon),.f=~c(..1,..2,..3,..4))) %>%
+     mutate(destFolder=file.path(path_to_working_directory,source)) %>%
+     mutate(dimensionsToRetrieve=list(c("precipitationCal")))
+``` 
+
+Then we retrieve the URLs of the datasets to download using the `getData_gpm` function. 
+  
+```{r, eval=F, echo=T}
+## Build list of datasets to download for GPM Daily and for all dates
+gpmOpenDAP_md_daily<-gpmOpenDAP_md %>% 
+  filter(source=="GPM_3IMERGDF.06")
+
+gpmData_md_daily<-datesDday %>%
+     set_names(as.numeric(.)) %>% # names will be numeric format of the dates (days since 1970-01-01)
+     map(~pmap(list(.,pluck(gpmOpenDAP_md_daily,"source"),pluck(gpmOpenDAP_md_daily,"destFolder"),pluck(gpmOpenDAP_md_daily,"dimensionsToRetrieve"),pluck(gpmOpenDAP_md_daily,"roiSpatialIndexBound")),
+               ~getRemoteData::getData_gpm(timeRange = c(..1-lagTime_timeSeries,..1),
+                              collection=..2,
+                              destFolder=..3,
+                              dimensions=unlist(..4),
+                              roiSpatialIndexBound=unlist(..5))) %>%
+           set_names(pluck(gpmOpenDAP_md_daily,"source")))
+   
+## Build list of datasets to download for GPM half-hourly and for all dates
+gpmOpenDAP_md_hhourly<-gpmOpenDAP_md %>% 
+  filter(source=="GPM_3IMERGHH.06")
+
+gpmData_md_hhourly<-datesDday %>%
+     set_names(as.numeric(.)) %>% # names will be numeric format of the dates (days since 1970-01-01)
+     map(~pmap(list(.,pluck(gpmOpenDAP_md_hhourly,"source"),pluck(gpmOpenDAP_md_hhourly,"destFolder"),pluck(gpmOpenDAP_md_hhourly,"dimensionsToRetrieve"),pluck(gpmOpenDAP_md_hhourly,"roiSpatialIndexBound")),
+               ~getRemoteData::getData_gpm(timeRange = c(paste0(as.Date(..1,origin="1970-01-01")," ",hourStart_Dday,":00:00"),paste0(as.Date(..1,origin="1970-01-01")+1," ",hourEnd_Dday,":00:00")),
+                            collection=..2,
+                            destFolder=..3,
+                            dimensions=unlist(..4),
+                            roiSpatialIndexBound=unlist(..5))) %>%
+           set_names(pluck(gpmOpenDAP_md_hhourly,"source")))
+   
+``` 
+
+We finally download the data, parrallelizing the processs with the `parallelDL` argument set to `TRUE`.
+
+```{r gpm_dl, eval=F, echo=T}
+DftoDl<-rbind(getDftoDl(gpmData_md_daily),getDftoDl(gpmData_md_hhourly))
+cat("Downloading GPM data...\n")
+Dl_res<-downloadData(DftoDl,username_EarthData,password_EarthData,parallelDL=TRUE)
+# Check if the datasets were downloaded
+head(file.exists(DftoDl$destfile))
+```
+  
+
+### 2.2/ Tidy, transform
+
+We extract the following variables within the buffers for the time series : 
+
+- *rain_gpmDay* : Mean of daily precipitations ;
+- *rain_gpmHhour* : Proportions of half-hours with positive precipitation during the whole night of catch ;
+
+#### 2.2.1/ Daily precipitations
+
+```{r gpm_daily, eval=F, echo=T}
+# For each date of interest, get the related time-series rasters names (i.e. the whole set of 40 days rasters)
+rastsNames_gpmDay<-getRastersNames_timeSeries(df_dates_loc,gpmData_md_daily,"GPM_3IMERGDF.06")
+   
+# Build paths to data
+path_to_gpmDay<-getRastersPaths(gpmData_md_daily,"GPM_3IMERGDF.06")
+   
+# Pre-process TODO check quality
+rasts_gpmDay<-path_to_gpmDay %>%
+     mutate(rast=future_map(destfiles,~getRemoteData::prepareData_gpm(.,"precipitationCal"))) %>% 
+     pluck("rast") %>%
+     set_names(path_to_gpmDay$names)
+
+# resampling to 250 m
+if(gpm_resample){
+  rasts_gpmDay<-future_map(rasts_gpmDay,~resampleProd(.,gpm_resample_output_res)) 
+}
+
+# Extract
+cat("Extracting daily precipitations (gpm)...\n")
+rain_gpmDay<-extractVar(buffer_sizes,df_dates_loc,rastsNames_gpmDay,rasts_gpmDay)
+rain_gpmDay$var<-"rain_gpmDay"
+rm(rasts_gpmDay)
+```   
+  
+#### 2.2.2/ Half-hourly precipitations
+
+```{r gpm_hhourly, eval=F, echo=T}
+rastsNames_gpmHhour<-getRastersNames_timeSeries(df_dates_loc,gpmData_md_hhourly,"GPM_3IMERGHH.06")
+   
+# Build paths to data
+path_to_gpmHhour<-getRastersPaths(gpmData_md_hhourly,"GPM_3IMERGHH.06")
+   
+# Pre-process TODO check quality
+rasts_gpmHhour<-path_to_gpmHhour %>%
+     mutate(rast=future_map(destfiles,~getRemoteData::prepareData_gpm(.,"precipitationCal"))) %>% 
+  pluck("rast") %>%
+     set_names(path_to_gpmHhour$names)
+
+# resampling to 250 m
+if(gpm_resample){
+  rasts_gpmHhour<-future_map(rasts_gpmHhour,~resampleProd(.,gpm_resample_output_res)) 
+}
+  # Extract
+cat("Extracting daily precipitations (gpm)...\n")
+rasts_gpmHhour<-extractVar(buffer_sizes=10,df_dates_loc,rastsNames_gpmHhour,rasts_gpmHhour)
+rasts_gpmHhour$var<-"rasts_gpmHhour"
+rm(rasts_gpmDay)
+```  
+
+## 3/ Precipitation with TAMSAT data
+
+TAMSAT is another source of precipitation data. https://www.tamsat.org.uk/about . We will use it to compare the model with GPM. 
+
+### 3.1/ Import 
+
+```{r tamsat_dl, eval=F, echo=T}
+
+tamsat_md<-data.frame(output_time_step=c("daily"), #,"monthly","monthly"),
+                         output_product=c("rainfall_estimate"), #,"rainfall_estimate","anomaly"),
+                         output_output=c("individual"), #,"individual","individual"),
+                         stringsAsFactors = F) %>%
+     mutate(source=paste(output_time_step,output_product,output_output,sep="_"))  %>%
+     mutate(destFolder=file.path(path_to_working_directory,"TAMSAT",source)) 
+   
+tamsatData_md<-datesDday %>%
+     set_names(as.numeric(.)) %>% # names will be numeric format of the dates (days since 1970-01-01)
+     map(~pmap(list(.,pluck(tamsat_md,"destFolder"),pluck(tamsat_md,"output_time_step"),pluck(tamsat_md,"output_product"),pluck(tamsat_md,"output_output")),
+               ~getRemoteData::getData_tamsat(timeRange = c(..1-lagTime_timeSeries,..1),
+                            destFolder=..2,
+                            output_time_step=..3,
+                            output_product=..4,
+                            output_output=..5)) %>%
+                        set_names(pluck(tamsat_md,"source")))
+   
+## Download datasets
+DftoDl<-getDftoDl(tamsatData_md)
+Dl_res<-downloadData(DftoDl,parallelDL=TRUE)
+# Check if the datasets were downloaded
+head(file.exists(DftoDl$destfile))
+``` 
+
+### 3.2/ Tidy, transform 
+
+As for GPM, we extract the mean of daily precipitations (*rain_tamsatDay*) within the buffers for the time series.
+
+```{r tamsat_process, eval=F, echo=T}
+rastsNames_tamsat<-getRastersNames_timeSeries(df_dates_loc,tamsatData_md,"daily_rainfall_estimate_individual")
+   
+# Build paths to data
+path_to_tamsat<-getRastersPaths(tamsatData_md,"daily_rainfall_estimate_individual")
+   
+# Pre-process
+rasts_tamsat<-path_to_tamsat %>%
+     mutate(rast=future_map(destfiles,~getRemoteData::prepareData_tamsat(.,roi))) %>%
+     pluck("rast") %>%
+     set_names(path_to_tamsat$names)
+
+# resampling to 250 m
+if(tamsat_resample){
+rasts_tamsat<-future_map(rasts_tamsat,~resampleProd(.,tamsat_resample_output_res)) 
+}
+
+# Extract
+cat("Extracting daily precipitations (tamsat)...\n")
+rain_tamsatDay<-extractVar(buffer_sizes,df_dates_loc,rastsNames_tamsat,rasts_tamsat)
+rain_tamsatDay$var<-"rain_tamsatDay"
+``` 
+
+## 4/ Nighttime lights with VIIRS DNB data
+
+### 4.1/ Import 
+
+```{r viirsdnb_dl, eval=F, echo=T}
+viirsDnbData_md<-datesDday %>%
+     set_names(as.numeric(.)) %>% # names will be numeric format of the dates (days since 1970-01-01)
+     map(~map(.,
+              ~getRemoteData::getData_viirsDnb(timeRange = .,
+                           roi=roi,
+                           dimensions=c("Monthly_AvgRadiance","Monthly_CloudFreeCoverage"),
+                           destFolder=file.path(path_to_working_directory,"viirs_dnb"))) %>%
+     set_names("viirs_dnb"))
+   
+   
+## Download datasets
+df_DataToDL<-getDftoDl(viirsDnbData_md)
+Dl_res<-downloadData(DftoDl,parallelDL=TRUE)
+# Check if the datasets were downloaded
+head(file.exists(DftoDl$destfile))
+``` 
+
+### 4.2/ Tidy, transform
+
+```{r viirsdnb_process, eval=F, echo=T}
+# Get the names of the rasters to use for each date
+rastsNames_viirsDnb<-getRastersNames_timeSeries(df_dates_loc,viirsDnbData_md,"viirs_dnb") %>%
+     map(~keep(.,str_detect(.,"Monthly_AvgRadiance")))
+
+# Build paths to data
+path_to_viirsDnb_AvgRadiance<-getRastersPaths(viirsDnbData_md,"viirs_dnb") %>%
+     mutate(date=substr(names,nchar(names)-4,nchar(names))) %>%
+     filter(str_detect(names,"AvgRadiance")) %>%
+     set_names(c("name_AvgRadiance","destfile_AvgRadiance","date"))
+
+path_to_viirsDnb_CloudFreeCoverage<-getRastersPaths(viirsDnbData_md,"viirs_dnb") %>%
+     mutate(date=substr(names,nchar(names)-4,nchar(names))) %>%
+     filter(str_detect(names,"CloudFreeCoverage")) %>%
+     set_names(c("name_CloudFreeCoverage","destfile_CloudFreeCoverage","date"))
+   
+path_to_viirsDnb<-merge(path_to_viirsDnb_AvgRadiance,path_to_viirsDnb_CloudFreeCoverage,by="date")
+
+# Pre-process
+rasts_viirsDnb<-path_to_viirsDnb %>%
+     mutate(rast_AvgRadiance=map(destfile_AvgRadiance,~raster(.))) %>% 
+     mutate(rast_CloudFreeCoverage=map(destfile_CloudFreeCoverage,~raster(.))) %>% 
+     mutate(rast_CloudFreeCoverage=map(rast_CloudFreeCoverage,~clamp(.x,lower=1,useValues=FALSE))) %>% # Quality control : if there are 0 cloud free obs, we set the pixel to NA
+     mutate(rast=map2(rast_AvgRadiance,rast_CloudFreeCoverage,~mask(.x,.y))) %>%
+     pluck("rast") %>%
+     set_names(path_to_viirsDnb_AvgRadiance$name_AvgRadiance)
+
+# Extract
+cat("Extracting nighttime lights (VIIRS DNB...\n")
+Nightlight<-extractVar(buffer_sizes,df_dates_loc,rastsNames_viirsDnb,rasts_viirsDnb)
+Nightlight$var<-"nightlight"
+rm(rasts_viirsDnb)
+``` 
+
+
+## 5/ Apparent magnitude of the Moon with IMCCE data
+
+Ephemeris of the Moon
+
+### 5.1/ Import 
+```{r imcce_dl, eval=F, echo=T}
+moonData_md<-datesDday %>%
+   set_names(as.numeric(.)) %>% # names will be numeric format of the dates (days since 1970-01-01)
+   map(~map(.,
+            ~getRemoteData::getData_imcce(timeRange = .,
+                                roi=roi,
+                                destFolder=file.path(path_to_working_directory,"moon_imcce"))) %>%
+         set_names("moon_imcce"))
+   
+## Download datasets
+df_DataToDL<-getDftoDl(moonData_md)
+Dl_res<-downloadData(df_DataToDL,parallelDL=TRUE)
+``` 
+
+### 5.2/ Tidy, transform
+```{r imcce_process, eval=F, echo=T}
+# Get the names of the files to use for each date
+DfNames_moon<-getRastersNames_timeSeries(df_dates_loc,moonData_md,"moon_imcce") %>%
+     unlist() %>%
+     cbind(names(moonData_md)) %>%
+     data.frame(stringsAsFactors = F) %>%
+     set_names(c("names","date"))
+
+# Build paths to data
+path_to_moon<-getRastersPaths(moonData_md,"moon_imcce")
+   
+# Pre-process
+moon_magnitude_dfs<-path_to_moon %>% 
+     mutate(df=map(destfiles,~read.csv(.,skip=10))) %>% 
+     mutate(V.Mag=map(df,"V.Mag"))
+   
+# Extract 
+moonMag<-hlc_dates_loc %>%
+     select(id,date) %>%
+     mutate(date=as.character(as.numeric(as.Date(date)))) %>%
+     left_join(DfNames_moon,by="date") %>%
+     left_join(moon_magnitude_dfs,by="names") %>%
+     select(id,V.Mag) %>%
+     set_names("id","val") %>%
+     mutate(var="moonMag") %>%
+     mutate(time_lag=0) %>%
+     mutate(buffer=NA) %>%
+     dplyr::select(id,buffer,time_lag,val,var)
+``` 
+
+
+## 6/ Wind with ERA-5 data
+
+### 6.1/ Import 
+
+```{r era5_download, eval=F, echo=T}
+era5_md<-data.frame(dimensionsToRetrieve=c("10m_u_component_of_wind","10m_v_component_of_wind"),
+                       stringsAsFactors = F) %>%
+  mutate(source=dimensionsToRetrieve)
+     
+era5Data_md<-datesDday %>%
+     set_names(as.numeric(.)) %>% # names will be numeric format of the dates (days since 1970-01-01)
+     map(~pmap(list(.,pluck(era5_md,"source"),pluck(era5_md,"dimensionsToRetrieve")),
+               ~getRemoteData::getData_era5(timeRange = c(paste0(as.Date(..1,origin="1970-01-01")," ",hourStart_Dday,":00:00"),paste0(as.Date(..1,origin="1970-01-01")+1," ",hourEnd_Dday,":00:00")),
+                            roi=roi,
+                            destFolder=file.path(path_to_working_directory,..2),
+                            dimensions=..3)) %>%
+           set_names(era5_md$source))
+
+# First create directories in the wd
+directories<-era5_md$source %>% 
+     file.path(path_to_working_directory,.) %>%
+     as.list()  %>%
+     lapply(dir.create,recursive = TRUE)
+   
+# Then download
+#import python CDS-API
+cdsapi <- reticulate::import('cdsapi')
+#for this step there must exist the file .cdsapirc in the root directory of the computer (e.g. "/home/ptaconet")
+server = cdsapi$Client() #start the connection
+# for now we have not found a better solution that making a standard "for" loop (it does not work as expected with purrr)
+for (i in 1:length(era5Data_md)){
+  for (j in 1:length(era5Data_md[[i]])){
+     for (k in 1:length(era5Data_md[[i]][[j]]$destfiles)){
+      server$retrieve("reanalysis-era5-single-levels",
+                     era5Data_md[[i]][[j]]$urls[k][[1]],
+                     era5Data_md[[i]][[j]]$destfiles[k])
+       }
+     }
+   }
+
+```    
+
+### 6.2/ Tidy, transform 
