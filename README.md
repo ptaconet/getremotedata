@@ -7,10 +7,12 @@
 
 <!-- badges: end -->
 
-`getRemoteData` is an R package that attempts to **facilitate** and
-**speed-up** the painfull and time-consuming **data import / download**
-process for some well-known and widely used environmental / climatic
-data (e.g. [MODIS](https://modis.gsfc.nasa.gov/),
+`getRemoteData` is a set of R functions that offer a similar grammar to
+query and import data from heterogeneous sources. Overall, this package
+attempts to **facilitate** and **speed-up** the painfull and
+time-consuming **data import / download** process for some well-known
+and widely used environmental / climatic data (e.g.
+[MODIS](https://modis.gsfc.nasa.gov/),
 [GPM](https://www.nasa.gov/mission_pages/GPM/main/index.html), etc.) as
 well as other sources (e.g. [VIIRS
 DNB](https://ngdc.noaa.gov/eog/viirs/download_dnb_composites.html),
@@ -19,7 +21,7 @@ to regional** spatial scales, i.e. typically from few decimals to a
 decade squared degrees. For larger areas, other packages might be more
 relevant (e.g. [`getSpatialData`](http://jxsw.de/getSpatialData/)).
 
-Why such a package ?
+**Why such a package** ?
 
 Modeling an ecological phenomenon (e.g. species distribution) using
 environmental data (e.g. temperature, rainfall) is quite a common task
@@ -32,21 +34,32 @@ in ecology. The data analysis workflow generally consists in :
 
 Data of interest for a specific study are usually heterogeneous (various
 sources, formats, etc.). Downloading long time series of several
-environmental data using “formal” ways (e.g. through web portals) might
-be time consuming and long (especially in regions with slow
-connections). In addition, data downloaded manually might cover quite
-large areas, or include many dimensions (e.g. the multiple bands for a
-MODIS product). If your aera of interest is smaller or if you do not
-need all the dimensions, why donwloading the whole dataset ? Whenever
-possible (i.e. made possible by the data provider - check section
-[Behind the scenes… how it
+environmental data “manually” (e.g. through user-friendly web portals)
+is time consuming and is not reproducible. In addition, data downloaded
+manually might cover quite large areas, or include many dimensions
+(e.g. the multiple bands for a MODIS product). If your aera of interest
+is smaller or if you do not need all the dimensions, why donwloading the
+whole dataset ? Whenever possible (i.e. made possible by the data
+provider - check section [Behind the scenes… how it
 works](#Behind%20the%20scenes...%20how%20it%20works)), `getRemoteData`
 enables to download the data strictly for your region and dimensions of
 interest.
 
-`getRemoteData` also enables the downloading of less-famous or non
-environmental / climatic data. Those are data that I use in my personal
-work.
+**When should you use `getRemoteData` ? **
+
+You might have a deeper look at `getRemoteData` if you recognize
+yourself in one or more of the following points :
+
+  - work at a local to regional spatial scale ;
+  - are interested in importing long climatic / environmental
+    time-series ;
+  - have a slow internet connection ;
+  - care about the digital environmental impact of your work.
+
+`getRemoteData` is developed in the frame of Phd project, and the
+sources of data implemented in the package are hence those that I use in
+my work. Sources of data are mostly environmental / climatic data, but
+not exclusively.
 
 Other relavant packages : -
 [`getSpatialData`](http://jxsw.de/getSpatialData/) - \[`MODIS`\] and

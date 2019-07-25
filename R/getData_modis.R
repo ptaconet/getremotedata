@@ -25,12 +25,14 @@
 #'  \item{"destfile": }{Local destination file}
 #'  }
 #'
-#' If \code{download} is set to TRUE, the data are downloaded to \code{destFolder}
+#' Additionally, if \code{download} is set to TRUE the data are downloaded to \code{destFolder}
 #'
 #' @details
 #'
 #' Arguments \code{modisTile}, \code{OpenDAPtimeVector}, \code{OpenDAPXVector}, \code{OpenDAPYVector} and \code{roiSpatialIndexBound} are optional. They are automatically calculated from the other input parameters if not provided. However, providing them optimizes the performances (i.e. fasten the processing time).
 #' It might be particularly useful to provide them when looping with the function over the same ROI.
+#'
+#' Currently, download of data over multiple MODIS tiles is not enabled.
 #'
 #' @author Paul Taconet, IRD \email{paul.taconet@ird.fr}
 #'

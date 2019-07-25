@@ -43,6 +43,7 @@ The data analysis workflow consists in :
 - create explicative / predictive models of the presence and abundance of each species.
 
 Here we present how we automatize the first step (data import, tidy and summarize) using R. More specifically, the workflow includes : 
+
 - the downloading and pre-processing of heterogeneous data ; 
 - the calculatation of a summary of each covariate around each sampling point for various buffers sizes ; 
 - for some covariates (e.g. temperature or precipitation), we want to reapeat those operations for a set of days prior to the date of HLC, to study how environmental conditions influence the presence / development of the mosquitoes ;
@@ -77,7 +78,7 @@ In addition, we want to extract the following covariates for each HLC night :
 - Apparent magnitude of the moon (daily, from [GPM](https://doi.org/10.5067/GPM/IMERGDF/DAY/06)); 
 - Nighttime lights (monthly, from [VIIRS DNB](https://ngdc.noaa.gov/eog/viirs/download_dnb_composites.html));
 
-Below is the header of the output table : 
+Below is the header of the final output table : 
 
 ```{r, echo=F}
 head(read.csv(system.file("extdata/stats_output_example.csv", package = "getRemoteData")),row.names = F,10)
@@ -94,7 +95,7 @@ Most of the data sources implemented in `getRemoteData` are open, free, and avai
 dataSources<-getRemoteData::getAvailableDataSources()
 ```
 ```{r getAvailableDataSources_eval, eval = FALSE, echo=F}
-datatable(dataSources, rownames = FALSE, filter="top", options = list(pageLength = 5, scrollX=T) )
+#datatable(dataSources, rownames = FALSE, filter="top", options = list(pageLength = 5, scrollX=T) )
 ```
 
 ## Worflow setup
@@ -117,7 +118,7 @@ path_to_earthdata_credentials<-file.path(path_to_working_directory,"credentials_
 path_to_input_dates_loc<-system.file("extdata/CIV_df_dates_loc.csv", package = "getRemoteData")
 ## Setup the data collections to download (NB : To get data.frame of the data sources / collections implemented : getRemoteData::getAvailableDataSources() )
 # a) as time series : setup collections and maximum lag time (in number of days) 
-dataSources_timeSeries<-c("MOD11A1.006","MYD11A1.006","MOD13Q1.006","MYD13Q1.006","MOD16A2.006","MYD16A2.006","GPM_3IMERGDF","TAMSAT")
+dataSources_timeSeries<-c("MOD11A1.006","MYD11A1.006","MOD11A2.006","MYD11A2.006","MOD13Q1.006","MYD13Q1.006","MOD16A2.006","MYD16A2.006","GPM_3IMERGDF","TAMSAT")
 lagTime_timeSeries<-40
 # b) for the dates of interest only : setup collections and - only for the data with hourly or half-hourly time resolutions (e.g. GPM_3IMERGHH or ERA5 ) - starting and ending times :
 dataSources_Dday<-c("GPM_3IMERGHH","ERA5","MIRIADE","VIIRS DNB")
@@ -152,10 +153,10 @@ require(reticulate)
 
 ### Setup functions
 
-We setup some functions that will be used all throughout the workflow to process multiple dates / times series at once.
+We setup some functions that will be used throughout the workflow to process multiple dates / times series at once.
 
 ```{r , eval=T}
-# Reshaping of list to get a data.frame of data to download, used as input of the getRemoteData::downloadData function.
+# Reshaping a list to get a data.frame of data to download, used as input of the getRemoteData::downloadData function.
 getDftoDl<-function(data_md){
   DftoDl<- data_md %>%
    flatten %>%
@@ -185,40 +186,96 @@ getRastersPaths<-function(xxxData_md,dataCollection){
   return(path)
 }
 
-extractVar_singleBuff<-function(rasts,names_rasts_to_use,spPoints,buffer_size){
-  
+# Extract a summary of a variable over 1 buffer
+extractVar_singleBuff<-function(rasts,names_rasts_to_use,spPoints,buffer_size,fun_summarize){
   res<-rasts[names_rasts_to_use] %>%  # filter only the rasters of the time series
-    map_dfr(~raster::extract(.,spTransform(spPoints,proj4string(.)),buffer=buffer_size,fun=mean, na.rm=TRUE, small=TRUE)) %>% # for each raster, calculate the stats
+    map_dfr(~raster::extract(.,spTransform(spPoints,proj4string(.)),buffer=buffer_size,fun=eval(parse(text=fun_summarize)), na.rm=TRUE, small=TRUE)) %>% # for each raster, calculate the stats
     #set_names(origin_date-as.numeric(names(.))) %>% ## to name by the number of days separating the date of interest from the the day of the data
     set_names(seq(0,ncol(.)-1,1)) %>%   ## to name by the lag index 
     mutate(id=as.character(spPoints$id)) %>%
     mutate(buffer=buffer_size) %>%
     gather(time_lag,val,-c(id,buffer)) %>%
     mutate(time_lag=as.numeric(time_lag))
-  
   return(res) # to put in wide format : res <- res %>% unite(var,var,time_lag)) %>% spread(key=var,value=val)
 }
 
+rain_gpmHhour<-extractVar(buffer_sizes=10,df_dates_loc,rastsNames_gpmHhour,rasts_gpmHhour,"sum")
 
-extractVar<-function(buffer_sizes,df_dates_loc,names_rasts_to_use,rasters,var_name){
-  
+# Extract a summary of a variable over multiple buffers
+extractVar<-function(buffer_sizes,df_dates_loc,names_rasts_to_use,rasters,fun_summarize){
   res<-buffer_sizes %>% # for each buffer, calculate stats
     set_names %>%
-    future_map_dfr(~pmap_dfr(list(names_rasts_to_use,df_dates_loc$sp_points,.),
-                             ~extractVar_singleBuff(rasters,..1,..2,..3)))  %>%
+    future_map_dfr(~pmap_dfr(list(names_rasts_to_use,df_dates_loc$sp_points,.,fun_summarize),
+                             ~extractVar_singleBuff(rasters,..1,..2,..3,..4)))  %>%
     #mutate(var=var_name) %>%
     dplyr::select(id,buffer,time_lag,val)
   # to put in wide format : lst_min <- lst_min %>% unite(var,var,time_lag) %>% spread(key=var,value=val)
-  
   return(res)
 }
 
+# Resample a product (using bilinear resampling)
 resampleProd<-function(rast,resample_output_res){
   resample_output_res<-getRemoteData::convertMetersToDegrees(resample_output_res,latitude_4326=mean(c(extent(rast)[3],extent(rast)[4])))
   r<-rast
   res(r)<-resample_output_res
   rast<-raster::resample(rast,r,method='bilinear')
 }
+
+# Impute NAs and setup quality flag
+# qval=1 is for values that where retrieved using the LST 1km/1day products
+# qval=2 is for values that where retrieved using the temperature of the upper(s) buffer(s) for the same day / time lag
+# qval=3 is for values that where retrieved using the mean temperature of the previous and the following day / time lag
+# qval=4 is for values that where retrieved using the LST 1km/8day temperature for the week of interest
+# qval=5 is for values that where retrieved using the mean temperature of the previous and the following LST 1km/8day temperature
+# qval=0 is for NAs remaining after these imputings
+
+# qval=1
+fillNA_l1<-function(df,qvalue){
+df <- df %>%
+  mutate(qval=if_else(!is.na(val),qvalue,0))
+return(df)
+}
+
+# qval=2
+fillNA_l2<-function(df,qvalue){
+df <- df %>%
+  arrange(id,time_lag,buffer) %>%
+  group_by(id,time_lag) %>%
+  fill(val, .direction = "up") %>%
+  mutate(qval=if_else((qval==0 & !is.na(val)),qvalue,qval)) %>%
+  as.data.frame()
+return(df)
+}
+
+# qval=3
+fillNA_l3<-function(df,qvalue){
+df <- df %>% 
+  arrange(id,buffer,time_lag) %>% 
+  mutate(val_ahead=lead(val)) %>% 
+  mutate(val_lag=lag(val)) %>% 
+  mutate(val_mean=map2_dbl(.x=val_ahead,.y=val_lag,~mean(c(.x,.y),na.rm=T))) %>% 
+  mutate(val_mean=replace(val_mean, which(is.nan(val_mean)), NA)) %>% 
+  mutate(val=if_else(!is.na(val),val,val_mean)) %>% 
+  mutate(qval=if_else((qval==0 & !is.na(val)),qvalue,qval))  %>% 
+  select(-c(val_ahead,val_lag,val_mean))
+return(df)
+}
+
+# qval=4
+fillNA_l4<-function(df,df_lst8day,qvalue){
+lst8day_as_1day <- df_lst8day %>%
+  slice(rep(1:n(), each = 7)) %>%
+  group_by(id,buffer) %>%
+  mutate(time_lag=seq(0,n()-1,1))
+
+df<-left_join(df,lst8day_as_1day,by=c("id","buffer","time_lag")) %>%
+  mutate(val.x=if_else(!is.na(val.x),val.x,val.y)) %>%
+  select(-c(val.y,var.y,qval.y)) %>%
+  rename(val=val.x,var=var.x,qval=qval.x) %>%
+  mutate(qval=if_else((qval==0 & !is.na(val)),qvalue,qval))
+return(df)
+}
+
 ```
 
 ### Workflow preparation
@@ -239,7 +296,7 @@ hlc_dates_loc<-read_csv(path_to_input_dates_loc)
 hlc_dates_loc
 ```
 
-From this file we create the area of interest (i.e. bounding box of all our observations) as a `sf` polygon object.
+From this file we create our area of interest (i.e. bounding box of all our observations) as a `sf` polygon object.
 Whenever possible, the data will be downloaded strictly over this bounding box, hence speeding-up the downloading time.
 
 ```{r, eval=T, echo=T}
@@ -298,6 +355,8 @@ We download all the MODIS collections of interest in one single shot. Within `ge
 The MODIS OpeNDAP server is located [here](https://opendap.cr.usgs.gov/opendap/hyrax/)
 
 Then we extract the statistics of each variable (LST, VI, ET) separately.
+
+Check out the function `getData_modis` for additional information on the MODIS products. 
 
 ### 1.1/ Import
 
@@ -381,25 +440,27 @@ The data processing workflow for the extraction of the maximum (resp. minimum) d
 - NAs : fill by taking the average between the two days that frame the NA day
 
 ```{r modis_lst, eval=F, echo=T}
-# For each date of interest, get the related time-series rasters names (i.e. the whole set of 40 days rasters)
-rastsNames_LST<-getRastersNames_timeSeries(df_dates_loc,modisData_md,"MOD11A1.006")
-# head(rastsNames_modLst)
-# Build the path to the Terra (MOD) and Aqua (MYD) products
-path_to_mod<-getRastersPaths(modisData_md,"MOD11A1.006")
-path_to_myd<-getRastersPaths(modisData_md,"MYD11A1.006")
-path_to_mod_myd<-merge(path_to_mod,path_to_myd,by="names",suffixes = c("_mod","_myd"))
 
-# Pre-process LstMin
-rasts_LstMin<-path_to_mod_myd %>%
-    mutate(rast_mod=map(destfiles_nmod,~getRemoteData::prepareData_modis(.,"LST_Night_1km"))) %>%
+extract_modis_lst<-function(MOD_collection, MYD_collection){
+  # For each date of interest, get the related time-series rasters names (i.e. the whole set of 40 days rasters)
+  rastsNames_LST<-getRastersNames_timeSeries(df_dates_loc,modisData_md,MOD_collection)
+  # head(rastsNames_modLst)
+  # Build the path to the Terra (MOD) and Aqua (MYD) products
+  path_to_mod<-getRastersPaths(modisData_md,MOD_collection)
+  path_to_myd<-getRastersPaths(modisData_md,MYD_collection)
+  path_to_mod_myd<-merge(path_to_mod,path_to_myd,by="names",suffixes = c("_mod","_myd"))
+
+  # Pre-process LstMin
+  rasts_LstMin<-path_to_mod_myd %>%
+    mutate(rast_mod=map(destfiles_mod,~getRemoteData::prepareData_modis(.,"LST_Night_1km"))) %>%
     mutate(rast_myd=map(destfiles_myd,~getRemoteData::prepareData_modis(.,"LST_Night_1km"))) %>%
     mutate(rast=map2(rast_mod,rast_myd,~min(.x,.y,na.rm = T))) %>%
     mutate(rast=map(rast,~.-273.15)) %>%
     pluck("rast") %>%
     set_names(path_to_mod_myd$names)
 
-# Pre-process LstMax
-rasts_LstMax<-path_to_mod_myd %>%
+  # Pre-process LstMax
+  rasts_LstMax<-path_to_mod_myd %>%
     mutate(rast_mod=map(destfiles_mod,~getRemoteData::prepareData_modis(.,"LST_Day_1km"))) %>%
     mutate(rast_myd=map(destfiles_myd,~getRemoteData::prepareData_modis(.,"LST_Day_1km"))) %>%
     mutate(rast=map2(rast_mod,rast_myd,~max(.x,.y,na.rm = T))) %>%
@@ -407,16 +468,49 @@ rasts_LstMax<-path_to_mod_myd %>%
     pluck("rast") %>%
     set_names(path_to_mod_myd$names)
    
-# Extract the variables 
-cat("Extracting LstMin...\n")
-lstMin<-extractVar(buffer_sizes,df_dates_loc,rastsNames_LST,rasts_LstMin) # to put in wide format : lstMin <- lstMin %>% unite(var,var,time_lag) %>% spread(key=var,value=val)
-lstMin$var<-"lstMin"
-cat("Extracting LstMax...\n")
-lstMax<-extractVar(buffer_sizes,df_dates_loc,rastsNames_LST,rasts_LstMax)
-lstMax$var<-"lstMax"
-#head(lstMin)
-# Remove the huge Raster lists
-rm(rasts_modLstMin,rasts_modLstMax)
+  # Extract the variables 
+  cat("Extracting LstMin...\n")
+  lstMin<-extractVar(buffer_sizes,df_dates_loc,rastsNames_LST,rasts_LstMin,"mean") # to put in wide format : lstMin <- lstMin %>% unite(var,var,time_lag) %>% spread(key=var,value=val)
+  lstMin$var<-"lstMin"
+  cat("Extracting LstMax...\n")
+  lstMax<-extractVar(buffer_sizes,df_dates_loc,rastsNames_LST,rasts_LstMax,"mean")
+  lstMax$var<-"lstMax"
+  #head(lstMin)
+  
+  return(list(lstMin,lstMax))
+}
+cat("extracting MODIS LST 1 day...\n")
+lst1day<-extract_modis_lst("MOD11A1.006","MYD11A1.006")
+lst1day[[1]]$var<-"lstMin1d"
+lst1day[[2]]$var<-"lstMax1d"
+cat("extracting MODIS LST 8 days...\n")
+lst8day<-extract_modis_lst("MOD11A2.006","MYD11A2.006")
+lst8day[[1]]$var<-"lstMin8d"
+lst8day[[2]]$var<-"lstMax8d"
+
+## Impute NAs
+lst8day<-lst8day %>%
+  map(.,~fillNA_l1(.,1))
+
+lst1day<-lst1day %>%
+  map(.,~fillNA_l1(.,1)) %>%
+  map(.,~fillNA_l2(.,2)) %>%
+  map(.,~fillNA_l3(.,3)) %>%
+  map2(.x=.,.y=lst8day,~fillNA_l4(.x,.y,4))
+
+lst8day<-lst8day %>%
+  map(.,~fillNA_l2(.,2)) %>%
+  map(.,~fillNA_l3(.,3))
+
+lst1day<-lst1day %>%
+    map2(.x=.,.y=lst8day,~fillNA_l4(.x,.y,5))
+
+
+lstMin1d<-lst1day[[1]]
+lstMax1d<-lst1day[[2]]
+lstMin8d<-lst8day[[1]]
+lstMax8d<-lst8day[[2]]
+
 ```
 
 #### 1.2.2 / VI
@@ -457,12 +551,24 @@ rasts_evi<-path_to_mod_myd %>%
      
 # Extract the variables 
 cat("Extracting ndvi...\n")
-ndvi<-extractVar(buffer_sizes,df_dates_loc,rastsNames_VI,rasts_ndvi)
+ndvi<-extractVar(buffer_sizes,df_dates_loc,rastsNames_VI,rasts_ndvi,"mean")
 ndvi$var<-"ndvi"
 cat("Extracting evi...\n")
-evi<-extractVar(buffer_sizes,df_dates_loc,rastsNames_VI,rasts_evi)
+evi<-extractVar(buffer_sizes,df_dates_loc,rastsNames_VI,rasts_evi,"mean")
 evi$var<-"evi" 
-rm(rasts_modNdvi,rasts_modEvi)
+rm(rasts_ndvi,rasts_evi)
+
+## Impute NAs
+ndvi<-ndvi %>%
+  fillNA_l1(.,1) %>%
+  fillNA_l2(.,2) %>%
+  fillNA_l3(.,3)
+
+evi<-evi %>%
+  fillNA_l1(.,1) %>%
+  fillNA_l2(.,2) %>%
+  fillNA_l3(.,3)
+
 ```
 
 #### 1.2.2 / ET
@@ -497,9 +603,15 @@ rasts_Et<-path_to_mod_myd %>%
      
 # Extract
 cat("Extracting et...\n")
-et<-extractVar(buffer_sizes,df_dates_loc,rastsNames_Et,rasts_Et)
+et<-extractVar(buffer_sizes,df_dates_loc,rastsNames_Et,rasts_Et,"mean")
 et$var<-"et"
 rm(rasts_Et)
+
+## Impute NAs
+et<-et %>%
+  fillNA_l1(.,1) %>%
+  fillNA_l2(.,2) %>%
+  fillNA_l3(.,3)
 ```
 
 ## 2/ Precipitation with GPM data
@@ -602,7 +714,7 @@ if(gpm_resample){
 
 # Extract
 cat("Extracting daily precipitations (gpm)...\n")
-rain_gpmDay<-extractVar(buffer_sizes,df_dates_loc,rastsNames_gpmDay,rasts_gpmDay)
+rain_gpmDay<-extractVar(buffer_sizes,df_dates_loc,rastsNames_gpmDay,rasts_gpmDay,"mean")
 rain_gpmDay$var<-"rain_gpmDay"
 rm(rasts_gpmDay)
 ```   
@@ -625,10 +737,19 @@ rasts_gpmHhour<-path_to_gpmHhour %>%
 if(gpm_resample){
   rasts_gpmHhour<-future_map(rasts_gpmHhour,~resampleProd(.,gpm_resample_output_res)) 
 }
-  # Extract
-cat("Extracting daily precipitations (gpm)...\n")
-rasts_gpmHhour<-extractVar(buffer_sizes=10,df_dates_loc,rastsNames_gpmHhour,rasts_gpmHhour)
-rasts_gpmHhour$var<-"rasts_gpmHhour"
+
+# Set to 1 if there was rain, else 0 
+rasts_gpmHhour<-future_map(rasts_gpmHhour,~raster::reclassify(.,c(-Inf,0.05,0, 0.05,Inf,1)))
+
+# Extract
+cat("Extracting half hourly precipitations (gpm)...\n")
+rain_gpmHhour<-extractVar(buffer_sizes=10,df_dates_loc,rastsNames_gpmHhour,rasts_gpmHhour,"sum")  # With this we get if is has rain (1) or not (0) for each half hour of each night (ie the lag). This dataset will be useful to study the detailed rythms (cycles) of the mosquitoes
+# Now we extract the variable that we want: the proportion of half-hours where it has rained for the total duration of each night
+rain_gpmHhour<-rain_gpmHhour %>%
+  group_by(id,buffer) %>% 
+  summarise(val=round(sum(val)/n()*100)) %>% 
+  mutate(time_lag=0)
+rain_gpmHhour$var<-"rain_gpmHhour"
 rm(rasts_gpmDay)
 ```  
 
@@ -687,7 +808,7 @@ rasts_tamsat<-future_map(rasts_tamsat,~resampleProd(.,tamsat_resample_output_res
 
 # Extract
 cat("Extracting daily precipitations (tamsat)...\n")
-rain_tamsatDay<-extractVar(buffer_sizes,df_dates_loc,rastsNames_tamsat,rasts_tamsat)
+rain_tamsatDay<-extractVar(buffer_sizes,df_dates_loc,rastsNames_tamsat,rasts_tamsat,"mean")
 rain_tamsatDay$var<-"rain_tamsatDay"
 ``` 
 
@@ -744,7 +865,7 @@ rasts_viirsDnb<-path_to_viirsDnb %>%
 
 # Extract
 cat("Extracting nighttime lights (VIIRS DNB...\n")
-Nightlight<-extractVar(buffer_sizes,df_dates_loc,rastsNames_viirsDnb,rasts_viirsDnb)
+Nightlight<-extractVar(buffer_sizes,df_dates_loc,rastsNames_viirsDnb,rasts_viirsDnb,"mean")
 Nightlight$var<-"nightlight"
 rm(rasts_viirsDnb)
 ``` 
@@ -844,3 +965,19 @@ for (i in 1:length(era5Data_md)){
 ```    
 
 ### 6.2/ Tidy, transform 
+
+```{r era5_process, eval=F, echo=T}
+
+# Get the names of the rasters to use for each date
+rastsNames_era5<-getRastersNames_timeSeries(df_dates_loc,era5Data_md,"10m_u_component_of_wind")
+   
+# Build paths to data
+path_to_u_wind<-getRastersPaths(era5Data_md,"10m_u_component_of_wind")
+path_to_v_wind<-getRastersPaths(era5Data_md,"10m_v_component_of_wind")
+path_to_u_v_wind<-merge(path_to_u_wind,path_to_v_wind,by="names",suffixes = c("_u","_v"))
+   
+
+
+
+
+```    

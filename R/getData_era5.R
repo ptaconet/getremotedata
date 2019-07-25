@@ -107,7 +107,7 @@ getData_era5<-function(timeRange=as.POSIXlt(c("2010-01-01 18:00:00","2010-01-02 
     mutate(urls=pmap(list(year,month,day,hour),~getQuery(dimensions,..1,..2,..3,..4,roi_bbox))) %>%
     mutate(names=paste0(year,month,day,"_",hour)) %>%
     mutate(destfiles=file.path(destFolder,paste0(names,".nc"))) %>%
-    select(names,urls,destfiles)
+    dplyr::select(names,urls,destfiles)
 
 
 if (download){

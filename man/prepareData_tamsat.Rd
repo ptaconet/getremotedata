@@ -30,7 +30,8 @@ roi=roi)
 }
 }
 \seealso{
-Other prepareData: \code{\link{prepareData_gpm}},
+Other prepareData: \code{\link{prepareData_era5}},
+  \code{\link{prepareData_gpm}},
   \code{\link{prepareData_modis}}
 }
 \author{
