@@ -19,13 +19,13 @@
 #'
 #' \dontrun{
 #' path_to_tamsat<-"path.to.my.tamsat.raster"
-#' roi=sf::st_read(system.file("extdata/ROI_example.kml", package = "getData"),quiet=T)
+#' roi=sf::st_read(system.file("extdata/ROI_example.kml", package = "getRemoteData"),quiet=T)
 #' rast_tamsat<-prepareData_tamsat(path_to_raw_tamsat=path_to_tamsat,
 #' roi=roi)
 #' #plot(rast_tamsat)
 #'}
 
-prepareData_tamsat<-function(path_to_raw_tamsat,roi=st_read("/home/ptaconet/r_react/getData/ROI_test.kml",quiet=T)){
+prepareData_tamsat<-function(path_to_raw_tamsat,roi=st_read(system.file("extdata/ROI_example.kml", package = "getRemoteData"),quiet=T)){
 
   rast<-raster(path_to_raw_tamsat)
 

@@ -7,14 +7,14 @@
 \usage{
 getData_era5(timeRange = as.POSIXlt(c("2010-01-01 18:00:00",
   "2010-01-02 09:00:00")),
-  roi = st_read("/home/ptaconet/r_react/getData/ROI_test.kml", quiet =
-  T), dimensions = c("10m_u_component_of_wind",
+  roi = st_read(system.file("extdata/ROI_example.kml", package =
+  "getRemoteData"), quiet = T), dimensions = c("10m_u_component_of_wind",
   "10m_v_component_of_wind"), username = NULL, password = NULL,
   download = FALSE, destFolder = getwd(), ...)
 
 getData_gpm(timeRange = as.Date(c("2017-01-01", "2017-01-30")),
-  roi = st_read("/home/ptaconet/r_react/getData/ROI_test.kml", quiet =
-  T), collection = "GPM_3IMERGDF.06",
+  roi = st_read(system.file("extdata/ROI_example.kml", package =
+  "getRemoteData"), quiet = T), collection = "GPM_3IMERGDF.06",
   dimensions = c("precipitationCal"), OpenDAPXVector = NULL,
   OpenDAPYVector = NULL, roiSpatialIndexBound = NULL,
   username = NULL, password = NULL, download = FALSE,
@@ -101,7 +101,7 @@ It might be particularly useful to provide them when looping with the function o
 \examples{
 
 # Read ROI as sf object
-roi=sf::st_read(system.file("extdata/ROI_example.kml", package = "getData"),quiet=T)
+roi=sf::st_read(system.file("extdata/ROI_example.kml", package = "getRemoteData"),quiet=T)
 timeRange<-c("2010-01-01 18:00:00","2010-01-02 09:00:00") \%>\% as.POSIXlt()
 
 \dontrun{
@@ -116,7 +116,7 @@ download=FALSE
 
 
 # Read ROI as sf object
-roi=sf::st_read(system.file("extdata/ROI_example.kml", package = "getData"),quiet=T)
+roi=sf::st_read(system.file("extdata/ROI_example.kml", package = "getRemoteData"),quiet=T)
 timeRange<-c("2017-01-01","2017-01-30") \%>\% as.Date()
 
 \dontrun{
@@ -133,12 +133,12 @@ download=FALSE
 }
 \seealso{
 Other getData: \code{\link{getData_imcce}},
-  \code{\link{getData_modis}},
+  \code{\link{getData_modis}}, \code{\link{getData_srtm}},
   \code{\link{getData_tamsat}},
   \code{\link{getData_viirsDnb}}
 
 Other getData: \code{\link{getData_imcce}},
-  \code{\link{getData_modis}},
+  \code{\link{getData_modis}}, \code{\link{getData_srtm}},
   \code{\link{getData_tamsat}},
   \code{\link{getData_viirsDnb}}
 }

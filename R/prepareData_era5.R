@@ -42,7 +42,7 @@ prepareData_era5<-function(path_to_raw_era5){
   #variable <- ncdf4::ncvar_get(nc,var_name)
   variable <- ncdf4::ncvar_get(nc)
 
-  rast <- raster(t(variable), xmn=min(lon)-0.125, xmx=max(lon)+0.125, ymn=min(lat)-0.125, ymx=max(lat)+0.125, crs=CRS("+init=epsg:4326"))
+  rast <- raster(t(variable), xmn=min(lon)-0.125, xmx=max(lon)+0.125, ymn=min(lat)-0.125, ymx=max(lat)+0.125, crs="+init=epsg:4326 +proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
 
   return(list(rast,timestamp))
 }

@@ -80,21 +80,21 @@ getData_tamsat<-function(timeRange=as.Date(c("2017-01-01","2017-01-30")), # mand
 
 
   if (output_time_step=="daily" & output_product=="rainfall_estimate" & output_output=="individual"){
-    urls <- urls %>% select(product_name_daily_rain_individual,url_product_daily_rain_individual)
+    urls <- urls %>% dplyr::select(product_name_daily_rain_individual,url_product_daily_rain_individual)
   } else if (output_time_step=="daily" & output_product=="rainfall_estimate" & output_output=="yearly"){
-    urls <- urls %>% select(product_name_daily_rain_yearly,url_product_daily_rain_yearly)
+    urls <- urls %>% dplyr::select(product_name_daily_rain_yearly,url_product_daily_rain_yearly)
   } else if (output_time_step=="monthly" & output_product=="rainfall_estimate" & output_output=="individual"){
-    urls <- urls %>% select(product_name_monthly_rain_individual,url_product_monthly_rain_individual)
+    urls <- urls %>% dplyr::select(product_name_monthly_rain_individual,url_product_monthly_rain_individual)
   } else if (output_time_step=="monthly" & output_product=="rainfall_estimate" & output_output=="yearly"){
-    urls <- urls %>% select(product_name_monthly_rain_yearly,url_product_monthly_rain_yearly)
+    urls <- urls %>% dplyr::select(product_name_monthly_rain_yearly,url_product_monthly_rain_yearly)
   } else if (output_time_step=="monthly" & output_product=="anomaly" & output_output=="individual"){
-    urls <- urls %>% select(product_name_monthly_anomaly_individual,url_product_monthly_anomaly_individual)
+    urls <- urls %>% dplyr::select(product_name_monthly_anomaly_individual,url_product_monthly_anomaly_individual)
   } #else if (output_time_step=="monthly" & output_product=="climatology" & output_output=="individual"){
   #urls <- urls %>% select(product_name_monthly_climatology_individual,url_product_monthly_climatology_individual)
   #}
   urls$destfiles<-file.path(destFolder,urls$product_name_daily_rain_individual)
 
-  res<-data.frame(names=urls[,1],urls=urls[,2],destfiles=urls[,3],stringsAsFactors = F)
+  res<-data.frame(name=urls[,1],url=urls[,2],destfile=urls[,3],stringsAsFactors = F)
 
   if (download){
     cat("Downloading the data...\n")

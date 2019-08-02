@@ -40,7 +40,7 @@
 #' @examples
 #'
 #' # Read ROI as sf object
-#' roi=sf::st_read(system.file("extdata/ROI_example.kml", package = "getData"),quiet=T)
+#' roi=sf::st_read(system.file("extdata/ROI_example.kml", package = "getRemoteData"),quiet=T)
 #' timeRange<-c("2010-01-01 18:00:00","2010-01-02 09:00:00") %>% as.POSIXlt()
 #'
 #' \dontrun{
@@ -55,7 +55,7 @@
 #'
 
 getData_era5<-function(timeRange=as.POSIXlt(c("2010-01-01 18:00:00","2010-01-02 09:00:00")), # mandatory. either a time range (e.g. c(date_start,date_end) ) or a single date e.g. ( date_start )
-                       roi=st_read("/home/ptaconet/r_react/getData/ROI_test.kml",quiet=T), # either provide roi (sf point or polygon) or provide roiSpatialIndexBound. if roiSpatialIndexBound is not provided, it will be calculated from roi
+                       roi=st_read(system.file("extdata/ROI_example.kml", package = "getRemoteData"),quiet=T), # either provide roi (sf point or polygon) or provide roiSpatialIndexBound. if roiSpatialIndexBound is not provided, it will be calculated from roi
                        dimensions=c("10m_u_component_of_wind","10m_v_component_of_wind"), # mandatory,
                        username=NULL, # EarthData user name
                        password=NULL, # EarthData password
@@ -104,10 +104,10 @@ getData_era5<-function(timeRange=as.POSIXlt(c("2010-01-01 18:00:00","2010-01-02 
 
 
   res<-datesToRetrieve %>%
-    mutate(urls=pmap(list(year,month,day,hour),~getQuery(dimensions,..1,..2,..3,..4,roi_bbox))) %>%
-    mutate(names=paste0(year,month,day,"_",hour)) %>%
-    mutate(destfiles=file.path(destFolder,paste0(names,".nc"))) %>%
-    dplyr::select(names,urls,destfiles)
+    mutate(url=pmap(list(year,month,day,hour),~getQuery(dimensions,..1,..2,..3,..4,roi_bbox))) %>%
+    mutate(name=paste0(year,month,day,"_",hour)) %>%
+    mutate(destfile=file.path(destFolder,paste0(name,".nc"))) %>%
+    dplyr::select(name,url,destfile)
 
 
 if (download){
@@ -117,17 +117,19 @@ if (download){
   cdsapi <- reticulate::import('cdsapi')
   #for this step there must exist the file .cdsapirc in the root directory of the computer (e.g. "/home/ptaconet")
   server = cdsapi$Client() #start the connection
-  for (i in 1:length(table_urls)){
-    for (j in 1:length(table_urls[[i]])){
-      for (k in 1:length(table_urls[[i]][[j]]$destfiles)){
+  for (i in 1:length(res)){
+    for (j in 1:length(res[[i]])){
+      for (k in 1:length(res[[i]][[j]]$destfile)){
+        if (!file.exists(era5Data_md[[i]][[j]]$destfile[k])){
            server$retrieve("reanalysis-era5-single-levels",
-                            table_urls[[i]][[j]]$urls[k][[1]],
-                            table_urls[[i]][[j]]$destfiles[k])
+                           res[[i]][[j]]$url[k][[1]],
+                           res[[i]][[j]]$destfile[k])
+        }
       }
     }
   }
-}
 
+}
   return(res)
 
 

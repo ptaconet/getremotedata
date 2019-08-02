@@ -6,8 +6,8 @@
 #'
 #' @param timeRange Date(s) of interest. Mandatory. Either a single date (e.g. \code{as.Date("2017-01-01"))} or time frame provided with two bounding dates ( e.g. \code{as.Date(c("2010-01-01","2010-01-30"))})
 #' @param roi sf POINT or POLYGON. The region of interest in EPSG 4326
-#' @param collection The MODIS collection of interest
-#' @param dimensions string vector. Names of the dimensions to retrieve fot the MODIS collection of interest.
+#' @param collection string. The MODIS collection of interest
+#' @param dimensions string vector. Names of the dimensions to retrieve for the MODIS collection of interest.
 #' @param modisTile string. Optional. The MODIS tile name.
 #' @param OpenDAPtimeVector numeric vector. Optional. The OpenDAP time dimension vector.
 #' @param OpenDAPXVector numeric vector. Optional. The OpenDAP X (longitude) dimension vector.
@@ -43,7 +43,7 @@
 #' @examples
 #'
 #' # Read ROI as sf object
-#' roi=sf::st_read(system.file("extdata/ROI_example.kml", package = "getData"),quiet=T)
+#' roi=sf::st_read(system.file("extdata/ROI_example.kml", package = "getRemoteData"),quiet=T)
 #' timeRange<-c("2017-01-01","2017-01-30") %>% as.Date()
 #'
 #' \dontrun{
@@ -58,7 +58,7 @@
 #'}
 
 getData_modis<-function(timeRange=as.Date(c("2010-01-01","2010-01-30")), # mandatory. either a time range (e.g. c(date_start,date_end) ) or a single date e.g. ( date_start )
-                        roi=st_read(system.file("extdata/ROI_example.kml", package = "getDat a"),quiet=T), # either provide roi (sf point or polygon) or provide roiSpatialIndexBound. if roiSpatialIndexBound is not provided, it will be calculated from roi
+                        roi=st_read(system.file("extdata/ROI_example.kml", package = "getRemoteData"),quiet=T), # either provide roi (sf point or polygon) or provide roiSpatialIndexBound. if roiSpatialIndexBound is not provided, it will be calculated from roi
                         collection="MOD11A1.006", # mandatory
                         dimensions=c("LST_Day_1km","LST_Night_1km"), # mandatory
                         modisTile=NULL, # optional. providing it will fasten the processing time. if not provided it will be calculated automatically
@@ -150,7 +150,7 @@ getData_modis<-function(timeRange=as.Date(c("2010-01-01","2010-01-30")), # manda
 
   names<-as.numeric(timeIndices_of_interest$date_closest_to_ideal_date)
 
-  res<-data.frame(names=names,urls=urls,destfiles=destfiles,stringsAsFactors = F)
+  res<-data.frame(name=names,url=urls,destfile=destfiles,stringsAsFactors = F)
 
   if (download){
     cat("Downloading the data...\n")

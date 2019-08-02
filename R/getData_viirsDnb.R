@@ -6,7 +6,7 @@
 #'
 #' @param timeRange Date(s) of interest. Mandatory. See Details for addition information on how to provide the dates.
 #' @param roi sf POINT or POLYGON. The region of interest in EPSG 4326
-#' @param collection TODO
+#' @param dimensions TODO
 #' @param download logical. Download data ?
 #' @param destFolder string. Mandatory if \code{download} is set to TRUE. The destination folder (i.e. folder where the data will be downloaded)
 #'
@@ -21,6 +21,9 @@
 #'
 #' @details
 #'
+#' Useful links :
+#'
+#'
 #' Argument \code{timeRange} can be provided either as a single date (e.g. \code{as.Date("2017-01-01"))} or time frame provided as two bounding dates ( e.g. \code{as.Date(c("2010-01-01","2010-01-30"))})
 #'
 #' @author Paul Taconet, IRD \email{paul.taconet@ird.fr}
@@ -32,7 +35,7 @@
 #' @examples
 #'
 #' # Read ROI as sf object
-#' roi=sf::st_read(system.file("extdata/ROI_example.kml", package = "getData"),quiet=T)
+#' roi=sf::st_read(system.file("extdata/ROI_example.kml", package = "getRemoteData"),quiet=T)
 #' timeRange<-c("2017-01-01","2017-01-30") %>% as.Date()
 #'
 #' getData_viirsDnb(timeRange=timeRange,
@@ -45,7 +48,7 @@
 
 
 getData_viirsDnb<-function(timeRange=as.Date(c("2017-01-01","2017-01-30")), # mandatory. either a time range (e.g. c(date_start,date_end) ) or a single date e.g. ( date_start )
-                           roi=st_read("/home/ptaconet/r_react/getData/ROI_test.kml",quiet=T), # either provide roi (sf point or polygon) or provide roiSpatialIndexBound. if roiSpatialIndexBound is not provided, it will be calculated from roi
+                           roi=st_read(system.file("extdata/ROI_example.kml", package = "getRemoteData"),quiet=T), # either provide roi (sf point or polygon) or provide roiSpatialIndexBound. if roiSpatialIndexBound is not provided, it will be calculated from roi
                            dimensions=c("Monthly_AvgRadiance","Monthly_CloudFreeCoverage"), # mandatory
                            download=FALSE, # TRUE will download the file and return a dataframe with : the URL, the path to the output file, a boolean wether the dataset was properly downloaded or not. FALSE will return a list with the URL only
                            destFolder=getwd(),
@@ -81,7 +84,7 @@ getData_viirsDnb<-function(timeRange=as.Date(c("2017-01-01","2017-01-30")), # ma
     mutate(destfile=file.path(destFolder,paste0(product_name,".tif")))
 
 
-  res<-data.frame(names=table_urls$product_name,urls=table_urls$url,destfiles=table_urls$destfile,stringsAsFactors = F)
+  res<-data.frame(name=table_urls$product_name,url=table_urls$url,destfile=table_urls$destfile,stringsAsFactors = F)
 
   if (download){
     cat("Downloading the data...\n")

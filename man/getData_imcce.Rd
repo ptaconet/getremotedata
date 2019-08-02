@@ -5,8 +5,9 @@
 \title{Download IMCCE time series data}
 \usage{
 getData_imcce(timeRange = as.Date(c("2010-01-01", "2010-01-30")),
-  roi = st_read("/home/ptaconet/r_react/getData/ROI_test.kml", quiet =
-  T), download = FALSE, destFolder = getwd(), ...)
+  roi = st_read(system.file("extdata/ROI_example.kml", package =
+  "getRemoteData"), quiet = T), download = FALSE, destFolder = getwd(),
+  ...)
 }
 \arguments{
 \item{timeRange}{Date(s) of interest. Mandatory. See Details for addition information on how to provide the dates.}
@@ -36,7 +37,7 @@ Argument \code{timeRange} can be provided either as a single date (e.g. \code{as
 \examples{
 
 # Read ROI as sf object
-roi=sf::st_read(system.file("extdata/ROI_example.kml", package = "getData"),quiet=T)
+roi=sf::st_read(system.file("extdata/ROI_example.kml", package = "getRemoteData"),quiet=T)
 timeRange<-c("2017-01-01","2017-01-30") \%>\% as.Date()
 
 \dontrun{
@@ -53,7 +54,7 @@ download=FALSE
 }
 \seealso{
 Other getData: \code{\link{getData_gpm}},
-  \code{\link{getData_modis}},
+  \code{\link{getData_modis}}, \code{\link{getData_srtm}},
   \code{\link{getData_tamsat}},
   \code{\link{getData_viirsDnb}}
 }

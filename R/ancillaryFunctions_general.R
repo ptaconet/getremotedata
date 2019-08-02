@@ -19,7 +19,7 @@ convertMetersToDegrees<-function(length_meters,
   return(length_degrees)
 }
 
-getUTMepsg<-function(roi){
+  getUTMepsg<-function(roi){
 
   bbox<-st_bbox(roi)
   #  cat("Warning: ROIs overlapping more than 1 UTM zone are currently not adapted in this workflow\n")

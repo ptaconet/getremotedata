@@ -40,7 +40,7 @@
 #' @examples
 #'
 #' # Read ROI as sf object
-#' roi=sf::st_read(system.file("extdata/ROI_example.kml", package = "getData"),quiet=T)
+#' roi=sf::st_read(system.file("extdata/ROI_example.kml", package = "getRemoteData"),quiet=T)
 #' timeRange<-c("2017-01-01","2017-01-30") %>% as.Date()
 #'
 #' \dontrun{
@@ -57,7 +57,7 @@
 
 
 getData_gpm<-function(timeRange=as.Date(c("2017-01-01","2017-01-30")), # mandatory. either a time range (e.g. c(date_start,date_end) ) or a single date e.g. ( date_start ) / or a as.POSIXlt single date or time range (e.g. "2010-01-01 18:00:00")
-                      roi=st_read("/home/ptaconet/r_react/getData/ROI_test.kml",quiet=T), # either provide roi (sf point or polygon) or provide roiSpatialIndexBound. if roiSpatialIndexBound is not provided, it will be calculated from roi
+                      roi=st_read(system.file("extdata/ROI_example.kml", package = "getRemoteData"),quiet=T), # either provide roi (sf point or polygon) or provide roiSpatialIndexBound. if roiSpatialIndexBound is not provided, it will be calculated from roi
                       collection="GPM_3IMERGDF.06", # mandatory
                       dimensions=c("precipitationCal"), # mandatory
                       OpenDAPXVector=NULL, # optional. providing it will fasten the processing time. if not provided it will be calculated automatically
@@ -150,7 +150,7 @@ getData_gpm<-function(timeRange=as.Date(c("2017-01-01","2017-01-30")), # mandato
 
   names<-table_urls$product_name
 
-  res<-data.frame(names=names,urls=urls,destfiles=destfiles,stringsAsFactors = F)
+  res<-data.frame(name=names,url=urls,destfile=destfiles,stringsAsFactors = F)
 
   if (download){
     cat("Downloading the data...\n")

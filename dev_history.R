@@ -47,7 +47,7 @@ devtools::install()
 
 
 
-## To build a website with home and vignettes
+  ## To build a website with home and vignettes
 usethis::use_package_doc()
 usethis::use_tibble()
 devtools::document()

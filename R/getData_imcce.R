@@ -31,7 +31,7 @@
 #' @examples
 #'
 #' # Read ROI as sf object
-#' roi=sf::st_read(system.file("extdata/ROI_example.kml", package = "getData"),quiet=T)
+#' roi=sf::st_read(system.file("extdata/ROI_example.kml", package = "getRemoteData"),quiet=T)
 #' timeRange<-c("2017-01-01","2017-01-30") %>% as.Date()
 #'
 #' \dontrun{
@@ -47,7 +47,7 @@
 #'
 
 getData_imcce<-function(timeRange=as.Date(c("2010-01-01","2010-01-30")),
-                        roi=st_read("/home/ptaconet/r_react/getData/ROI_test.kml",quiet=T),
+                        roi=st_read(system.file("extdata/ROI_example.kml", package = "getRemoteData"),quiet=T),
                         download=FALSE,
                         destFolder=getwd(),
                         ...){
@@ -75,7 +75,7 @@ getData_imcce<-function(timeRange=as.Date(c("2010-01-01","2010-01-30")),
 
   names<-table_urls$product_name
 
-  res<-data.frame(names=names,urls=urls,destfiles=destfiles,stringsAsFactors = F)
+  res<-data.frame(name=names,url=urls,destfile=destfiles,stringsAsFactors = F)
 
   if (download){
     cat("Downloading the data...\n")

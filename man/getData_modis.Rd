@@ -6,7 +6,7 @@
 \usage{
 getData_modis(timeRange = as.Date(c("2010-01-01", "2010-01-30")),
   roi = st_read(system.file("extdata/ROI_example.kml", package =
-  "getDat a"), quiet = T), collection = "MOD11A1.006",
+  "getRemoteData"), quiet = T), collection = "MOD11A1.006",
   dimensions = c("LST_Day_1km", "LST_Night_1km"), modisTile = NULL,
   OpenDAPtimeVector = NULL, OpenDAPXVector = NULL,
   OpenDAPYVector = NULL, roiSpatialIndexBound = NULL,
@@ -18,9 +18,9 @@ getData_modis(timeRange = as.Date(c("2010-01-01", "2010-01-30")),
 
 \item{roi}{sf POINT or POLYGON. The region of interest in EPSG 4326}
 
-\item{collection}{The MODIS collection of interest}
+\item{collection}{string. The MODIS collection of interest}
 
-\item{dimensions}{string vector. Names of the dimensions to retrieve fot the MODIS collection of interest.}
+\item{dimensions}{string vector. Names of the dimensions to retrieve for the MODIS collection of interest.}
 
 \item{modisTile}{string. Optional. The MODIS tile name.}
 
@@ -62,7 +62,7 @@ Currently, download of data over multiple MODIS tiles is not enabled.
 \examples{
 
 # Read ROI as sf object
-roi=sf::st_read(system.file("extdata/ROI_example.kml", package = "getData"),quiet=T)
+roi=sf::st_read(system.file("extdata/ROI_example.kml", package = "getRemoteData"),quiet=T)
 timeRange<-c("2017-01-01","2017-01-30") \%>\% as.Date()
 
 \dontrun{
@@ -78,7 +78,7 @@ download=FALSE
 }
 \seealso{
 Other getData: \code{\link{getData_gpm}},
-  \code{\link{getData_imcce}},
+  \code{\link{getData_imcce}}, \code{\link{getData_srtm}},
   \code{\link{getData_tamsat}},
   \code{\link{getData_viirsDnb}}
 }

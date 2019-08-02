@@ -5,20 +5,21 @@
 \title{Download VIIRS DNB time series data}
 \usage{
 getData_viirsDnb(timeRange = as.Date(c("2017-01-01", "2017-01-30")),
-  roi = st_read("/home/ptaconet/r_react/getData/ROI_test.kml", quiet =
-  T), dimensions = c("Monthly_AvgRadiance", "Monthly_CloudFreeCoverage"),
-  download = FALSE, destFolder = getwd(), ...)
+  roi = st_read(system.file("extdata/ROI_example.kml", package =
+  "getRemoteData"), quiet = T), dimensions = c("Monthly_AvgRadiance",
+  "Monthly_CloudFreeCoverage"), download = FALSE, destFolder = getwd(),
+  ...)
 }
 \arguments{
 \item{timeRange}{Date(s) of interest. Mandatory. See Details for addition information on how to provide the dates.}
 
 \item{roi}{sf POINT or POLYGON. The region of interest in EPSG 4326}
 
+\item{dimensions}{TODO}
+
 \item{download}{logical. Download data ?}
 
 \item{destFolder}{string. Mandatory if \code{download} is set to TRUE. The destination folder (i.e. folder where the data will be downloaded)}
-
-\item{collection}{TODO}
 }
 \value{
 a data.frame with 3 columns :
@@ -34,12 +35,15 @@ If \code{download} is set to TRUE, the data are downloaded to \code{destFolder}
 This function enables to retrieve URLs of VIIRS DNB datasets for a given ROI and time frame, and eventually download the data
 }
 \details{
+Useful links :
+
+
 Argument \code{timeRange} can be provided either as a single date (e.g. \code{as.Date("2017-01-01"))} or time frame provided as two bounding dates ( e.g. \code{as.Date(c("2010-01-01","2010-01-30"))})
 }
 \examples{
 
 # Read ROI as sf object
-roi=sf::st_read(system.file("extdata/ROI_example.kml", package = "getData"),quiet=T)
+roi=sf::st_read(system.file("extdata/ROI_example.kml", package = "getRemoteData"),quiet=T)
 timeRange<-c("2017-01-01","2017-01-30") \%>\% as.Date()
 
 getData_viirsDnb(timeRange=timeRange,
@@ -53,7 +57,7 @@ download=FALSE
 \seealso{
 Other getData: \code{\link{getData_gpm}},
   \code{\link{getData_imcce}}, \code{\link{getData_modis}},
-  \code{\link{getData_tamsat}}
+  \code{\link{getData_srtm}}, \code{\link{getData_tamsat}}
 }
 \author{
 Paul Taconet, IRD \email{paul.taconet@ird.fr}

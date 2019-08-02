@@ -5,8 +5,8 @@
 \title{Open a TAMSAT product as a \code{raster} object}
 \usage{
 prepareData_tamsat(path_to_raw_tamsat,
-  roi = st_read("/home/ptaconet/r_react/getData/ROI_test.kml", quiet =
-  T))
+  roi = st_read(system.file("extdata/ROI_example.kml", package =
+  "getRemoteData"), quiet = T))
 }
 \arguments{
 \item{path_to_raw_tamsat}{string. Path to the data in .nc4 format}
@@ -23,7 +23,7 @@ This function opens as a \code{raster} object a TAMSAT product that was download
 
 \dontrun{
 path_to_tamsat<-"path.to.my.tamsat.raster"
-roi=sf::st_read(system.file("extdata/ROI_example.kml", package = "getData"),quiet=T)
+roi=sf::st_read(system.file("extdata/ROI_example.kml", package = "getRemoteData"),quiet=T)
 rast_tamsat<-prepareData_tamsat(path_to_raw_tamsat=path_to_tamsat,
 roi=roi)
 #plot(rast_tamsat)
