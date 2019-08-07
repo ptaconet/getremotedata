@@ -86,7 +86,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/aa-exploration.html">Efficient extraction of spatial-temporal environmental statistics over small to medium spatial scales</a>
+      <a href="../articles/aa-exploration.html">Automatic extraction of spatial-temporal environmental data within buffers around sample points</a>
     </li>
   </ul>
 </li>
@@ -123,8 +123,9 @@
     </div>
 
     <pre class="usage"><span class='fu'>getData_imcce</span>(<span class='kw'>timeRange</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/as.Date'>as.Date</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"2010-01-01"</span>, <span class='st'>"2010-01-30"</span>)),
-  <span class='kw'>roi</span> <span class='kw'>=</span> <span class='fu'>st_read</span>(<span class='st'>"/home/ptaconet/r_react/getData/ROI_test.kml"</span>, <span class='kw'>quiet</span> <span class='kw'>=</span>
-  <span class='no'>T</span>), <span class='kw'>download</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>destFolder</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/getwd'>getwd</a></span>(), <span class='no'>...</span>)</pre>
+  <span class='kw'>roi</span> <span class='kw'>=</span> <span class='fu'>st_read</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/system.file'>system.file</a></span>(<span class='st'>"extdata/ROI_example.kml"</span>, <span class='kw'>package</span> <span class='kw'>=</span>
+  <span class='st'>"getRemoteData"</span>), <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='no'>T</span>), <span class='kw'>download</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>destFolder</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/getwd'>getwd</a></span>(),
+  <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -164,7 +165,7 @@
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other getData: <code><a href='getData_gpm.html'>getData_gpm</a></code>,
-  <code><a href='getData_modis.html'>getData_modis</a></code>,
+  <code><a href='getData_modis.html'>getData_modis</a></code>, <code><a href='getData_srtm.html'>getData_srtm</a></code>,
   <code><a href='getData_tamsat.html'>getData_tamsat</a></code>,
   <code><a href='getData_viirsDnb.html'>getData_viirsDnb</a></code></p></div>
     
@@ -172,7 +173,7 @@
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='co'># Read ROI as sf object</span>
-<span class='no'>roi</span><span class='kw'>=</span><span class='kw pkg'>sf</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/sf/topics/st_read'>st_read</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/system.file'>system.file</a></span>(<span class='st'>"extdata/ROI_example.kml"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"getData"</span>),<span class='kw'>quiet</span><span class='kw'>=</span><span class='no'>T</span>)
+<span class='no'>roi</span><span class='kw'>=</span><span class='kw pkg'>sf</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/sf/topics/st_read'>st_read</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/system.file'>system.file</a></span>(<span class='st'>"extdata/ROI_example.kml"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"getRemoteData"</span>),<span class='kw'>quiet</span><span class='kw'>=</span><span class='no'>T</span>)
 <span class='no'>timeRange</span><span class='kw'>&lt;-</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"2017-01-01"</span>,<span class='st'>"2017-01-30"</span>) <span class='kw'>%&gt;%</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/as.Date'>as.Date</a></span>()</div><div class='output co'>#&gt; <span class='error'>Error in c("2017-01-01", "2017-01-30") %&gt;% as.Date(): impossible de trouver la fonction "%&gt;%"</span></div><div class='input'>
 </div><span class='co'># NOT RUN {</span>
 <span class='fu'>getData_imcce</span>(<span class='kw'>timeRange</span><span class='kw'>=</span><span class='no'>timeRange</span>,

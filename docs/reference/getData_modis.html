@@ -86,7 +86,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/aa-exploration.html">Efficient extraction of spatial-temporal environmental statistics over small to medium spatial scales</a>
+      <a href="../articles/aa-exploration.html">Automatic extraction of spatial-temporal environmental data within buffers around sample points</a>
     </li>
   </ul>
 </li>
@@ -124,7 +124,7 @@
 
     <pre class="usage"><span class='fu'>getData_modis</span>(<span class='kw'>timeRange</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/as.Date'>as.Date</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"2010-01-01"</span>, <span class='st'>"2010-01-30"</span>)),
   <span class='kw'>roi</span> <span class='kw'>=</span> <span class='fu'>st_read</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/system.file'>system.file</a></span>(<span class='st'>"extdata/ROI_example.kml"</span>, <span class='kw'>package</span> <span class='kw'>=</span>
-  <span class='st'>"getDat a"</span>), <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='no'>T</span>), <span class='kw'>collection</span> <span class='kw'>=</span> <span class='st'>"MOD11A1.006"</span>,
+  <span class='st'>"getRemoteData"</span>), <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='no'>T</span>), <span class='kw'>collection</span> <span class='kw'>=</span> <span class='st'>"MOD11A1.006"</span>,
   <span class='kw'>dimensions</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"LST_Day_1km"</span>, <span class='st'>"LST_Night_1km"</span>), <span class='kw'>modisTile</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>OpenDAPtimeVector</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>OpenDAPXVector</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>OpenDAPYVector</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>roiSpatialIndexBound</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
@@ -144,11 +144,11 @@
     </tr>
     <tr>
       <th>collection</th>
-      <td><p>The MODIS collection of interest</p></td>
+      <td><p>string. The MODIS collection of interest</p></td>
     </tr>
     <tr>
       <th>dimensions</th>
-      <td><p>string vector. Names of the dimensions to retrieve fot the MODIS collection of interest.</p></td>
+      <td><p>string vector. Names of the dimensions to retrieve for the MODIS collection of interest.</p></td>
     </tr>
     <tr>
       <th>modisTile</th>
@@ -196,17 +196,18 @@
 <li><p>"destfile": Local destination file</p></li>
 </ul>
 
-<p>If <code>download</code> is set to TRUE, the data are downloaded to <code>destFolder</code></p>
+<p>Additionally, if <code>download</code> is set to TRUE the data are downloaded to <code>destFolder</code></p>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>Arguments <code>modisTile</code>, <code>OpenDAPtimeVector</code>, <code>OpenDAPXVector</code>, <code>OpenDAPYVector</code> and <code>roiSpatialIndexBound</code> are optional. They are automatically calculated from the other input parameters if not provided. However, providing them optimizes the performances (i.e. fasten the processing time).
 It might be particularly useful to provide them when looping with the function over the same ROI.</p>
+<p>Currently, download of data over multiple MODIS tiles is not enabled.</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other getData: <code><a href='getData_gpm.html'>getData_gpm</a></code>,
-  <code><a href='getData_imcce.html'>getData_imcce</a></code>,
+  <code><a href='getData_imcce.html'>getData_imcce</a></code>, <code><a href='getData_srtm.html'>getData_srtm</a></code>,
   <code><a href='getData_tamsat.html'>getData_tamsat</a></code>,
   <code><a href='getData_viirsDnb.html'>getData_viirsDnb</a></code></p></div>
     
@@ -214,7 +215,7 @@ It might be particularly useful to provide them when looping with the function o
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='co'># Read ROI as sf object</span>
-<span class='no'>roi</span><span class='kw'>=</span><span class='kw pkg'>sf</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/sf/topics/st_read'>st_read</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/system.file'>system.file</a></span>(<span class='st'>"extdata/ROI_example.kml"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"getData"</span>),<span class='kw'>quiet</span><span class='kw'>=</span><span class='no'>T</span>)
+<span class='no'>roi</span><span class='kw'>=</span><span class='kw pkg'>sf</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/sf/topics/st_read'>st_read</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/system.file'>system.file</a></span>(<span class='st'>"extdata/ROI_example.kml"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"getRemoteData"</span>),<span class='kw'>quiet</span><span class='kw'>=</span><span class='no'>T</span>)
 <span class='no'>timeRange</span><span class='kw'>&lt;-</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"2017-01-01"</span>,<span class='st'>"2017-01-30"</span>) <span class='kw'>%&gt;%</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/as.Date'>as.Date</a></span>()</div><div class='output co'>#&gt; <span class='error'>Error in c("2017-01-01", "2017-01-30") %&gt;% as.Date(): impossible de trouver la fonction "%&gt;%"</span></div><div class='input'>
 </div><span class='co'># NOT RUN {</span>
 <span class='fu'>getData_modis</span>(<span class='kw'>timeRange</span><span class='kw'>=</span><span class='no'>timeRange</span>,

@@ -21,6 +21,7 @@ downloadData<-function(df_to_dl,username=NULL,password=NULL,parallelDL=FALSE){
   data_to_download<-data_dl %>%
     filter(fileDl==FALSE)
 
+  if (nrow(data_to_download)>0){
   # Create directories if they do not exist
   unique(dirname(data_to_download$destfile)) %>%
     lapply(dir.create,recursive = TRUE, mode = "0777", showWarnings = FALSE)
@@ -45,7 +46,7 @@ downloadData<-function(df_to_dl,username=NULL,password=NULL,parallelDL=FALSE){
       dl_func(url=data_to_download$url[i],output=data_to_download$destfile[i],username=username,password=password)
     }
   }
-
+}
   data_dl<-data_to_download %>%
     mutate(fileDl=map_lgl(destfile,file.exists)) %>%
     mutate(dlStatus=ifelse(fileDl==TRUE,1,2))  %>%

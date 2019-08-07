@@ -1,0 +1,6 @@
+name: UTM Zone 30, Northern Hemisphere
+datum: wgs84
+ellps: wgs84
+proj: utm
+zone: 30
+no_defs: defined

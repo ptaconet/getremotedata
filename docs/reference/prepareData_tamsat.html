@@ -86,7 +86,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/aa-exploration.html">Efficient extraction of spatial-temporal environmental statistics over small to medium spatial scales</a>
+      <a href="../articles/aa-exploration.html">Automatic extraction of spatial-temporal environmental data within buffers around sample points</a>
     </li>
   </ul>
 </li>
@@ -123,8 +123,8 @@
     </div>
 
     <pre class="usage"><span class='fu'>prepareData_tamsat</span>(<span class='no'>path_to_raw_tamsat</span>,
-  <span class='kw'>roi</span> <span class='kw'>=</span> <span class='fu'>st_read</span>(<span class='st'>"/home/ptaconet/r_react/getData/ROI_test.kml"</span>, <span class='kw'>quiet</span> <span class='kw'>=</span>
-  <span class='no'>T</span>))</pre>
+  <span class='kw'>roi</span> <span class='kw'>=</span> <span class='fu'>st_read</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/system.file'>system.file</a></span>(<span class='st'>"extdata/ROI_example.kml"</span>, <span class='kw'>package</span> <span class='kw'>=</span>
+  <span class='st'>"getRemoteData"</span>), <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='no'>T</span>))</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -145,7 +145,8 @@
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other prepareData: <code><a href='prepareData_gpm.html'>prepareData_gpm</a></code>,
+    <div class='dont-index'><p>Other prepareData: <code><a href='prepareData_era5.html'>prepareData_era5</a></code>,
+  <code><a href='prepareData_gpm.html'>prepareData_gpm</a></code>,
   <code><a href='prepareData_modis.html'>prepareData_modis</a></code></p></div>
     
 
@@ -153,7 +154,7 @@
     <pre class="examples"><div class='input'>
 </div><span class='co'># NOT RUN {</span>
 <span class='no'>path_to_tamsat</span><span class='kw'>&lt;-</span><span class='st'>"path.to.my.tamsat.raster"</span>
-<span class='no'>roi</span><span class='kw'>=</span><span class='kw pkg'>sf</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/sf/topics/st_read'>st_read</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/system.file'>system.file</a></span>(<span class='st'>"extdata/ROI_example.kml"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"getData"</span>),<span class='kw'>quiet</span><span class='kw'>=</span><span class='no'>T</span>)
+<span class='no'>roi</span><span class='kw'>=</span><span class='kw pkg'>sf</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/sf/topics/st_read'>st_read</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/system.file'>system.file</a></span>(<span class='st'>"extdata/ROI_example.kml"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"getRemoteData"</span>),<span class='kw'>quiet</span><span class='kw'>=</span><span class='no'>T</span>)
 <span class='no'>rast_tamsat</span><span class='kw'>&lt;-</span><span class='fu'>prepareData_tamsat</span>(<span class='kw'>path_to_raw_tamsat</span><span class='kw'>=</span><span class='no'>path_to_tamsat</span>,
 <span class='kw'>roi</span><span class='kw'>=</span><span class='no'>roi</span>)
 <span class='co'>#plot(rast_tamsat)</span>

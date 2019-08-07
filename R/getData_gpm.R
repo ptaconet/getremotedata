@@ -113,14 +113,14 @@ getData_gpm<-function(timeRange=as.Date(c("2017-01-01","2017-01-30")), # mandato
   }
 
   # To retrieve spatial indices
-  OpenDAPURL<-urls$product_name[1]
+  OpenDAPURL<-urls$url_product[1]
   # Calculate OpenDAPXVector if not provided
   if(is.null(OpenDAPXVector) & is.null(roiSpatialIndexBound)){
-    OpenDAPXVector<-getOpenDAPvector(OpenDAPURL,SpatialOpenDAPXVectorName)
+    OpenDAPXVector<-getRemoteData::getOpenDAPvector(OpenDAPURL,SpatialOpenDAPXVectorName)
   }
   # Calculate OpenDAPYVector if not provided
   if(is.null(OpenDAPYVector) & is.null(roiSpatialIndexBound)){
-    OpenDAPYVector<-getOpenDAPvector(OpenDAPURL,SpatialOpenDAPYVectorName)
+    OpenDAPYVector<-getRemoteData::getOpenDAPvector(OpenDAPURL,SpatialOpenDAPYVectorName)
   }
   # Calculate roiSpatialIndexBound if not provided
   if(is.null(roiSpatialIndexBound)){

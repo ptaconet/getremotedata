@@ -86,7 +86,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/aa-exploration.html">Efficient extraction of spatial-temporal environmental statistics over small to medium spatial scales</a>
+      <a href="../articles/aa-exploration.html">Automatic extraction of spatial-temporal environmental data within buffers around sample points</a>
     </li>
   </ul>
 </li>
@@ -143,7 +143,8 @@
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other prepareData: <code><a href='prepareData_modis.html'>prepareData_modis</a></code>,
+    <div class='dont-index'><p>Other prepareData: <code><a href='prepareData_era5.html'>prepareData_era5</a></code>,
+  <code><a href='prepareData_modis.html'>prepareData_modis</a></code>,
   <code><a href='prepareData_tamsat.html'>prepareData_tamsat</a></code></p></div>
     
 
@@ -152,9 +153,8 @@
 <span class='no'>path_to_gpm</span><span class='kw'>&lt;-</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/system.file'>system.file</a></span>(<span class='st'>"extdata/gpm_example.nc4"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"getRemoteData"</span>)
 
 <span class='no'>rast_gpm</span><span class='kw'>&lt;-</span><span class='fu'>prepareData_gpm</span>(<span class='kw'>path_to_raw_gpm</span><span class='kw'>=</span><span class='no'>path_to_gpm</span>,
-<span class='kw'>var_name</span><span class='kw'>=</span><span class='st'>"precipitationCal"</span>)</div><div class='output co'>#&gt; <span class='message'>Le chargement a nécessité le package : ncdf4</span></div><div class='input'>#plot(rast_modis)
-
-</div></pre>
+<span class='kw'>var_name</span><span class='kw'>=</span><span class='st'>"precipitationCal"</span>)
+<span class='co'>#plot(rast_modis)</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

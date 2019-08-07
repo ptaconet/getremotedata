@@ -1,0 +1,10 @@
+Wed Aug  7 13:00:28 2019
+tmprast
+PERMANENT
+ptaconet
+raster
+
+
+généré par r.external
+r.external -o input="/home/ptaconet/Documents/react/data_CIV/DEM_SRT\
+M/DEM.tif" output="tmprast" band=1

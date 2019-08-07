@@ -1,0 +1,14 @@
+Wed Aug  7 12:28:58 2019
+aspect
+PERMANENT
+ptaconet
+raster
+raster elevation file DEM
+
+généré par r.slope.aspect
+aspect map elev = DEM
+zfactor = 1.00
+min_slope = 0.000000
+
+r.slope.aspect --overwrite elevation="DEM" slope="slope" aspect="asp\
+ect" format="percent" precision="FCELL" zscale=1 min_slope=0

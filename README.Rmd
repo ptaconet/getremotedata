@@ -1,5 +1,6 @@
 ---
 output: github_document
+always_allow_html: yes
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -61,12 +62,15 @@ devtools::install_github("ptaconet/getRemoteData")
 
 You can get the data sources/collections downloadable with `getRemoteData` and details about each of them with : 
 
-```{r getAvailableDataSources_call, eval = FALSE, echo=T}
+```{r getAvailableDataSources_call, eval = FALSE, echo=T, warning=F, message=F}
 getRemoteData::getAvailableDataSources()
 ```
 ```{r, eval = TRUE, echo=F}
-library(DT)
-datatable(getRemoteData::getAvailableDataSources(), rownames = FALSE, filter="top", options = list(pageLength = 5, scrollX=T) )
+library(kableExtra)
+getRemoteData::getAvailableDataSources() %>%
+  dplyr::select(-citation) %>%
+  kable() %>%
+  kable_styling()
 ```
 
 ## Example
@@ -78,9 +82,11 @@ Say you want to download  over a 3500km^2^ region of interest:
 
 ```{r example, eval = FALSE}
 library(getRemoteData)
-# Read the region of interest as a sf object 
+library(sf)
+library(purrr)
+# Read the region of interest as a sf object. Here : the Korhogo area in Côte D'Ivoire
 roi<-sf::st_read(system.file("extdata/ROI_example.kml", package = "getData"),quiet=T)
-# Set-up your time frame of interest
+# Set-up your time frame of interest. 
 time_frame<-c("2017-05-01","2017-06-10")
 # Set-up your credentials to EarthData
 username_EarthData<-"my.earthdata.username"
@@ -97,7 +103,8 @@ dl_modis<-getRemoteData::getData_modis(timeRange = time_frame,
                                      password=password_EarthData,
                                      parallelDL=T #setting to F will download the data linearly
                                      )
-head(dl_res)
+head(dl_modis)
+# Download the GPM daily products in the current working directory
 dl_gpm<-getRemoteData::getData_gpm(timeRange = time_frame,
                                      roi = roi,
                                      collection="GPM_3IMERGDF.06",
@@ -106,12 +113,18 @@ dl_gpm<-getRemoteData::getData_gpm(timeRange = time_frame,
                                      destFolder=getwd(),
                                      username=username_EarthData,
                                      password=password_EarthData,
-                                     parallelDL=T #setting to F will download the data linearly
+                                     parallelDL=T
                                      )
 head(dl_gpm)
+
 # Get the data downloaded as a list of rasters
-rasts_modis<-getRemoteData::prepareData_modis()
-rasts_gpm<-getRemoteData::prepareData_gpm()
+rasts_modis<-dl_modis$destfile %>%
+  purrr::map(~getRemoteData::prepareData_modis(.,"LST_Day_1km")) %>%
+  set_names(dl_modis$name)
+
+rasts_gpm<-dl_gpm$destfile %>%
+  purrr::map(~getRemoteData::prepareData_gpm(.,"precipitationCal")) %>%
+  set_names(dl_gpm$name)
 ```
 
 The functions of `getRemoteData` all work the same way : 
@@ -122,7 +135,7 @@ The functions of `getRemoteData` all work the same way :
 - by default, the function does not download the dataset. It returns a data.frame with the URL(s) to download the dataset(s) of interest given the input arguments. To download the data, set the *download* argument to TRUE ;
 - other arguments are specific to each data product (e.g. *collection*, *dimensions*,*username*,*password*)
 
-Absence of the *timeRange* (resp. *roi*) arguments in a function means that the data of interest do not have any time (resp. spatial) dimension. 
+Absence of the *timeRange* (resp. *roi*) arguments in a function means that the data of interest do not have any time (resp. spatial) dimension.
 
 Have a look at the vignette [Efficient extraction of spatial-temporal series over small-scale areas](https://www.nasa.gov/mission_pages/GPM/main/index.html) to check what else you can do using getRemoteData !
 
@@ -130,7 +143,7 @@ Have a look at the vignette [Efficient extraction of spatial-temporal series ove
 
 The package is at a very early stage of development. Here are some of the current limitations and ideas of future developments : 
 
-- MODIS data cannot be donwloaded if your area of interest covers multiple MODIS tiles (for an overview of MODIS tiles go [here](https://modis.ornl.gov/files/modis_sin.kmz));
+- MODIS data cannot be downloaded if your area of interest covers multiple MODIS tiles (for an overview of MODIS tiles go [here](https://modis.ornl.gov/files/modis_sin.kmz));
 
 ## Behind the scene... how it  works
 
