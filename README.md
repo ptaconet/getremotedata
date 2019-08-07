@@ -7,7 +7,7 @@
 
 <!-- badges: end -->
 
-`getRemoteData` is a set of R functions that offer a common grammar to
+`getRemoteData` is a set of R function that offer a common grammar to
 query and import remote data from heterogeneous sources. Overall, this
 package attempts to **facilitate** and **speed-up** the painfull and
 time-consuming **data import / download** process for some well-known
@@ -105,43 +105,61 @@ getRemoteData::getAvailableDataSources()
 
 <th style="text-align:left;">
 
-Covariate
+source
 
 </th>
 
 <th style="text-align:left;">
 
-Source
+covariate
 
 </th>
 
 <th style="text-align:left;">
 
-Collection
+collection
 
 </th>
 
 <th style="text-align:left;">
 
-TimeSeries
+getRemoteData\_import\_func
 
 </th>
 
 <th style="text-align:left;">
 
-Provider
+getRemoteData\_prepare\_func
 
 </th>
 
 <th style="text-align:left;">
 
-Long.Name
+url\_metadata
+
+</th>
+
+<th style="text-align:left;">
+
+is\_timeSeries
+
+</th>
+
+<th style="text-align:left;">
+
+provider
+
+</th>
+
+<th style="text-align:left;">
+
+long\_name
 
 </th>
 
 <th style="text-align:right;">
 
-Version
+version
 
 </th>
 
@@ -153,61 +171,43 @@ DOI
 
 <th style="text-align:right;">
 
-Spatial.resolution..m.
+spatial\_resolution\_m
 
 </th>
 
 <th style="text-align:right;">
 
-Temporal.resolution
+temporal\_resolution
 
 </th>
 
 <th style="text-align:left;">
 
-Temporal.resolution.unit
+temporal\_resolution\_unit
 
 </th>
 
 <th style="text-align:left;">
 
-Spatial.Coverage
+spatial\_coverage
 
 </th>
 
 <th style="text-align:left;">
 
-URL.metadata
+X
 
 </th>
 
 <th style="text-align:left;">
 
-URL.programmatic.download
+url\_programmatic\_access
 
 </th>
 
 <th style="text-align:left;">
 
-URL.manual.download
-
-</th>
-
-<th style="text-align:left;">
-
-Citation
-
-</th>
-
-<th style="text-align:left;">
-
-Rfunction\_getData
-
-</th>
-
-<th style="text-align:left;">
-
-Rfunction\_processData
+url\_manual\_access
 
 </th>
 
@@ -218,6 +218,12 @@ Rfunction\_processData
 <tbody>
 
 <tr>
+
+<td style="text-align:left;">
+
+MODIS
+
+</td>
 
 <td style="text-align:left;">
 
@@ -233,7 +239,19 @@ MOD11A1.v006
 
 <td style="text-align:left;">
 
-MODIS
+getData\_modis()
+
+</td>
+
+<td style="text-align:left;">
+
+prepareData\_modis()
+
+</td>
+
+<td style="text-align:left;">
+
+<https://lpdaac.usgs.gov/products/mod11a1v006/>
 
 </td>
 
@@ -270,7 +288,7 @@ Grid V006
 
 <td style="text-align:right;">
 
-1000.0
+1000
 
 </td>
 
@@ -294,7 +312,7 @@ Global
 
 <td style="text-align:left;">
 
-<https://lpdaac.usgs.gov/products/mod11a1v006/>
+NA
 
 </td>
 
@@ -310,29 +328,15 @@ Global
 
 </td>
 
-<td style="text-align:left;">
-
-Wan, Z., Hook, S., Hulley, G. (2015). MOD11A1 MODIS/Terra Land Surface
-Temperature/Emissivity Daily L3 Global 1km SIN Grid V006 \[Data set\].
-NASA EOSDIS Land Processes DAAC. doi: 10.5067/MODIS/MOD11A1.006
-
-</td>
-
-<td style="text-align:left;">
-
-getData\_modis
-
-</td>
-
-<td style="text-align:left;">
-
-prepareData\_modis
-
-</td>
-
 </tr>
 
 <tr>
+
+<td style="text-align:left;">
+
+MODIS
+
+</td>
 
 <td style="text-align:left;">
 
@@ -348,7 +352,19 @@ MYD11A1.v006
 
 <td style="text-align:left;">
 
-MODIS
+getData\_modis()
+
+</td>
+
+<td style="text-align:left;">
+
+prepareData\_modis()
+
+</td>
+
+<td style="text-align:left;">
+
+<https://lpdaac.usgs.gov/products/myd11a1v006/>
 
 </td>
 
@@ -385,7 +401,7 @@ Grid V006
 
 <td style="text-align:right;">
 
-1000.0
+1000
 
 </td>
 
@@ -409,7 +425,7 @@ Global
 
 <td style="text-align:left;">
 
-<https://lpdaac.usgs.gov/products/myd11a1v006/>
+NA
 
 </td>
 
@@ -425,29 +441,235 @@ Global
 
 </td>
 
+</tr>
+
+<tr>
+
 <td style="text-align:left;">
 
-Wan, Z., Hook, S., Hulley, G. (2015). MYD11A1 MODIS/Aqua Land Surface
-Temperature/Emissivity Daily L3 Global 1km SIN Grid V006 \[Data set\].
-NASA EOSDIS Land Processes DAAC. doi: 10.5067/MODIS/MYD11A1.006
+MODIS
 
 </td>
 
 <td style="text-align:left;">
 
-getData\_modis
+Temperature
 
 </td>
 
 <td style="text-align:left;">
 
-prepareData\_modis
+MOD11A2.v006
+
+</td>
+
+<td style="text-align:left;">
+
+getData\_modis()
+
+</td>
+
+<td style="text-align:left;">
+
+prepareData\_modis()
+
+</td>
+
+<td style="text-align:left;">
+
+<https://lpdaac.usgs.gov/products/mod11a2v006/>
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+<td style="text-align:left;">
+
+NASA
+
+</td>
+
+<td style="text-align:left;">
+
+</td>
+
+<td style="text-align:right;">
+
+6
+
+</td>
+
+<td style="text-align:left;">
+
+<https://dx.doi.org/10.5067/MODIS/MOD11A2.006>
+
+</td>
+
+<td style="text-align:right;">
+
+1000
+
+</td>
+
+<td style="text-align:right;">
+
+8
+
+</td>
+
+<td style="text-align:left;">
+
+day
+
+</td>
+
+<td style="text-align:left;">
+
+Global
+
+</td>
+
+<td style="text-align:left;">
+
+NA
+
+</td>
+
+<td style="text-align:left;">
+
+<https://opendap.cr.usgs.gov/opendap/hyrax/MOD11A2.006/contents.html>
+
+</td>
+
+<td style="text-align:left;">
+
+<https://search.earthdata.nasa.gov/search?q=MOD11A2&ok=MOD11A2>
 
 </td>
 
 </tr>
 
 <tr>
+
+<td style="text-align:left;">
+
+MODIS
+
+</td>
+
+<td style="text-align:left;">
+
+Temperature
+
+</td>
+
+<td style="text-align:left;">
+
+MYD11A2.v006
+
+</td>
+
+<td style="text-align:left;">
+
+getData\_modis()
+
+</td>
+
+<td style="text-align:left;">
+
+prepareData\_modis()
+
+</td>
+
+<td style="text-align:left;">
+
+<https://lpdaac.usgs.gov/products/myd11a2v006/>
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+<td style="text-align:left;">
+
+NASA
+
+</td>
+
+<td style="text-align:left;">
+
+</td>
+
+<td style="text-align:right;">
+
+6
+
+</td>
+
+<td style="text-align:left;">
+
+<https://dx.doi.org/10.5067/MODIS/MYD11A2.006>
+
+</td>
+
+<td style="text-align:right;">
+
+1000
+
+</td>
+
+<td style="text-align:right;">
+
+8
+
+</td>
+
+<td style="text-align:left;">
+
+day
+
+</td>
+
+<td style="text-align:left;">
+
+Global
+
+</td>
+
+<td style="text-align:left;">
+
+NA
+
+</td>
+
+<td style="text-align:left;">
+
+<https://opendap.cr.usgs.gov/opendap/hyrax/MYD11A2.006/contents.html>
+
+</td>
+
+<td style="text-align:left;">
+
+<https://search.earthdata.nasa.gov/search?q=MYD11A2&ok=MYD11A2>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+MODIS
+
+</td>
 
 <td style="text-align:left;">
 
@@ -463,7 +685,19 @@ MOD13Q1.v006
 
 <td style="text-align:left;">
 
-MODIS
+getData\_modis()
+
+</td>
+
+<td style="text-align:left;">
+
+prepareData\_modis()
+
+</td>
+
+<td style="text-align:left;">
+
+<https://lpdaac.usgs.gov/products/mod13q1v006/>
 
 </td>
 
@@ -499,7 +733,7 @@ MODIS/Terra Vegetation Indices 16-Day L3 Global 250m SIN Grid V006
 
 <td style="text-align:right;">
 
-250.0
+250
 
 </td>
 
@@ -523,7 +757,7 @@ Global
 
 <td style="text-align:left;">
 
-<https://lpdaac.usgs.gov/products/mod13q1v006/>
+NA
 
 </td>
 
@@ -539,29 +773,15 @@ Global
 
 </td>
 
-<td style="text-align:left;">
-
-Didan, K. (2015). MOD13Q1 MODIS/Terra Vegetation Indices 16-Day L3
-Global 250m SIN Grid V006 \[Data set\]. NASA EOSDIS Land Processes DAAC.
-doi: 10.5067/MODIS/MOD13Q1.006
-
-</td>
-
-<td style="text-align:left;">
-
-getData\_modis
-
-</td>
-
-<td style="text-align:left;">
-
-prepareData\_modis
-
-</td>
-
 </tr>
 
 <tr>
+
+<td style="text-align:left;">
+
+MODIS
+
+</td>
 
 <td style="text-align:left;">
 
@@ -577,7 +797,19 @@ MYD13Q1.v006
 
 <td style="text-align:left;">
 
-MODIS
+getData\_modis()
+
+</td>
+
+<td style="text-align:left;">
+
+prepareData\_modis()
+
+</td>
+
+<td style="text-align:left;">
+
+<https://lpdaac.usgs.gov/products/myd13q1v006/>
 
 </td>
 
@@ -613,7 +845,7 @@ MODIS/Aqua Vegetation Indices 16-Day L3 Global 250m SIN Grid V006
 
 <td style="text-align:right;">
 
-250.0
+250
 
 </td>
 
@@ -637,7 +869,7 @@ Global
 
 <td style="text-align:left;">
 
-<https://lpdaac.usgs.gov/products/myd13q1v006/>
+NA
 
 </td>
 
@@ -653,29 +885,15 @@ Global
 
 </td>
 
-<td style="text-align:left;">
-
-Didan, K. (2015). MYD13Q1 MODIS/Aqua Vegetation Indices 16-Day L3 Global
-250m SIN Grid V006 \[Data set\]. NASA EOSDIS Land Processes DAAC. doi:
-10.5067/MODIS/MYD13Q1.006
-
-</td>
-
-<td style="text-align:left;">
-
-getData\_modis
-
-</td>
-
-<td style="text-align:left;">
-
-prepareData\_modis
-
-</td>
-
 </tr>
 
 <tr>
+
+<td style="text-align:left;">
+
+MODIS
+
+</td>
 
 <td style="text-align:left;">
 
@@ -691,7 +909,19 @@ MOD16A2.v006
 
 <td style="text-align:left;">
 
-MODIS
+getData\_modis()
+
+</td>
+
+<td style="text-align:left;">
+
+prepareData\_modis()
+
+</td>
+
+<td style="text-align:left;">
+
+<https://lpdaac.usgs.gov/products/mod16a2v006/>
 
 </td>
 
@@ -727,7 +957,7 @@ MODIS/Terra Net Evapotranspiration 8-Day L4 Global 500m SIN Grid V006
 
 <td style="text-align:right;">
 
-500.0
+500
 
 </td>
 
@@ -751,7 +981,7 @@ Global
 
 <td style="text-align:left;">
 
-<https://lpdaac.usgs.gov/products/mod16a2v006/>
+NA
 
 </td>
 
@@ -767,29 +997,15 @@ Global
 
 </td>
 
-<td style="text-align:left;">
-
-Running, S., Mu, Q., Zhao, M. (2017). MOD16A2 MODIS/Terra Net
-Evapotranspiration 8-Day L4 Global 500m SIN Grid V006 \[Data set\]. NASA
-EOSDIS Land Processes DAAC. doi: 10.5067/MODIS/MOD16A2.006
-
-</td>
-
-<td style="text-align:left;">
-
-getData\_modis
-
-</td>
-
-<td style="text-align:left;">
-
-prepareData\_modis
-
-</td>
-
 </tr>
 
 <tr>
+
+<td style="text-align:left;">
+
+MODIS
+
+</td>
 
 <td style="text-align:left;">
 
@@ -805,7 +1021,19 @@ MYD16A2.v006
 
 <td style="text-align:left;">
 
-MODIS
+getData\_modis()
+
+</td>
+
+<td style="text-align:left;">
+
+prepareData\_modis()
+
+</td>
+
+<td style="text-align:left;">
+
+<https://lpdaac.usgs.gov/products/myd16a2v006/>
 
 </td>
 
@@ -841,7 +1069,7 @@ MODIS/Aqua Net Evapotranspiration 8-Day L4 Global 500m SIN Grid V006
 
 <td style="text-align:right;">
 
-500.0
+500
 
 </td>
 
@@ -865,7 +1093,7 @@ Global
 
 <td style="text-align:left;">
 
-<https://lpdaac.usgs.gov/products/myd16a2v006/>
+NA
 
 </td>
 
@@ -881,29 +1109,15 @@ Global
 
 </td>
 
-<td style="text-align:left;">
-
-Running, S., Mu, Q., Zhao, M. (2017). MYD16A2 MODIS/Aqua Net
-Evapotranspiration 8-Day L4 Global 500m SIN Grid V006 \[Data set\]. NASA
-EOSDIS Land Processes DAAC. doi: 10.5067/MODIS/MYD16A2.006
-
-</td>
-
-<td style="text-align:left;">
-
-getData\_modis
-
-</td>
-
-<td style="text-align:left;">
-
-prepareData\_modis
-
-</td>
-
 </tr>
 
 <tr>
+
+<td style="text-align:left;">
+
+GPM
+
+</td>
 
 <td style="text-align:left;">
 
@@ -919,7 +1133,19 @@ GPM\_3IMERGDF
 
 <td style="text-align:left;">
 
-GPM
+getData\_gpm()
+
+</td>
+
+<td style="text-align:left;">
+
+prepareData\_gpm()
+
+</td>
+
+<td style="text-align:left;">
+
+<https://disc.gsfc.nasa.gov/datasets/GPM_3IMERGDF_06/summary>
 
 </td>
 
@@ -955,7 +1181,7 @@ GPM IMERG Final Precipitation L3 1 day 0.1 degree x 0.1 degree V06
 
 <td style="text-align:right;">
 
-10000.0
+10000
 
 </td>
 
@@ -979,7 +1205,7 @@ Global
 
 <td style="text-align:left;">
 
-<https://disc.gsfc.nasa.gov/datasets/GPM_3IMERGDF_06/summary>
+NA
 
 </td>
 
@@ -995,31 +1221,125 @@ Global
 
 </td>
 
+</tr>
+
+<tr>
+
 <td style="text-align:left;">
 
-Huffman, G.J., E.F. Stocker, D.T. Bolvin, E.J. Nelkin, Jackson Tan
-(2019), GPM IMERG Final Precipitation L3 1 day 0.1 degree x 0.1 degree
-V06, Edited by Andrey Savtchenko, Greenbelt, MD, Goddard Earth Sciences
-Data and Information Services Center (GES DISC), Accessed: \[Data Access
-Date\], 10.5067/GPM/IMERGDF/DAY/06
+GPM
 
 </td>
 
 <td style="text-align:left;">
 
-getData\_gpm
+Rainfall - Night of catch
 
 </td>
 
 <td style="text-align:left;">
 
-prepareData\_gpm
+GPM\_3IMERGHH
+
+</td>
+
+<td style="text-align:left;">
+
+getData\_gpm()
+
+</td>
+
+<td style="text-align:left;">
+
+prepareData\_gpm()
+
+</td>
+
+<td style="text-align:left;">
+
+<https://disc.gsfc.nasa.gov/datasets/GPM_3IMERGHH_06/summary>
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+<td style="text-align:left;">
+
+NASA
+
+</td>
+
+<td style="text-align:left;">
+
+GPM IMERG Final Precipitation L3 Half Hourly 0.1 degree x 0.1 degree V06
+
+</td>
+
+<td style="text-align:right;">
+
+6
+
+</td>
+
+<td style="text-align:left;">
+
+<https://doi.org/10.5067/GPM/IMERG/3B-HH/06>
+
+</td>
+
+<td style="text-align:right;">
+
+10000
+
+</td>
+
+<td style="text-align:right;">
+
+30
+
+</td>
+
+<td style="text-align:left;">
+
+minute
+
+</td>
+
+<td style="text-align:left;">
+
+Global
+
+</td>
+
+<td style="text-align:left;">
+
+NA
+
+</td>
+
+<td style="text-align:left;">
+
+<https://gpm1.gesdisc.eosdis.nasa.gov/opendap/GPM_L3/GPM_3IMERGHH.06/>
+
+</td>
+
+<td style="text-align:left;">
 
 </td>
 
 </tr>
 
 <tr>
+
+<td style="text-align:left;">
+
+TAMSAT
+
+</td>
 
 <td style="text-align:left;">
 
@@ -1035,7 +1355,19 @@ TAMSAT
 
 <td style="text-align:left;">
 
-TAMSAT
+getData\_tamsat()
+
+</td>
+
+<td style="text-align:left;">
+
+prepareData\_tamsat()
+
+</td>
+
+<td style="text-align:left;">
+
+<https://www.tamsat.org.uk/about>
 
 </td>
 
@@ -1072,7 +1404,7 @@ ground-based observations
 
 <td style="text-align:right;">
 
-4000.0
+4000
 
 </td>
 
@@ -1096,7 +1428,7 @@ Africa
 
 <td style="text-align:left;">
 
-<https://www.tamsat.org.uk/about>
+NA
 
 </td>
 
@@ -1112,148 +1444,15 @@ Africa
 
 </td>
 
-<td style="text-align:left;">
-
-Tarnavsky, E., D. Grimes, R. Maidment, E. Black, R. Allan, M. Stringer,
-R. Chadwick, F. Kayitakire (2014) Extension of the TAMSAT
-Satellite-based Rainfall Monitoring over Africa and from 1983 to present
-Journal of Applied Meteorology and Climate DOI 10.1175/JAMC-D-14-0016.1
-Maidment, R., D. Grimes, R.P.Allan, E. Tarnavsky, M. Stringer, T.
-Hewison, R. Roebeling and E. Black (2014) The 30 year TAMSAT African
-Rainfall Climatology And Time series (TARCAT) data set Journal of
-Geophysical Research DOI: 10.1002/2014JD021927
-
-</td>
-
-<td style="text-align:left;">
-
-getData\_tamsat
-
-</td>
-
-<td style="text-align:left;">
-
-prepareData\_tamsat
-
-</td>
-
 </tr>
 
 <tr>
 
 <td style="text-align:left;">
 
-Rainfall - Night of catch
+ERA5
 
 </td>
-
-<td style="text-align:left;">
-
-GPM\_3IMERGHH
-
-</td>
-
-<td style="text-align:left;">
-
-GPM
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-<td style="text-align:left;">
-
-NASA
-
-</td>
-
-<td style="text-align:left;">
-
-GPM IMERG Final Precipitation L3 Half Hourly 0.1 degree x 0.1 degree V06
-
-</td>
-
-<td style="text-align:right;">
-
-6
-
-</td>
-
-<td style="text-align:left;">
-
-<https://doi.org/10.5067/GPM/IMERG/3B-HH/06>
-
-</td>
-
-<td style="text-align:right;">
-
-10000.0
-
-</td>
-
-<td style="text-align:right;">
-
-30
-
-</td>
-
-<td style="text-align:left;">
-
-minute
-
-</td>
-
-<td style="text-align:left;">
-
-Global
-
-</td>
-
-<td style="text-align:left;">
-
-<https://disc.gsfc.nasa.gov/datasets/GPM_3IMERGHH_06/summary>
-
-</td>
-
-<td style="text-align:left;">
-
-<https://gpm1.gesdisc.eosdis.nasa.gov/opendap/GPM_L3/GPM_3IMERGHH.06/>
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-Huffman, G.J., E.F. Stocker, D.T. Bolvin, E.J. Nelkin, Jackson Tan
-(2019), GPM IMERG Final Precipitation L3 Half Hourly 0.1 degree x 0.1
-degree V06, Greenbelt, MD, Goddard Earth Sciences Data and Information
-Services Center (GES DISC), Accessed: \[Data Access Date\],
-10.5067/GPM/IMERG/3B-HH/06
-
-</td>
-
-<td style="text-align:left;">
-
-getData\_gpm
-
-</td>
-
-<td style="text-align:left;">
-
-prepareData\_gpm
-
-</td>
-
-</tr>
-
-<tr>
 
 <td style="text-align:left;">
 
@@ -1270,7 +1469,19 @@ ERA5
 
 <td style="text-align:left;">
 
-ERA5
+getData\_era5()
+
+</td>
+
+<td style="text-align:left;">
+
+prepareData\_era5()
+
+</td>
+
+<td style="text-align:left;">
+
+<https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels?tab=overview>
 
 </td>
 
@@ -1304,7 +1515,7 @@ ERA5
 
 <td style="text-align:right;">
 
-27000.0
+27000
 
 </td>
 
@@ -1328,7 +1539,7 @@ Global
 
 <td style="text-align:left;">
 
-<https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels?tab=overview>
+NA
 
 </td>
 
@@ -1344,28 +1555,15 @@ Global
 
 </td>
 
-<td style="text-align:left;">
-
-Copernicus Climate Change Service (C3S) (2017): ERA5: Fifth generation
-of ECMWF atmospheric reanalyses of the global climate . Copernicus
-Climate Change Service Climate Data Store (CDS), date of access.
-<https://cds.climate.copernicus.eu/cdsapp#!/home>
-
-</td>
-
-<td style="text-align:left;">
-
-getData\_era5
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
 </tr>
 
 <tr>
+
+<td style="text-align:left;">
+
+MIRIADE
+
+</td>
 
 <td style="text-align:left;">
 
@@ -1381,7 +1579,17 @@ MIRIADE
 
 <td style="text-align:left;">
 
-MIRIADE
+getData\_miriade()
+
+</td>
+
+<td style="text-align:left;">
+
+</td>
+
+<td style="text-align:left;">
+
+<http://vo.imcce.fr/webservices/miriade/>
 
 </td>
 
@@ -1439,7 +1647,7 @@ Global
 
 <td style="text-align:left;">
 
-<http://vo.imcce.fr/webservices/miriade/>
+NA
 
 </td>
 
@@ -1455,25 +1663,15 @@ Global
 
 </td>
 
-<td style="text-align:left;">
-
-This research has made use of IMCCE’s Miriade VO tool
-
-</td>
-
-<td style="text-align:left;">
-
-getData\_miriade
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
 </tr>
 
 <tr>
+
+<td style="text-align:left;">
+
+VIIRS DNB
+
+</td>
 
 <td style="text-align:left;">
 
@@ -1489,7 +1687,17 @@ VIIRS DNB
 
 <td style="text-align:left;">
 
-VIIRS DNB
+getData\_viirsdnb()
+
+</td>
+
+<td style="text-align:left;">
+
+</td>
+
+<td style="text-align:left;">
+
+<https://ngdc.noaa.gov/eog/viirs/download_dnb_composites.html>
 
 </td>
 
@@ -1524,7 +1732,7 @@ NA
 
 <td style="text-align:right;">
 
-450.0
+450
 
 </td>
 
@@ -1548,7 +1756,7 @@ Global
 
 <td style="text-align:left;">
 
-<https://ngdc.noaa.gov/eog/viirs/download_dnb_composites.html>
+NA
 
 </td>
 
@@ -1564,23 +1772,15 @@ Global
 
 </td>
 
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-getData\_viirsdnb
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
 </tr>
 
 <tr>
+
+<td style="text-align:left;">
+
+SRTMGL1\_v004
+
+</td>
 
 <td style="text-align:left;">
 
@@ -1596,7 +1796,17 @@ SRTMGL1\_v003
 
 <td style="text-align:left;">
 
-SRTMGL1\_v004
+getData\_srtm()
+
+</td>
+
+<td style="text-align:left;">
+
+</td>
+
+<td style="text-align:left;">
+
+<https://lpdaac.usgs.gov/products/srtmgl1v003/>
 
 </td>
 
@@ -1633,7 +1843,7 @@ second
 
 <td style="text-align:right;">
 
-30.0
+30
 
 </td>
 
@@ -1657,7 +1867,7 @@ Global
 
 <td style="text-align:left;">
 
-<https://lpdaac.usgs.gov/products/srtmgl1v003/>
+NA
 
 </td>
 
@@ -1673,27 +1883,15 @@ Global
 
 </td>
 
-<td style="text-align:left;">
-
-NASA JPL (2013). NASA Shuttle Radar Topography Mission Global 1 arc
-second \[Data set\]. NASA EOSDIS Land Processes DAAC. doi:
-10.5067/MEaSUREs/SRTM/SRTMGL1.003
-
-</td>
-
-<td style="text-align:left;">
-
-getData\_srtm
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
 </tr>
 
 <tr>
+
+<td style="text-align:left;">
+
+CGLS-LC101
+
+</td>
 
 <td style="text-align:left;">
 
@@ -1709,7 +1907,17 @@ CGLS-LC100
 
 <td style="text-align:left;">
 
-CGLS-LC101
+getData\_cgls()
+
+</td>
+
+<td style="text-align:left;">
+
+</td>
+
+<td style="text-align:left;">
+
+<https://land.copernicus.eu/global/products/lc>
 
 </td>
 
@@ -1743,7 +1951,7 @@ Moderate dynamic land cover 100m
 
 <td style="text-align:right;">
 
-100.0
+100
 
 </td>
 
@@ -1767,7 +1975,7 @@ Global
 
 <td style="text-align:left;">
 
-<https://land.copernicus.eu/global/products/lc>
+NA
 
 </td>
 
@@ -1783,27 +1991,19 @@ NA
 
 </td>
 
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-getData\_cgls
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
 </tr>
 
 <tr>
 
 <td style="text-align:left;">
 
-Population
+HRSL
+
+</td>
+
+<td style="text-align:left;">
+
+Built-up, Population
 
 </td>
 
@@ -1815,7 +2015,17 @@ HRSL
 
 <td style="text-align:left;">
 
-HRSL
+getData\_hrsl()
+
+</td>
+
+<td style="text-align:left;">
+
+</td>
+
+<td style="text-align:left;">
+
+<https://ciesin.columbia.edu/repository/hrsl/#over>
 
 </td>
 
@@ -1850,7 +2060,7 @@ High Resolution Settlement Layer
 
 <td style="text-align:right;">
 
-30.0
+30
 
 </td>
 
@@ -1875,7 +2085,7 @@ Available for some countries : see list here :
 
 <td style="text-align:left;">
 
-<https://ciesin.columbia.edu/repository/hrsl/#over>
+NA
 
 </td>
 
@@ -1891,28 +2101,15 @@ NA
 
 </td>
 
-<td style="text-align:left;">
-
-Facebook Connectivity Lab and Center for International Earth Science
-Information Network - CIESIN - Columbia University. 2016. High
-Resolution Settlement Layer (HRSL). Source imagery for HRSL © 2016
-DigitalGlobe. Accessed DAY MONTH YEAR.
-
-</td>
-
-<td style="text-align:left;">
-
-getData\_hrsl
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
 </tr>
 
 <tr>
+
+<td style="text-align:left;">
+
+WorldPop\_100m\_Population
+
+</td>
 
 <td style="text-align:left;">
 
@@ -1928,7 +2125,17 @@ WorldPop\_100m\_Population
 
 <td style="text-align:left;">
 
-WorldPop\_100m\_Population
+getData\_worldpop()
+
+</td>
+
+<td style="text-align:left;">
+
+</td>
+
+<td style="text-align:left;">
+
+<https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0107042>
 
 </td>
 
@@ -1965,7 +2172,7 @@ national totals adjusted to match UN population division estimates
 
 <td style="text-align:right;">
 
-100.0
+100
 
 </td>
 
@@ -1983,14 +2190,13 @@ NA
 
 <td style="text-align:left;">
 
-Africa, Asia, South America,
-Oceania
+Africa, Asia, South America, Oceania
 
 </td>
 
 <td style="text-align:left;">
 
-<https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0107042>
+NA
 
 </td>
 
@@ -2006,142 +2212,15 @@ NA
 
 </td>
 
-<td style="text-align:left;">
-
-WorldPop (www.worldpop.org - School of Geography and Environmental
-Science, University of Southampton). 2013. Burkina Faso 100m Population.
-Alpha version 2010 and 2014 estimates of numbers of people per grid
-square, with national totals adjusted to match UN population division
-estimates (<http://esa.un.org/wpp/>). DOI: 10.5258/SOTON/WP00033
-
-</td>
-
-<td style="text-align:left;">
-
-getData\_worldpop
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
 </tr>
 
 <tr>
 
 <td style="text-align:left;">
 
-Built-up area
+OpenSteetMap
 
 </td>
-
-<td style="text-align:left;">
-
-HRSL
-
-</td>
-
-<td style="text-align:left;">
-
-HRSL
-
-</td>
-
-<td style="text-align:left;">
-
-FALSE
-
-</td>
-
-<td style="text-align:left;">
-
-Facebook Connectivity Lab and Center for International Earth Science
-Information Network
-
-</td>
-
-<td style="text-align:left;">
-
-High Resolution Settlement Layer
-
-</td>
-
-<td style="text-align:right;">
-
-1
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:right;">
-
-30.0
-
-</td>
-
-<td style="text-align:right;">
-
-NA
-
-</td>
-
-<td style="text-align:left;">
-
-NA
-
-</td>
-
-<td style="text-align:left;">
-
-Available for some countries : see list here :
-<https://ciesin.columbia.edu/repository/hrsl/#data>
-
-</td>
-
-<td style="text-align:left;">
-
-<https://ciesin.columbia.edu/repository/hrsl/#over>
-
-</td>
-
-<td style="text-align:left;">
-
-NA
-
-</td>
-
-<td style="text-align:left;">
-
-<https://ciesin.columbia.edu/repository/hrsl/#data>
-
-</td>
-
-<td style="text-align:left;">
-
-Facebook Connectivity Lab and Center for International Earth Science
-Information Network - CIESIN - Columbia University. 2016. High
-Resolution Settlement Layer (HRSL). Source imagery for HRSL © 2016
-DigitalGlobe. Accessed DAY MONTH YEAR.
-
-</td>
-
-<td style="text-align:left;">
-
-getData\_hrsl
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-</tr>
-
-<tr>
 
 <td style="text-align:left;">
 
@@ -2157,7 +2236,15 @@ OpenSteetMap
 
 <td style="text-align:left;">
 
-OpenSteetMap
+</td>
+
+<td style="text-align:left;">
+
+</td>
+
+<td style="text-align:left;">
+
+<https://www.openstreetmap.org/about>
 
 </td>
 
@@ -2217,7 +2304,7 @@ Global
 
 <td style="text-align:left;">
 
-<https://www.openstreetmap.org/about>
+NA
 
 </td>
 
@@ -2231,25 +2318,20 @@ Global
 
 </td>
 
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
 </tr>
 
 <tr>
 
 <td style="text-align:left;">
 
-Open waters / Wetlands
+Global\_Surface\_Water
+
+</td>
+
+<td style="text-align:left;">
+
+Open waters /
+Wetlands
 
 </td>
 
@@ -2261,7 +2343,17 @@ Global\_Surface\_Water
 
 <td style="text-align:left;">
 
-Global\_Surface\_Water
+getData\_gsw()
+
+</td>
+
+<td style="text-align:left;">
+
+</td>
+
+<td style="text-align:left;">
+
+<https://storage.cloud.google.com/global-surface-water/downloads_ancillary/DataUsersGuidev2018.pdf>
 
 </td>
 
@@ -2279,8 +2371,7 @@ JRC
 
 <td style="text-align:left;">
 
-Global Surface
-Water
+Global Surface Water
 
 </td>
 
@@ -2298,7 +2389,7 @@ Water
 
 <td style="text-align:right;">
 
-30.0
+30
 
 </td>
 
@@ -2322,7 +2413,7 @@ Global
 
 <td style="text-align:left;">
 
-<https://storage.cloud.google.com/global-surface-water/downloads_ancillary/DataUsersGuidev2018.pdf>
+NA
 
 </td>
 
@@ -2335,570 +2426,6 @@ NA
 <td style="text-align:left;">
 
 <https://global-surface-water.appspot.com/download>
-
-</td>
-
-<td style="text-align:left;">
-
-Jean-Francois Pekel, Andrew Cottam, Noel Gorelick, Alan S. Belward,
-High-resolution mapping of global surface water and its long-term
-changes. Nature 540, 418-422 (2016). (<doi:10.1038/nature20584>)
-
-</td>
-
-<td style="text-align:left;">
-
-getData\_gsw
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-NA
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:right;">
-
-NA
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:right;">
-
-NA
-
-</td>
-
-<td style="text-align:right;">
-
-NA
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-NA
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:right;">
-
-NA
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:right;">
-
-NA
-
-</td>
-
-<td style="text-align:right;">
-
-NA
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left;">
-
-Land cover
-
-</td>
-
-<td style="text-align:left;">
-
-REACT\_lu
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-NA
-
-</td>
-
-<td style="text-align:left;">
-
-REACT / IRD
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:right;">
-
-NA
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:right;">
-
-1.6
-
-</td>
-
-<td style="text-align:right;">
-
-NA
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-REACT
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-getData\_react
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left;">
-
-Population
-
-</td>
-
-<td style="text-align:left;">
-
-REACT\_pop
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-NA
-
-</td>
-
-<td style="text-align:left;">
-
-REACT / IRD
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:right;">
-
-NA
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:right;">
-
-1.6
-
-</td>
-
-<td style="text-align:right;">
-
-NA
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-REACT
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-getData\_react
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left;">
-
-Built-up area
-
-</td>
-
-<td style="text-align:left;">
-
-REACT\_builtup
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-NA
-
-</td>
-
-<td style="text-align:left;">
-
-REACT / IRD
-
-</td>
-
-<td style="text-align:left;">
-
-Built-up areas over the REACT project areas
-
-</td>
-
-<td style="text-align:right;">
-
-NA
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:right;">
-
-1.6
-
-</td>
-
-<td style="text-align:right;">
-
-NA
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-REACT
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-getData\_react
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left;">
-
-Pedology
-
-</td>
-
-<td style="text-align:left;">
-
-REACT\_pedo
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-NA
-
-</td>
-
-<td style="text-align:left;">
-
-REACT / IRD
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:right;">
-
-NA
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:right;">
-
-100.0
-
-</td>
-
-<td style="text-align:right;">
-
-NA
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-REACT
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-getData\_react
-
-</td>
-
-<td style="text-align:left;">
 
 </td>
 
