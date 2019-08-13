@@ -26,6 +26,6 @@
 
 
 getAvailableDataSources<-function(){
-  df_AvailableDataSources<-utils::read.csv(system.file("extdata/data_collections.csv", package = "getRemoteData"))
+  df_AvailableDataSources<-utils::read.csv(system.file("extdata/data_collections.csv", package = "getRemoteData"),stringsAsFactors=F)
   return(df_AvailableDataSources)
 }

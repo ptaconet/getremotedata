@@ -37,7 +37,7 @@ devtools::check()
 
 ## Manual step : Add example dataset in inst/example-data
 
-usethis::use_vignette("aa-exploration")
+#usethis::use_vignette("aa-exploration")
 # Document functions and dependencies
 attachment::att_to_description()
 # Check the package
