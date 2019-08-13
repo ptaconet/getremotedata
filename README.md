@@ -57,19 +57,21 @@ yourself in one or more of the following points :
   - have a slow internet connection ;
   - care about the digital environmental impact of your work.
 
-`getRemoteData` is developed in the frame of Phd project, and the
+`getRemoteData` is developed in the frame of PhD project, and the
 sources of data implemented in the package are hence those that I use in
 my work. Sources of data are mostly environmental / climatic data, but
-not exclusively. Have a look at the function ‘getAvailableDataSources’
+not exclusively. Have a look at the function `getAvailableDataSources`
 to check which sources are already implemented \!
 
-Other relavant packages : -
-[`getSpatialData`](http://jxsw.de/getSpatialData/) - \[`MODIS`\] and
-\[`MODISTools`\] and \[`MODISTsp`\] - GPM ?
+Other relavant packages :
+
+  - [`getSpatialData`](http://jxsw.de/getSpatialData/)
+  - \[`MODIS`\] and \[`MODISTools`\] and \[`MODISTsp`\]
+  - GPM ?
 
 ## Installation
 
-You can install the development version of getRemoteData from
+You can install the development version of `getRemoteData` from
 [GitHub](https://github.com/) with:
 
 ``` r
@@ -195,12 +197,6 @@ spatial\_coverage
 
 <th style="text-align:left;">
 
-X
-
-</th>
-
-<th style="text-align:left;">
-
 url\_programmatic\_access
 
 </th>
@@ -307,12 +303,6 @@ day
 <td style="text-align:left;">
 
 Global
-
-</td>
-
-<td style="text-align:left;">
-
-NA
 
 </td>
 
@@ -425,12 +415,6 @@ Global
 
 <td style="text-align:left;">
 
-NA
-
-</td>
-
-<td style="text-align:left;">
-
 <https://opendap.cr.usgs.gov/opendap/hyrax/MYD11A1.006/contents.html>
 
 </td>
@@ -495,6 +479,9 @@ NASA
 
 <td style="text-align:left;">
 
+MODIS/Terra Land Surface Temperature/Emissivity 8-Day L3 Global 1 km SIN
+Grid V006
+
 </td>
 
 <td style="text-align:right;">
@@ -530,12 +517,6 @@ day
 <td style="text-align:left;">
 
 Global
-
-</td>
-
-<td style="text-align:left;">
-
-NA
 
 </td>
 
@@ -605,6 +586,9 @@ NASA
 
 <td style="text-align:left;">
 
+MODIS/Aqua Land Surface Temperature/Emissivity 8-Day L3 Global 1 km SIN
+Grid V006
+
 </td>
 
 <td style="text-align:right;">
@@ -640,12 +624,6 @@ day
 <td style="text-align:left;">
 
 Global
-
-</td>
-
-<td style="text-align:left;">
-
-NA
 
 </td>
 
@@ -757,12 +735,6 @@ Global
 
 <td style="text-align:left;">
 
-NA
-
-</td>
-
-<td style="text-align:left;">
-
 <https://opendap.cr.usgs.gov/opendap/hyrax/MOD13Q1.006/contents.html>
 
 </td>
@@ -864,12 +836,6 @@ day
 <td style="text-align:left;">
 
 Global
-
-</td>
-
-<td style="text-align:left;">
-
-NA
 
 </td>
 
@@ -981,12 +947,6 @@ Global
 
 <td style="text-align:left;">
 
-NA
-
-</td>
-
-<td style="text-align:left;">
-
 <https://opendap.cr.usgs.gov/opendap/hyrax/MOD16A2.006/contents.html>
 
 </td>
@@ -1088,12 +1048,6 @@ day
 <td style="text-align:left;">
 
 Global
-
-</td>
-
-<td style="text-align:left;">
-
-NA
 
 </td>
 
@@ -1205,12 +1159,6 @@ Global
 
 <td style="text-align:left;">
 
-NA
-
-</td>
-
-<td style="text-align:left;">
-
 <https://gpm1.gesdisc.eosdis.nasa.gov/opendap/GPM_L3/GPM_3IMERGDF.06/>
 
 </td>
@@ -1312,12 +1260,6 @@ minute
 <td style="text-align:left;">
 
 Global
-
-</td>
-
-<td style="text-align:left;">
-
-NA
 
 </td>
 
@@ -1428,12 +1370,6 @@ Africa
 
 <td style="text-align:left;">
 
-NA
-
-</td>
-
-<td style="text-align:left;">
-
 <https://www.tamsat.org.uk/data/archive>
 
 </td>
@@ -1539,12 +1475,6 @@ Global
 
 <td style="text-align:left;">
 
-NA
-
-</td>
-
-<td style="text-align:left;">
-
 <https://dominicroye.github.io/en/2018/access-to-climate-reanalysis-data-from-r/>
 
 </td>
@@ -1642,12 +1572,6 @@ NA
 <td style="text-align:left;">
 
 Global
-
-</td>
-
-<td style="text-align:left;">
-
-NA
 
 </td>
 
@@ -1756,12 +1680,6 @@ Global
 
 <td style="text-align:left;">
 
-NA
-
-</td>
-
-<td style="text-align:left;">
-
 <https://gis.ngdc.noaa.gov/arcgis/rest/services/NPP_VIIRS_DNB/Monthly_AvgRadiance/ImageServer/>
 
 </td>
@@ -1862,12 +1780,6 @@ NA
 <td style="text-align:left;">
 
 Global
-
-</td>
-
-<td style="text-align:left;">
-
-NA
 
 </td>
 
@@ -1981,12 +1893,6 @@ NA
 
 <td style="text-align:left;">
 
-NA
-
-</td>
-
-<td style="text-align:left;">
-
 <https://lcviewer.vito.be/download>
 
 </td>
@@ -2080,12 +1986,6 @@ NA
 
 Available for some countries : see list here :
 <https://ciesin.columbia.edu/repository/hrsl/#data>
-
-</td>
-
-<td style="text-align:left;">
-
-NA
 
 </td>
 
@@ -2202,12 +2102,6 @@ NA
 
 <td style="text-align:left;">
 
-NA
-
-</td>
-
-<td style="text-align:left;">
-
 <https://www.worldpop.org/geodata/listing?id=16>
 
 </td>
@@ -2299,12 +2193,6 @@ NA
 <td style="text-align:left;">
 
 Global
-
-</td>
-
-<td style="text-align:left;">
-
-NA
 
 </td>
 
@@ -2419,12 +2307,6 @@ NA
 
 <td style="text-align:left;">
 
-NA
-
-</td>
-
-<td style="text-align:left;">
-
 <https://global-surface-water.appspot.com/download>
 
 </td>
@@ -2439,10 +2321,12 @@ NA
 
 Say you want to download over a 3500km<sup>2</sup> region of interest:
 
-  - a 40 days time series of MODIS Terrra Land Surface Temperature (LST)
-    (daily time resolution);
-  - the same 40 days times series of Global Precipitation Measurement
-    (GPM) (daily time resolution) :
+  - a 40 days time series of [MODIS Terrra Land Surface Temperature
+    (LST)](https://dx.doi.org/10.5067/MODIS/MOD11A1.006) (daily time
+    resolution);
+  - the same 40 days times series of [Global Precipitation Measurement
+    (GPM)](https://doi.org/10.5067/GPM/IMERGDF/DAY/06) (daily time
+    resolution) :
 
 <!-- end list -->
 
@@ -2495,26 +2379,26 @@ rasts_gpm<-dl_gpm$destfile %>%
 
 The functions of `getRemoteData` all work the same way :
 
-  - *timeRange* is your date / time frame of interest (eventually
+  - `timeRange` is your date / time frame of interest (eventually
     including hours for the data with less that daily resolution) ;
-  - *roi* is your area of interest (as an `sf` object, either point or
+  - `roi` is your area of interest (as an `sf` object, either point or
     polygon) ;
-  - *destfolder* is the data destination folder ;
+  - `destfolder` is the data destination folder ;
   - by default, the function does not download the dataset. It returns a
     data.frame with the URL(s) to download the dataset(s) of interest
     given the input arguments. To download the data, set the *download*
     argument to TRUE ;
   - other arguments are specific to each data product (e.g.
-    *collection*, *dimensions*,*username*,*password*)
+    `collection`, `dimensions`,`username`,`password`)
 
-Absence of the *timeRange* (resp. *roi*) arguments in a function means
+Absence of the `timeRange` (resp. `roi`) arguments in a function means
 that the data of interest do not have any time (resp. spatial)
 dimension.
 
-Have a look at the vignette [Efficient extraction of spatial-temporal
-series over small-scale
-areas](https://www.nasa.gov/mission_pages/GPM/main/index.html) to check
-what else you can do using getRemoteData \!
+Have a look at the vignette [Automatic extraction of spatial-temporal
+environmental data within buffers around sample
+points](https://ptaconet.github.io/malamodpkg/articles/import_tidy_transform_envdata.html)
+to get an example of what you can do with `getRemoteData` \!
 
 ## Current limitations
 

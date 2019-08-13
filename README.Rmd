@@ -41,9 +41,10 @@ You might have a deeper look at `getRemoteData` if you recognize yourself in one
 - care about the digital environmental impact of your work.
 
 
-`getRemoteData` is developed in the frame of Phd project, and the sources of data implemented in the package are hence those that I use in my work. Sources of data are mostly environmental / climatic data, but not exclusively. Have a look at the function 'getAvailableDataSources' to check which sources are already implemented ! 
+`getRemoteData` is developed in the frame of PhD project, and the sources of data implemented in the package are hence those that I use in my work. Sources of data are mostly environmental / climatic data, but not exclusively. Have a look at the function `getAvailableDataSources` to check which sources are already implemented ! 
 
 Other relavant packages : 
+
 - [`getSpatialData`](http://jxsw.de/getSpatialData/)
 - [`MODIS`] and [`MODISTools`] and [`MODISTsp`]
 - GPM ?
@@ -51,7 +52,7 @@ Other relavant packages :
 
 ## Installation
 
-You can install the development version of getRemoteData from [GitHub](https://github.com/) with: 
+You can install the development version of `getRemoteData` from [GitHub](https://github.com/) with: 
 
 ``` r
 # install.packages("devtools")
@@ -77,8 +78,8 @@ getRemoteData::getAvailableDataSources() %>%
 
 Say you want to download  over a 3500km^2^ region of interest:
 
-- a 40 days time series of MODIS Terrra Land Surface Temperature (LST) (daily time resolution);
-- the same 40 days times series of Global Precipitation Measurement (GPM) (daily time resolution) :
+- a 40 days time series of [MODIS Terrra Land Surface Temperature (LST)](https://dx.doi.org/10.5067/MODIS/MOD11A1.006) (daily time resolution);
+- the same 40 days times series of [Global Precipitation Measurement (GPM)](https://doi.org/10.5067/GPM/IMERGDF/DAY/06) (daily time resolution) :
 
 ```{r example, eval = FALSE}
 library(getRemoteData)
@@ -129,15 +130,15 @@ rasts_gpm<-dl_gpm$destfile %>%
 
 The functions of `getRemoteData` all work the same way : 
 
-- *timeRange* is your date / time frame of interest (eventually including hours for the data with less that daily resolution) ;
-- *roi* is your area of interest (as an `sf` object, either point or polygon) ;
-- *destfolder* is the data destination folder ;
+- `timeRange` is your date / time frame of interest (eventually including hours for the data with less that daily resolution) ;
+- `roi` is your area of interest (as an `sf` object, either point or polygon) ;
+- `destfolder` is the data destination folder ;
 - by default, the function does not download the dataset. It returns a data.frame with the URL(s) to download the dataset(s) of interest given the input arguments. To download the data, set the *download* argument to TRUE ;
-- other arguments are specific to each data product (e.g. *collection*, *dimensions*,*username*,*password*)
+- other arguments are specific to each data product (e.g. `collection`, `dimensions`,`username`,`password`)
 
-Absence of the *timeRange* (resp. *roi*) arguments in a function means that the data of interest do not have any time (resp. spatial) dimension.
+Absence of the `timeRange` (resp. `roi`) arguments in a function means that the data of interest do not have any time (resp. spatial) dimension.
 
-Have a look at the vignette [Efficient extraction of spatial-temporal series over small-scale areas](https://www.nasa.gov/mission_pages/GPM/main/index.html) to check what else you can do using getRemoteData !
+Have a look at the vignette [Automatic extraction of spatial-temporal environmental data within buffers around sample points](https://ptaconet.github.io/malamodpkg/articles/import_tidy_transform_envdata.html) to get an example of what you can do with `getRemoteData` !
 
 ## Current limitations
 
