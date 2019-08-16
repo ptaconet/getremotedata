@@ -138,7 +138,7 @@ The functions of `getRemoteData` all work the same way :
 
 Absence of the `timeRange` (resp. `roi`) arguments in a function means that the data of interest do not have any time (resp. spatial) dimension.
 
-Have a look at the vignette [Automatic extraction of spatial-temporal environmental data within buffers around sample points](https://ptaconet.github.io/malamodpkg/articles/import_tidy_transform_envdata.html) to get an example of what you can do with `getRemoteData` !
+Have a look at the vignette [Automatic extraction of spatial-temporal environmental data within buffers around sampling points](https://ptaconet.github.io/malamodpkg/articles/import_tidy_transform_envdata.html) to get an example of what you can do with `getRemoteData` !
 
 ## Current limitations
 
@@ -149,4 +149,4 @@ The package is at a very early stage of development. Here are some of the curren
 ## Behind the scene... how it  works
 
 As much as possible, when implemented by the data providers, `getRemoteData` uses web services or APIsto download the data. Web services are in few words standard web protocols that enable to filter the data directly at the downloading phase. Filters can be spatial, temporal, dimensional, etc. Example of widely-used web services / data transfer protocols for geospatial timeseries are [OGC WFS](https://en.wikipedia.org/wiki/Web_Feature_Service) or [OPeNDAP](https://en.wikipedia.org/wiki/OPeNDAP). 
-If long time series are queried, `getRemoteData` speeds-up the downloading time by parralelizing it.
+If long time series are queried, `getRemoteData` speeds-up the downloading time by parallelizing it.

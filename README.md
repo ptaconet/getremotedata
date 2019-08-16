@@ -2396,7 +2396,7 @@ that the data of interest do not have any time (resp. spatial)
 dimension.
 
 Have a look at the vignette [Automatic extraction of spatial-temporal
-environmental data within buffers around sample
+environmental data within buffers around sampling
 points](https://ptaconet.github.io/malamodpkg/articles/import_tidy_transform_envdata.html)
 to get an example of what you can do with `getRemoteData` \!
 
@@ -2420,4 +2420,4 @@ transfer protocols for geospatial timeseries are [OGC
 WFS](https://en.wikipedia.org/wiki/Web_Feature_Service) or
 [OPeNDAP](https://en.wikipedia.org/wiki/OPeNDAP). If long time series
 are queried, `getRemoteData` speeds-up the downloading time by
-parralelizing it.
+parallelizing it.
