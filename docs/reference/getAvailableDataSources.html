@@ -145,10 +145,11 @@
 #&gt; 14                VIIRS DNB               Nighttime lights - Night of catch
 #&gt; 15             SRTMGL1_v004             Elevation and elevation derivatives
 #&gt; 16               CGLS-LC101                                      Land cover
-#&gt; 17                     HRSL                            Built-up, Population
-#&gt; 18 WorldPop_100m_Population                                      Population
-#&gt; 19             OpenSteetMap                                           Roads
-#&gt; 20     Global_Surface_Water                          Open waters / Wetlands
+#&gt; 17         CCI_LC_S2_AFRICA                                      Land cover
+#&gt; 18                     HRSL                            Built-up, Population
+#&gt; 19 WorldPop_100m_Population                                      Population
+#&gt; 20             OpenSteetMap                                           Roads
+#&gt; 21     Global_Surface_Water                          Open waters / Wetlands
 #&gt;                  collection getRemoteData_import_func
 #&gt; 1              MOD11A1.v006           getData_modis()
 #&gt; 2              MYD11A1.v006           getData_modis()
@@ -166,10 +167,11 @@
 #&gt; 14                VIIRS DNB        getData_viirsdnb()
 #&gt; 15             SRTMGL1_v003            getData_srtm()
 #&gt; 16               CGLS-LC100            getData_cgls()
-#&gt; 17                     HRSL            getData_hrsl()
-#&gt; 18 WorldPop_100m_Population        getData_worldpop()
-#&gt; 19             OpenSteetMap                          
-#&gt; 20     Global_Surface_Water             getData_gsw()
+#&gt; 17                   CCI-LS                          
+#&gt; 18                     HRSL            getData_hrsl()
+#&gt; 19 WorldPop_100m_Population        getData_worldpop()
+#&gt; 20             OpenSteetMap                          
+#&gt; 21     Global_Surface_Water             getData_gsw()
 #&gt;    getRemoteData_prepare_func
 #&gt; 1         prepareData_modis()
 #&gt; 2         prepareData_modis()
@@ -191,6 +193,7 @@
 #&gt; 18                           
 #&gt; 19                           
 #&gt; 20                           
+#&gt; 21                           
 #&gt;                                                                                         url_metadata
 #&gt; 1                                                      https://lpdaac.usgs.gov/products/mod11a1v006/
 #&gt; 2                                                      https://lpdaac.usgs.gov/products/myd11a1v006/
@@ -205,13 +208,14 @@
 #&gt; 11                                                                   https://www.tamsat.org.uk/about
 #&gt; 12     https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels?tab=overview
 #&gt; 13                                                           http://vo.imcce.fr/webservices/miriade/
-#&gt; 14                                      https://ngdc.noaa.gov/eog/viirs/download_dnb_composites.html
+#&gt; 14                                            https://eogdata.mines.edu/download_dnb_composites.html
 #&gt; 15                                                     https://lpdaac.usgs.gov/products/srtmgl1v003/
 #&gt; 16                                                     https://land.copernicus.eu/global/products/lc
-#&gt; 17                                                 https://ciesin.columbia.edu/repository/hrsl/#over
-#&gt; 18                         https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0107042
-#&gt; 19                                                               https://www.openstreetmap.org/about
-#&gt; 20 https://storage.cloud.google.com/global-surface-water/downloads_ancillary/DataUsersGuidev2018.pdf
+#&gt; 17                                                      http://2016africalandcover20m.esrin.esa.int/
+#&gt; 18                                                 https://ciesin.columbia.edu/repository/hrsl/#over
+#&gt; 19                         https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0107042
+#&gt; 20                                                               https://www.openstreetmap.org/about
+#&gt; 21 https://storage.cloud.google.com/global-surface-water/downloads_ancillary/DataUsersGuidev2018.pdf
 #&gt;    is_timeSeries
 #&gt; 1           TRUE
 #&gt; 2           TRUE
@@ -233,6 +237,7 @@
 #&gt; 18         FALSE
 #&gt; 19         FALSE
 #&gt; 20         FALSE
+#&gt; 21         FALSE
 #&gt;                                                                                    provider
 #&gt; 1                                                                                      NASA
 #&gt; 2                                                                                      NASA
@@ -250,10 +255,11 @@
 #&gt; 14                                                                                     NOAA
 #&gt; 15                                                                                     NASA
 #&gt; 16                                                        Copernicus Global Land Operations
-#&gt; 17 Facebook Connectivity Lab and Center for International Earth Science Information Network
-#&gt; 18                                                                                 WorldPop
-#&gt; 19                                                                             OpenSteetMap
-#&gt; 20                                                                                      JRC
+#&gt; 17                                               Climate Change Initiative Land Cover (ESA)
+#&gt; 18 Facebook Connectivity Lab and Center for International Earth Science Information Network
+#&gt; 19                                                                                 WorldPop
+#&gt; 20                                                                             OpenSteetMap
+#&gt; 21                                                                                      JRC
 #&gt;                                                                                                                                     long_name
 #&gt; 1                                                           MODIS/Terra Land Surface Temperature/Emissivity Daily L3 Global 1km SIN Grid V006
 #&gt; 2                                                            MODIS/Aqua Land Surface Temperature/Emissivity Daily L3 Global 1km SIN Grid V006
@@ -269,12 +275,13 @@
 #&gt; 12                                                                                                                                       ERA5
 #&gt; 13                                                                            The Virtual Observatory Solar System Object Ephemeris Generator
 #&gt; 14                                                                     Visible Infrared Imaging Radiometer Suite (VIIRS) Day/Night Band (DNB)
-#&gt; 15                                                                                  NASA Shuttle Radar Topography Mission Global 1 arc second
-#&gt; 16                                                                                                           Moderate dynamic land cover 100m
-#&gt; 17                                                                                                           High Resolution Settlement Layer
-#&gt; 18 Alpha version 2014 estimates of numbers of people per grid square, with national totals adjusted to match UN population division estimates
-#&gt; 19                                                                                                                               OpenSteetMap
-#&gt; 20                                                                                                                       Global Surface Water
+#&gt; 15                                                 Digital Elevation Model from the NASA Shuttle Radar Topography Mission Global 1 arc second
+#&gt; 16                                                                                                      Moderate dynamic land cover 100m 2015
+#&gt; 17                                                                                             S2 prototype Land Cover 20m map of Africa 2016
+#&gt; 18                                                                                                           High Resolution Settlement Layer
+#&gt; 19 Alpha version 2014 estimates of numbers of people per grid square, with national totals adjusted to match UN population division estimates
+#&gt; 20                                                                                                                               OpenSteetMap
+#&gt; 21                                                                                                                       Global Surface Water
 #&gt;    version                                                  DOI
 #&gt; 1        6         https://dx.doi.org/10.5067/MODIS/MOD11A1.006
 #&gt; 2        6         https://dx.doi.org/10.5067/MODIS/MYD11A1.006
@@ -292,10 +299,11 @@
 #&gt; 14      NA                                                     
 #&gt; 15       3 https://dx.doi.org/10.5067/MEASURES/SRTM/SRTMGL1.003
 #&gt; 16       2                                                     
-#&gt; 17       1                                                     
-#&gt; 18       3         10.5258/SOTON/WP00033\n10.5258/SOTON/WP00065
-#&gt; 19      NA                                                 &lt;NA&gt;
-#&gt; 20       1                                  10.1038/nature20584
+#&gt; 17      NA                                                     
+#&gt; 18       1                                                     
+#&gt; 19       3         10.5258/SOTON/WP00033\n10.5258/SOTON/WP00065
+#&gt; 20      NA                                                 &lt;NA&gt;
+#&gt; 21       1                                  10.1038/nature20584
 #&gt;    spatial_resolution_m temporal_resolution temporal_resolution_unit
 #&gt; 1                  1000                   1                      day
 #&gt; 2                  1000                   1                      day
@@ -313,10 +321,11 @@
 #&gt; 14                  450                   1                    month
 #&gt; 15                   30                  NA                     &lt;NA&gt;
 #&gt; 16                  100                   1                     year
-#&gt; 17                   30                  NA                     &lt;NA&gt;
-#&gt; 18                  100                  NA                     &lt;NA&gt;
-#&gt; 19                   NA                  NA                     &lt;NA&gt;
-#&gt; 20                   30                   1                     year
+#&gt; 17                   20                  NA                     &lt;NA&gt;
+#&gt; 18                   30                  NA                     &lt;NA&gt;
+#&gt; 19                  100                  NA                     &lt;NA&gt;
+#&gt; 20                   NA                  NA                     &lt;NA&gt;
+#&gt; 21                   30                   1                     year
 #&gt;                                                                                    spatial_coverage
 #&gt; 1                                                                                            Global
 #&gt; 2                                                                                            Global
@@ -334,10 +343,11 @@
 #&gt; 14                                                                                           Global
 #&gt; 15                                                                                           Global
 #&gt; 16                                                                                           Global
-#&gt; 17 Available for some countries : see list here : https://ciesin.columbia.edu/repository/hrsl/#data
-#&gt; 18                                                             Africa, Asia, South America, Oceania
-#&gt; 19                                                                                           Global
+#&gt; 17                                                                                           Africa
+#&gt; 18 Available for some countries : see list here : https://ciesin.columbia.edu/repository/hrsl/#data
+#&gt; 19                                                             Africa, Asia, South America, Oceania
 #&gt; 20                                                                                           Global
+#&gt; 21                                                                                           Global
 #&gt;                                                                          url_programmatic_access
 #&gt; 1                            https://opendap.cr.usgs.gov/opendap/hyrax/MOD11A1.006/contents.html
 #&gt; 2                            https://opendap.cr.usgs.gov/opendap/hyrax/MYD11A1.006/contents.html
@@ -357,8 +367,9 @@
 #&gt; 16                                                                                          &lt;NA&gt;
 #&gt; 17                                                                                          &lt;NA&gt;
 #&gt; 18                                                                                          &lt;NA&gt;
-#&gt; 19                                                                                              
-#&gt; 20                                                                                          &lt;NA&gt;
+#&gt; 19                                                                                          &lt;NA&gt;
+#&gt; 20                                                                                              
+#&gt; 21                                                                                          &lt;NA&gt;
 #&gt;                                                                                      url_manual_access
 #&gt; 1                                        https://search.earthdata.nasa.gov/search?q=MOD11A1&amp;ok=MOD11A1
 #&gt; 2                                        https://search.earthdata.nasa.gov/search?q=MYD11A1&amp;ok=MYD11A1
@@ -376,10 +387,11 @@
 #&gt; 14                                        https://ngdc.noaa.gov/eog/viirs/download_dnb_composites.html
 #&gt; 15 https://search.earthdata.nasa.gov/search/collection-details?p=C1000000240-LPDAAC_ECS&amp;q=SRTM&amp;ok=SRTM
 #&gt; 16                                                                   https://lcviewer.vito.be/download
-#&gt; 17                                                   https://ciesin.columbia.edu/repository/hrsl/#data
-#&gt; 18                                                      https://www.worldpop.org/geodata/listing?id=16
-#&gt; 19                                                                      https://www.openstreetmap.org/
-#&gt; 20                                                   https://global-surface-water.appspot.com/download
+#&gt; 17                                            http://2016africalandcover20m.esrin.esa.int/download.php
+#&gt; 18                                                   https://ciesin.columbia.edu/repository/hrsl/#data
+#&gt; 19                                                      https://www.worldpop.org/geodata/listing?id=16
+#&gt; 20                                                                      https://www.openstreetmap.org/
+#&gt; 21                                                   https://global-surface-water.appspot.com/download
 #&gt;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           citation
 #&gt; 1                                                                                                                                                                                                                                                                                                                                      Wan, Z., Hook, S., Hulley, G. (2015). MOD11A1 MODIS/Terra Land Surface Temperature/Emissivity Daily L3 Global 1km SIN Grid V006 [Data set]. NASA EOSDIS Land Processes DAAC. doi: 10.5067/MODIS/MOD11A1.006
 #&gt; 2                                                                                                                                                                                                                                                                                                                                       Wan, Z., Hook, S., Hulley, G. (2015). MYD11A1 MODIS/Aqua Land Surface Temperature/Emissivity Daily L3 Global 1km SIN Grid V006 [Data set]. NASA EOSDIS Land Processes DAAC. doi: 10.5067/MODIS/MYD11A1.006
@@ -397,10 +409,33 @@
 #&gt; 14                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
 #&gt; 15                                                                                                                                                                                                                                                                                                                                                                                  NASA JPL (2013). NASA Shuttle Radar Topography Mission Global 1 arc second [Data set]. NASA EOSDIS Land Processes DAAC. doi: 10.5067/MEaSUREs/SRTM/SRTMGL1.003
 #&gt; 16                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-#&gt; 17                                                                                                                                                                                                                                                                                                   Facebook Connectivity Lab and Center for International Earth Science Information Network - CIESIN - Columbia University. 2016. High Resolution Settlement Layer (HRSL). Source imagery for HRSL © 2016 DigitalGlobe. Accessed DAY MONTH YEAR.
-#&gt; 18                                                                                                                                                                                            WorldPop (www.worldpop.org - School of Geography and Environmental Science, University of Southampton). 2013. Burkina Faso 100m Population. Alpha version 2010 and 2014 estimates of numbers of people per grid square, with national totals adjusted to match UN population division estimates (http://esa.un.org/wpp/). DOI: 10.5258/SOTON/WP00033
-#&gt; 19                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-#&gt; 20                                                                                                                                                                                                                                                                                                                                            Jean-Francois Pekel, Andrew Cottam, Noel Gorelick, Alan S. Belward, High-resolution mapping of global surface water and its long-term changes. Nature 540, 418-422 (2016). (doi:10.1038/nature20584)</div><div class='input'>
+#&gt; 17                                                                                                                                                                                                                                                                                                                                                                                                                                \xa9 Contains modified Copernicus data (2015/2016)\n\xa9 ESA Climate Change Initiative - Land Cover project 2017
+#&gt; 18                                                                                                                                                                                                                                                                                                   Facebook Connectivity Lab and Center for International Earth Science Information Network - CIESIN - Columbia University. 2016. High Resolution Settlement Layer (HRSL). Source imagery for HRSL © 2016 DigitalGlobe. Accessed DAY MONTH YEAR.
+#&gt; 19                                                                                                                                                                                            WorldPop (www.worldpop.org - School of Geography and Environmental Science, University of Southampton). 2013. Burkina Faso 100m Population. Alpha version 2010 and 2014 estimates of numbers of people per grid square, with national totals adjusted to match UN population division estimates (http://esa.un.org/wpp/). DOI: 10.5258/SOTON/WP00033
+#&gt; 20                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+#&gt; 21                                                                                                                                                                                                                                                                                                                                            Jean-Francois Pekel, Andrew Cottam, Noel Gorelick, Alan S. Belward, High-resolution mapping of global surface water and its long-term changes. Nature 540, 418-422 (2016). (doi:10.1038/nature20584)
+#&gt;             status
+#&gt; 1      Implemented
+#&gt; 2      Implemented
+#&gt; 3      Implemented
+#&gt; 4      Implemented
+#&gt; 5      Implemented
+#&gt; 6      Implemented
+#&gt; 7      Implemented
+#&gt; 8      Implemented
+#&gt; 9      Implemented
+#&gt; 10     Implemented
+#&gt; 11     Implemented
+#&gt; 12     Implemented
+#&gt; 13     Implemented
+#&gt; 14     Implemented
+#&gt; 15     Implemented
+#&gt; 16 Not implemented
+#&gt; 17 Not implemented
+#&gt; 18 Not implemented
+#&gt; 19 Not implemented
+#&gt; 20 Not implemented
+#&gt; 21 Not implemented</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

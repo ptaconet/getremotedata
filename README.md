@@ -7,19 +7,20 @@
 
 <!-- badges: end -->
 
-`getRemoteData` is a set of R function that offer a common grammar to
-query and import remote data from heterogeneous sources. Overall, this
-package attempts to **facilitate** and **speed-up** the painfull and
-time-consuming **data import / download** process for some well-known
-and widely used environmental / climatic data (e.g.
-[MODIS](https://modis.gsfc.nasa.gov/),
+`getRemoteData` is an R package that offers a common grammar to query
+and import remote data (i.e. data stored on the cloud) from
+heterogeneous sources. Overall, this package attempts to **facilitate**
+and **speed-up** the painfull and time-consuming **data import /
+download** process for some well-known and widely used environmental /
+climatic data (e.g. [MODIS](https://modis.gsfc.nasa.gov/),
 [GPM](https://www.nasa.gov/mission_pages/GPM/main/index.html), etc.) as
 well as other sources (e.g. [VIIRS
 DNB](https://ngdc.noaa.gov/eog/viirs/download_dnb_composites.html),
 etc.). You will take the best of `getRemoteData` if you work at **local
 to regional** spatial scales, i.e. typically from few decimals to a
 decade squared degrees. For larger areas, other packages might be more
-relevant (e.g. [`getSpatialData`](http://jxsw.de/getSpatialData/)).
+relevant (see section [Other relevant
+packages](#other-relevant-packages) ).
 
 **Why such a package ?**
 
@@ -35,20 +36,20 @@ in ecology. The data analysis workflow generally consists in :
 Data of interest for a specific study are usually heterogeneous (various
 sources, formats, etc.). Downloading long time series of several
 environmental data “manually” (e.g. through user-friendly web portals)
-is time consuming and is not reproducible. In addition, when downloaded
-manually, spatial datasets might cover quite large areas, or include
-many dimensions (e.g. the multiple bands for a MODIS product). If your
-aera of interest is smaller or if you do not need all the dimensions,
-why donwloading the whole dataset ? Whenever possible (i.e. made
-possible by the data provider - check section [Behind the scene… how it
-works](#%20Behind%20the%20scene...%20how%20it%20works)), `getRemoteData`
-enables to download the data strictly for your region and dimensions of
-interest.
+is time consuming, not reproducible and prone to errors. In addition,
+when downloaded manually, spatial datasets might cover quite large
+areas, or include many dimensions (e.g. the multiple bands for a MODIS
+product). If your aera of interest is smaller or if you do not need all
+the dimensions, why donwloading the whole dataset ? Whenever possible
+(i.e. made possible by the data provider - check section [Behind the
+scene… how it works](#behind-the-scene-...-how-it-works)),
+`getRemoteData` enables to download the data strictly for your region
+and dimensions of interest.
 
 **When should you use `getRemoteData` ?**
 
-You might have a deeper look at `getRemoteData` if you recognize
-yourself in one or more of the following points :
+`getRemoteData` can hopefully help if you recognize yourself in one or
+more of the following points :
 
   - work at a local to regional spatial scale ;
   - need to import data from various sources (e.g. MODIS, GPM, etc.) ;
@@ -62,12 +63,6 @@ sources of data implemented in the package are hence those that I use in
 my work. Sources of data are mostly environmental / climatic data, but
 not exclusively. Have a look at the function `getAvailableDataSources`
 to check which sources are already implemented \!
-
-Other relavant packages :
-
-  - [`getSpatialData`](http://jxsw.de/getSpatialData/)
-  - \[`MODIS`\] and \[`MODISTools`\] and \[`MODISTsp`\]
-  - GPM ?
 
 ## Installation
 
@@ -207,6 +202,12 @@ url\_manual\_access
 
 </th>
 
+<th style="text-align:left;">
+
+status
+
+</th>
+
 </tr>
 
 </thead>
@@ -318,6 +319,12 @@ Global
 
 </td>
 
+<td style="text-align:left;">
+
+Implemented
+
+</td>
+
 </tr>
 
 <tr>
@@ -422,6 +429,12 @@ Global
 <td style="text-align:left;">
 
 <https://search.earthdata.nasa.gov/search?q=MYD11A1&ok=MYD11A1>
+
+</td>
+
+<td style="text-align:left;">
+
+Implemented
 
 </td>
 
@@ -532,6 +545,12 @@ Global
 
 </td>
 
+<td style="text-align:left;">
+
+Implemented
+
+</td>
+
 </tr>
 
 <tr>
@@ -636,6 +655,12 @@ Global
 <td style="text-align:left;">
 
 <https://search.earthdata.nasa.gov/search?q=MYD11A2&ok=MYD11A2>
+
+</td>
+
+<td style="text-align:left;">
+
+Implemented
 
 </td>
 
@@ -745,6 +770,12 @@ Global
 
 </td>
 
+<td style="text-align:left;">
+
+Implemented
+
+</td>
+
 </tr>
 
 <tr>
@@ -848,6 +879,12 @@ Global
 <td style="text-align:left;">
 
 <https://search.earthdata.nasa.gov/search?q=MYD13Q1&ok=MYD13Q1>
+
+</td>
+
+<td style="text-align:left;">
+
+Implemented
 
 </td>
 
@@ -957,6 +994,12 @@ Global
 
 </td>
 
+<td style="text-align:left;">
+
+Implemented
+
+</td>
+
 </tr>
 
 <tr>
@@ -1060,6 +1103,12 @@ Global
 <td style="text-align:left;">
 
 <https://search.earthdata.nasa.gov/search?q=MYD16A2&ok=MYD16A2>
+
+</td>
+
+<td style="text-align:left;">
+
+Implemented
 
 </td>
 
@@ -1169,6 +1218,12 @@ Global
 
 </td>
 
+<td style="text-align:left;">
+
+Implemented
+
+</td>
+
 </tr>
 
 <tr>
@@ -1270,6 +1325,12 @@ Global
 </td>
 
 <td style="text-align:left;">
+
+</td>
+
+<td style="text-align:left;">
+
+Implemented
 
 </td>
 
@@ -1380,6 +1441,12 @@ Africa
 
 </td>
 
+<td style="text-align:left;">
+
+Implemented
+
+</td>
+
 </tr>
 
 <tr>
@@ -1485,6 +1552,12 @@ Global
 
 </td>
 
+<td style="text-align:left;">
+
+Implemented
+
+</td>
+
 </tr>
 
 <tr>
@@ -1584,6 +1657,12 @@ Global
 <td style="text-align:left;">
 
 <http://vo.imcce.fr/webservices/miriade/?forms>
+
+</td>
+
+<td style="text-align:left;">
+
+Implemented
 
 </td>
 
@@ -1687,6 +1766,12 @@ Global
 <td style="text-align:left;">
 
 <https://ngdc.noaa.gov/eog/viirs/download_dnb_composites.html>
+
+</td>
+
+<td style="text-align:left;">
+
+Implemented
 
 </td>
 
@@ -1795,6 +1880,12 @@ Global
 
 </td>
 
+<td style="text-align:left;">
+
+Implemented
+
+</td>
+
 </tr>
 
 <tr>
@@ -1894,6 +1985,118 @@ NA
 <td style="text-align:left;">
 
 <https://lcviewer.vito.be/download>
+
+</td>
+
+<td style="text-align:left;">
+
+Not implemented
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+CCI\_LC\_S2\_AFRICA
+
+</td>
+
+<td style="text-align:left;">
+
+Land cover
+
+</td>
+
+<td style="text-align:left;">
+
+CCI-LS
+
+</td>
+
+<td style="text-align:left;">
+
+</td>
+
+<td style="text-align:left;">
+
+</td>
+
+<td style="text-align:left;">
+
+<http://2016africalandcover20m.esrin.esa.int/>
+
+</td>
+
+<td style="text-align:left;">
+
+FALSE
+
+</td>
+
+<td style="text-align:left;">
+
+Climate Change Initiative Land Cover (ESA)
+
+</td>
+
+<td style="text-align:left;">
+
+S2 prototype Land Cover 20m map of Africa 2016
+
+</td>
+
+<td style="text-align:right;">
+
+NA
+
+</td>
+
+<td style="text-align:left;">
+
+</td>
+
+<td style="text-align:right;">
+
+20
+
+</td>
+
+<td style="text-align:right;">
+
+NA
+
+</td>
+
+<td style="text-align:left;">
+
+NA
+
+</td>
+
+<td style="text-align:left;">
+
+Africa
+
+</td>
+
+<td style="text-align:left;">
+
+NA
+
+</td>
+
+<td style="text-align:left;">
+
+<http://2016africalandcover20m.esrin.esa.int/download.php>
+
+</td>
+
+<td style="text-align:left;">
+
+Not implemented
 
 </td>
 
@@ -1998,6 +2201,13 @@ NA
 <td style="text-align:left;">
 
 <https://ciesin.columbia.edu/repository/hrsl/#data>
+
+</td>
+
+<td style="text-align:left;">
+
+Not
+implemented
 
 </td>
 
@@ -2106,6 +2316,12 @@ NA
 
 </td>
 
+<td style="text-align:left;">
+
+Not implemented
+
+</td>
+
 </tr>
 
 <tr>
@@ -2203,6 +2419,12 @@ Global
 <td style="text-align:left;">
 
 <https://www.openstreetmap.org/>
+
+</td>
+
+<td style="text-align:left;">
+
+Not implemented
 
 </td>
 
@@ -2308,6 +2530,12 @@ NA
 <td style="text-align:left;">
 
 <https://global-surface-water.appspot.com/download>
+
+</td>
+
+<td style="text-align:left;">
+
+Not implemented
 
 </td>
 
@@ -2421,3 +2649,9 @@ WFS](https://en.wikipedia.org/wiki/Web_Feature_Service) or
 [OPeNDAP](https://en.wikipedia.org/wiki/OPeNDAP). If long time series
 are queried, `getRemoteData` speeds-up the downloading time by
 parallelizing it.
+
+## Other relevant packages
+
+  - [`getSpatialData`](http://jxsw.de/getSpatialData/)
+  - \[`MODIS`\] and \[`MODISTools`\] and \[`MODISTsp`\]
+  - GPM ?
