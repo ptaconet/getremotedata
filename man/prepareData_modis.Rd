@@ -29,6 +29,7 @@ var_name="LST_Day_1km")
 \seealso{
 Other prepareData: \code{\link{prepareData_era5}},
   \code{\link{prepareData_gpm}},
+  \code{\link{prepareData_smap}},
   \code{\link{prepareData_tamsat}}
 }
 \author{

@@ -32,7 +32,8 @@ roi=roi)
 \seealso{
 Other prepareData: \code{\link{prepareData_era5}},
   \code{\link{prepareData_gpm}},
-  \code{\link{prepareData_modis}}
+  \code{\link{prepareData_modis}},
+  \code{\link{prepareData_smap}}
 }
 \author{
 Paul Taconet, IRD \email{paul.taconet@ird.fr}

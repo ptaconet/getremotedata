@@ -29,6 +29,7 @@ var_name="precipitationCal")
 \seealso{
 Other prepareData: \code{\link{prepareData_era5}},
   \code{\link{prepareData_modis}},
+  \code{\link{prepareData_smap}},
   \code{\link{prepareData_tamsat}}
 }
 \author{

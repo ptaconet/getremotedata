@@ -1340,6 +1340,118 @@ Implemented
 
 <td style="text-align:left;">
 
+SMAP
+
+</td>
+
+<td style="text-align:left;">
+
+Soil Moisture Active Passive
+
+</td>
+
+<td style="text-align:left;">
+
+SPL3SMP\_E
+
+</td>
+
+<td style="text-align:left;">
+
+getData\_smap()
+
+</td>
+
+<td style="text-align:left;">
+
+prepareData\_smap()
+
+</td>
+
+<td style="text-align:left;">
+
+<https://nsidc.org/data/spl3smp_e#sm>
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+<td style="text-align:left;">
+
+NASA
+
+</td>
+
+<td style="text-align:left;">
+
+SMAP Enhanced L3 Radiometer Global Daily 9 km EASE-Grid Soil Moisture,
+Version
+3
+
+</td>
+
+<td style="text-align:right;">
+
+3
+
+</td>
+
+<td style="text-align:left;">
+
+<https://doi.org/10.5067/T90W6VRLCBHI>
+
+</td>
+
+<td style="text-align:right;">
+
+9000
+
+</td>
+
+<td style="text-align:right;">
+
+1
+
+</td>
+
+<td style="text-align:left;">
+
+day
+
+</td>
+
+<td style="text-align:left;">
+
+Global
+
+</td>
+
+<td style="text-align:left;">
+
+<https://n5eil02u.ecs.nsidc.org/opendap/SMAP/SPL3SMP_E.002/contents.html>
+
+</td>
+
+<td style="text-align:left;">
+
+<https://nsidc.org/data/spl3smp_e?qt-data_set_tabs=1#qt-data_set_tabs>
+
+</td>
+
+<td style="text-align:left;">
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
 TAMSAT
 
 </td>
@@ -1700,7 +1812,7 @@ getData\_viirsdnb()
 
 <td style="text-align:left;">
 
-<https://ngdc.noaa.gov/eog/viirs/download_dnb_composites.html>
+<https://eogdata.mines.edu/download_dnb_composites.html>
 
 </td>
 
@@ -1827,7 +1939,8 @@ NASA
 
 <td style="text-align:left;">
 
-NASA Shuttle Radar Topography Mission Global 1 arc
+Digital Elevation Model from the NASA Shuttle Radar Topography Mission
+Global 1 arc
 second
 
 </td>
@@ -1938,7 +2051,7 @@ Copernicus Global Land Operations
 
 <td style="text-align:left;">
 
-Moderate dynamic land cover 100m
+Moderate dynamic land cover 100m 2015
 
 </td>
 
@@ -2640,7 +2753,7 @@ the current limitations and ideas of future developments :
 ## Behind the scene… how it works
 
 As much as possible, when implemented by the data providers,
-`getRemoteData` uses web services or APIsto download the data. Web
+`getRemoteData` uses web services or APIs to download the data. Web
 services are in few words standard web protocols that enable to filter
 the data directly at the downloading phase. Filters can be spatial,
 temporal, dimensional, etc. Example of widely-used web services / data

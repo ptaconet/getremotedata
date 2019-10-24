@@ -141,7 +141,7 @@ The package is at a very early stage of development. Here are some of the curren
 
 ## Behind the scene... how it works
 
-As much as possible, when implemented by the data providers, `getRemoteData` uses web services or APIsto download the data. Web services are in few words standard web protocols that enable to filter the data directly at the downloading phase. Filters can be spatial, temporal, dimensional, etc. Example of widely-used web services / data transfer protocols for geospatial timeseries are [OGC WFS](https://en.wikipedia.org/wiki/Web_Feature_Service) or [OPeNDAP](https://en.wikipedia.org/wiki/OPeNDAP). 
+As much as possible, when implemented by the data providers, `getRemoteData` uses web services or APIs to download the data. Web services are in few words standard web protocols that enable to filter the data directly at the downloading phase. Filters can be spatial, temporal, dimensional, etc. Example of widely-used web services / data transfer protocols for geospatial timeseries are [OGC WFS](https://en.wikipedia.org/wiki/Web_Feature_Service) or [OPeNDAP](https://en.wikipedia.org/wiki/OPeNDAP). 
 If long time series are queried, `getRemoteData` speeds-up the downloading time by parallelizing it.
 
 ## Other relevant packages
