@@ -90,6 +90,8 @@ getData_modis<-function(timeRange=as.Date(c("2010-01-01","2010-01-30")), # manda
     gridDimensionName<-"MODIS_Grid_16DAY_250m_500m_VI_eos_cf_projection"
   } else if (collection %in% c("MOD16A2.006","MYD16A2.006")){
     gridDimensionName<-"MOD_Grid_MOD16A2_eos_cf_projection"
+  } else {
+    gridDimensionName<-"eos_cf_projection"
   }
 
   # Calculate modisTile if not provided
