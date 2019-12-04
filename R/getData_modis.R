@@ -1,12 +1,12 @@
 #' @name getData_modis
 #' @aliases getData_modis
-#' @title Download MODIS time series data
+#' @title Download MODIS or VNP collections time series data
 #' @description This function enables to retrieve URLs of MODIS datasets for a given ROI and time frame, and eventually download the data
 #' @export
 #'
 #' @param timeRange Date(s) of interest. Mandatory. Either a single date (e.g. \code{as.Date("2017-01-01"))} or time frame provided with two bounding dates ( e.g. \code{as.Date(c("2010-01-01","2010-01-30"))})
 #' @param roi sf POINT or POLYGON. The region of interest in EPSG 4326
-#' @param collection string. The MODIS collection of interest
+#' @param collection string. The MODIS collection of interest.
 #' @param dimensions string vector. Names of the dimensions to retrieve for the MODIS collection of interest.
 #' @param modisTile string. Optional. The MODIS tile name.
 #' @param OpenDAPtimeVector numeric vector. Optional. The OpenDAP time dimension vector.

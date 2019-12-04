@@ -110,6 +110,22 @@ getData_gpm<-function(timeRange=as.Date(c("2017-01-01","2017-01-30")), # mandato
       mutate(product_name=paste0("3B-DAY.MS.MRG.3IMERG.",gsub("-","",date_character),"-S000000-E235959.V06.nc4")) %>%
       mutate(url_product=paste(OpenDAPServerUrl,collection,year,month,product_name,sep="/"))
 
+  } else if(collection=="GPM_3IMERGM.06"){
+
+    timeRange=as.Date(timeRange,origin="1970-01-01")
+
+    datesToRetrieve<-seq(timeRange[2],timeRange[1],-1) %>%
+      lubridate::floor_date(x, unit = "month") %>%
+      unique() %>%
+      data.frame(stringsAsFactors = F) %>%
+      set_names("date") %>%
+      mutate(date_character=substr(date,1,10)) %>%
+      mutate(year=format(date,'%Y')) %>%
+      mutate(month=format(date,'%m'))
+
+    urls<-datesToRetrieve %>%
+      mutate(product_name=paste0("3B-MO.MS.MRG.3IMERG.",year,month,"01-S000000-E235959.",month,".V06B.HDF5")) %>%
+      mutate(url_product=paste(OpenDAPServerUrl,collection,year,product_name,sep="/"))
   }
 
   # To retrieve spatial indices
