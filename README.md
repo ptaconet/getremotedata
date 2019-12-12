@@ -7,12 +7,13 @@
 
 <!-- badges: end -->
 
-`getRemoteData` is an R package that offers a common grammar to query
+`getRemoteData` is an R package that offers a common framework to query
 and import remote data (i.e. data stored on the cloud) from
 heterogeneous sources. Overall, this package attempts to **facilitate**
 and **speed-up** the painfull and time-consuming **data import /
 download** process for some well-known and widely used environmental /
 climatic data (e.g. [MODIS](https://modis.gsfc.nasa.gov/),
+[VNP](https://lpdaac.usgs.gov/search/?query=VNP&page=2),
 [GPM](https://www.nasa.gov/mission_pages/GPM/main/index.html), etc.) as
 well as other sources (e.g. [VIIRS
 DNB](https://ngdc.noaa.gov/eog/viirs/download_dnb_composites.html),
@@ -40,11 +41,16 @@ is time consuming, not reproducible and prone to errors. In addition,
 when downloaded manually, spatial datasets might cover quite large
 areas, or include many dimensions (e.g. the multiple bands for a MODIS
 product). If your aera of interest is smaller or if you do not need all
-the dimensions, why donwloading the whole dataset ? Whenever possible
+the dimensions, why downloading the whole dataset ? Whenever possible
 (i.e. made possible by the data provider - check section [Behind the
 scene… how it works](#behind-the-scene-...-how-it-works)),
 `getRemoteData` enables to download the data strictly for your region
 and dimensions of interest.
+
+Finally, getRemoteData relies as much as possible on open and standard
+data access protocols (eg. OPeNDAP), which makes it (and by extension,
+your script) less vulnerable to external changes than packages or
+applications relying on APIs.
 
 **When should you use `getRemoteData` ?**
 
@@ -1103,6 +1109,345 @@ Global
 <td style="text-align:left;">
 
 <https://search.earthdata.nasa.gov/search?q=MYD16A2&ok=MYD16A2>
+
+</td>
+
+<td style="text-align:left;">
+
+Implemented
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+VNP
+
+</td>
+
+<td style="text-align:left;">
+
+Temperature
+
+</td>
+
+<td style="text-align:left;">
+
+VNP21A1D.v001
+
+</td>
+
+<td style="text-align:left;">
+
+getData\_modis()
+
+</td>
+
+<td style="text-align:left;">
+
+prepareData\_modis()
+
+</td>
+
+<td style="text-align:left;">
+
+<https://lpdaac.usgs.gov/products/vnp21a1dv001/>
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+<td style="text-align:left;">
+
+NASA
+
+</td>
+
+<td style="text-align:left;">
+
+VIIRS/NPP Land Surface Temperature and Emissivity Daily L3 Global 1 km
+SIN Grid Day
+
+</td>
+
+<td style="text-align:right;">
+
+1
+
+</td>
+
+<td style="text-align:left;">
+
+<https://dx.doi.org/10.5067/MODIS/VNP21A1D.001>
+
+</td>
+
+<td style="text-align:right;">
+
+1000
+
+</td>
+
+<td style="text-align:right;">
+
+1
+
+</td>
+
+<td style="text-align:left;">
+
+day
+
+</td>
+
+<td style="text-align:left;">
+
+Global
+
+</td>
+
+<td style="text-align:left;">
+
+<https://opendap.cr.usgs.gov/opendap/hyrax/VNP21A1D.001/contents.html>
+
+</td>
+
+<td style="text-align:left;">
+
+<https://search.earthdata.nasa.gov/search?q=VNP21A1D&ok=VNP21A1D>
+
+</td>
+
+<td style="text-align:left;">
+
+Implemented
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+VNP
+
+</td>
+
+<td style="text-align:left;">
+
+Temperature
+
+</td>
+
+<td style="text-align:left;">
+
+VNP21A1N.v001
+
+</td>
+
+<td style="text-align:left;">
+
+getData\_modis()
+
+</td>
+
+<td style="text-align:left;">
+
+prepareData\_modis()
+
+</td>
+
+<td style="text-align:left;">
+
+<https://lpdaac.usgs.gov/products/vnp21a1nv001/>
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+<td style="text-align:left;">
+
+NASA
+
+</td>
+
+<td style="text-align:left;">
+
+VIIRS/NPP Land Surface Temperature and Emissivity Daily L3 Global 1 km
+SIN Grid Night
+
+</td>
+
+<td style="text-align:right;">
+
+1
+
+</td>
+
+<td style="text-align:left;">
+
+<https://dx.doi.org/10.5067/MODIS/VNP21A1N.001>
+
+</td>
+
+<td style="text-align:right;">
+
+1000
+
+</td>
+
+<td style="text-align:right;">
+
+1
+
+</td>
+
+<td style="text-align:left;">
+
+day
+
+</td>
+
+<td style="text-align:left;">
+
+Global
+
+</td>
+
+<td style="text-align:left;">
+
+<https://opendap.cr.usgs.gov/opendap/hyrax/VNP21A1N.001/contents.html>
+
+</td>
+
+<td style="text-align:left;">
+
+<https://search.earthdata.nasa.gov/search?q=VNP21A1N&ok=VNP21A1N>
+
+</td>
+
+<td style="text-align:left;">
+
+Implemented
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+VNP
+
+</td>
+
+<td style="text-align:left;">
+
+Temperature
+
+</td>
+
+<td style="text-align:left;">
+
+VNP21A2.v001
+
+</td>
+
+<td style="text-align:left;">
+
+getData\_modis()
+
+</td>
+
+<td style="text-align:left;">
+
+prepareData\_modis()
+
+</td>
+
+<td style="text-align:left;">
+
+<https://lpdaac.usgs.gov/products/vnp21a2v001/>
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+<td style="text-align:left;">
+
+NASA
+
+</td>
+
+<td style="text-align:left;">
+
+VIIRS/NPP Land Surface Temperature and Emissivity 8-Day L3 Global 1 km
+SIN Grid
+
+</td>
+
+<td style="text-align:right;">
+
+1
+
+</td>
+
+<td style="text-align:left;">
+
+<https://dx.doi.org/10.5067/MODIS/VNP21A2.001>
+
+</td>
+
+<td style="text-align:right;">
+
+1000
+
+</td>
+
+<td style="text-align:right;">
+
+8
+
+</td>
+
+<td style="text-align:left;">
+
+day
+
+</td>
+
+<td style="text-align:left;">
+
+Global
+
+</td>
+
+<td style="text-align:left;">
+
+<https://opendap.cr.usgs.gov/opendap/hyrax/VNP21A2.001/contents.html>
+
+</td>
+
+<td style="text-align:left;">
+
+<https://search.earthdata.nasa.gov/search?q=VNP21A2&ok=VNP21A2>
 
 </td>
 

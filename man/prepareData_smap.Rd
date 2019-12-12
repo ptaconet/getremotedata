@@ -4,7 +4,8 @@
 \alias{prepareData_smap}
 \title{Open a SMAP product as a \code{raster} object}
 \usage{
-prepareData_smap(path_to_raw_smap, var_name)
+prepareData_smap(path_to_raw_smap, var_name, minLon, minLat, maxLon,
+  maxLat)
 }
 \arguments{
 \item{var_name}{string. Dimension name (e.g. "Soil_Moisture_Retrieval_Data_AM_soil_moisture")}
