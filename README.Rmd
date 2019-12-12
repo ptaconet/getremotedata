@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-`getRemoteData` is an R package that offers a common framework to query and import remote data (i.e. data stored on the cloud) from heterogeneous sources. Overall, this package attempts to **facilitate** and **speed-up** the painfull and time-consuming **data import / download** process for some well-known and widely used environmental / climatic data (e.g. [MODIS](https://modis.gsfc.nasa.gov/), [VNP](https://lpdaac.usgs.gov/search/?query=VNP&page=2), [GPM](https://www.nasa.gov/mission_pages/GPM/main/index.html), etc.) as well as other sources (e.g. [VIIRS DNB](https://ngdc.noaa.gov/eog/viirs/download_dnb_composites.html), etc.). You will take the best of `getRemoteData` if you work at **local to regional** spatial scales, i.e. typically from few decimals to a decade squared degrees. For larger areas, other packages might be more relevant (see section [Other relevant packages](#other-relevant-packages) ).
+`getRemoteData` is an R package that offers a common framework to download and import remote data (i.e. data stored on the cloud) from heterogeneous sources. Overall, this package attempts to **facilitate** and **speed-up** the painfull and time-consuming **data import / download** process for some well-known and widely used environmental / climatic data (e.g. [MODIS](https://modis.gsfc.nasa.gov/), [VNP](https://lpdaac.usgs.gov/search/?query=VNP&page=2), [GPM](https://www.nasa.gov/mission_pages/GPM/main/index.html), etc.) as well as other sources (e.g. [VIIRS DNB](https://ngdc.noaa.gov/eog/viirs/download_dnb_composites.html), etc.). You will take the best of `getRemoteData` if you work at **local to regional** spatial scales, i.e. typically from few decimals to a decade squared degrees. For larger areas, other packages might be more relevant (see section [Other relevant packages](#other-relevant-packages) ).
 
 **Why such a package ?**  
 
@@ -28,21 +28,15 @@ Modeling an ecological phenomenon (e.g. species distribution) using environmenta
 - importing, tidying and summarizing various environmental data at geographical locations and dates of interest ;
 - creating explicative / predictive models of the phenomenon using the environmental data.
 
-Data of interest for a specific study are usually heterogeneous (various sources, formats, etc.). Downloading long time series of several environmental data "manually" (e.g. through user-friendly web portals) is time consuming, not reproducible and prone to errors. In addition, when downloaded manually, spatial datasets might cover quite large areas, or include many dimensions (e.g. the multiple bands for a MODIS product). If your aera of interest is smaller or if you do not need all the dimensions, why downloading the whole dataset ? Whenever possible (i.e. made possible by the data provider - check section [Behind the scene... how it  works](#behind-the-scene-...-how-it-works)), `getRemoteData` enables to download the data strictly for your region and dimensions of interest.
+Data of interest for a specific study are usually heterogeneous (various providers and formats). Downloading long time series of several environmental data "manually" (e.g. through user-friendly web portals) is time consuming, not reproducible and prone to errors. In addition, when downloaded manually, spatial datasets might cover quite large areas, or include many dimensions (e.g. the multiple bands for a MODIS product). If your aera of interest is smaller or if you do not need all the dimensions, why downloading the whole dataset ? Whenever possible (i.e. made possible by the data provider - check section [Behind the scene... how it  works](#behind-the-scene-...-how-it-works)), `getRemoteData` enables to download the data strictly for your region and dimensions of interest.
 
 Finally, getRemoteData relies as much as possible on open and standard data access protocols (eg. [OPeNDAP](https://en.wikipedia.org/wiki/OPeNDAP)), which makes the package (and by extension, your script) less vulnerable to external changes than packages or applications relying on APIs.
 
 **When should you use `getRemoteData` ?**
 
-`getRemoteData` can hopefully help if you recognize yourself in one or more of the following points :
+`getRemoteData` can hopefully help if you work at a local to regional spatial scale and need to download long time-series of various climatic / environmental spatialized products. By filtering the data directly at the downloading phase, `getRemoteData` enables to import strictly the data that is needed, resulting in a reduction of i) the physical size of the data that is retrieved and ii) the overall downloading time. 
 
-- work at a local to regional spatial scale ; 
-- need to import data from various sources (e.g. MODIS, GPM, etc.) ;
-- are interested in importing long climatic / environmental time-series ; 
-- have a slow internet connection ; 
-- care about the environmental impact of your digital work.
-
-`getRemoteData` is developed in the frame of PhD project, and the sources of data implemented in the package are hence those that I use in my work. Sources of data are mostly environmental / climatic data, but not exclusively. Have a look at the function `getAvailableDataSources` to check which sources are already implemented ! 
+Apart from these performance considerations, ethical considerations have drived to the development of this package : i) reduction of the environmental impact of our digital work and ii) promotion of open protocols and standards for data access. 
 
 ## Installation
 
@@ -55,11 +49,13 @@ devtools::install_github("ptaconet/getRemoteData")
 
 ## Get the data sources implemented in `getRemoteData`
 
-The `getAvailableDataSources` function provides information on the data sources/collections implemented in `getRemoteData`
+The `getAvailableDataSources()` function provides information on the products downloadable with `getRemoteData` :
 
 ```{r getAvailableDataSources_call, eval = FALSE, echo=T, warning=F, message=F}
 getRemoteData::getAvailableDataSources(detailed=FALSE)
+# Turn the argument `detailed` to `TRUE` (default) to get a more detailed table (details for each collection).
 ```
+
 ```{r, eval = TRUE, echo=F}
 library(kableExtra)
 getRemoteData::getAvailableDataSources(detailed=FALSE) %>%
@@ -67,37 +63,46 @@ getRemoteData::getAvailableDataSources(detailed=FALSE) %>%
   kable_styling()
 ```
 
-Turn the argument `detailed` to `TRUE` to get more detailed information on each data collection tested and validated.
+Note that the *Collections* column provides only the product's collections for which data download and import via `getRemoteData` have been tested and validated : the source products might contain more collections.
 
-## Syntax
+## Functions and syntax
 
-The functions of `getRemoteData` all have the following arguments : 
+The functions of `getRemoteData` can be split into two families : 
 
-- `timeRange` : date / time frame of interest (eventually including hours for the data with less that daily resolution) ;
+- **The *`getData`* family** : functions to retrieve the URLs of products to download given a set of arguments of interest (time range, region of interest, collection, etc. - see below), and eventually download them. There is one *`getData`* function for each product (e.g. `getData_modis_vnp()`, `getData_gpm()`, etc.)
+- **The *`prepareData`* family** : functions to import a dataset retrieved through a `getData` function (usually as an object of class `raster`). Similarly, there is one *`prepareData`* function for each product (e.g. `prepareData_modis_vnp()`, `prepareData_gpm()`, etc.)
+
+The function `downloadData()` takes as input the output of a *`getData`* function and downloads the products.
+
+The *`getData`* functions have the following mutual arguments : 
+
+- `timeRange` : date / time frame of interest (eventually including hours for sub-daily resolution data) ;
 - `roi` : area of interest (either point or polygon) ;
-- `collection` : {for multi-collection data only} : collections of interest (eg. MOD11A1.v006)
-- `dimensions` : {for multi-dimension data only} : dimensions to download (eg. c("LST_Day_1km","LST_Night_1km") )
-- `username` and `password` : {for data that require to log-in only} : credentials 
-- `destfolder` : data destination folder ;
+- `collection` {for multi-collection products only} : collection of interest (eg. `"MOD11A1.v006"`)
+- `dimensions` {for multi-dimension products only} : dimensions to download (eg. `c("LST_Day_1km","LST_Night_1km")`)
+- `username` and `password` {for products that require to log-in only} : login credentials
+- `destfolder` : data destination folder
+- `download` : wether to download the datasets or not
 
-By default, the function does not download the dataset. It returns a data.frame with the URL(s) to download the dataset(s) of interest given the input arguments. To download the data, set the *download* argument to TRUE ;
+Other optional arguments might be provided (see documentation of the functions). Absence of the `timeRange` (resp. `roi`) argument in a function means that the product of interest does not have any temporal (resp. spatial) dimension. The function returns a data.frame with the URL(s) to download the dataset(s) of interest and their destination file.
 
-Other optional arguments might be provided (see documentation). Absence of the `timeRange` (resp. `roi`) arguments in a function means that the data of interest do not have any temporal (resp. spatial) dimension.
+Data downloaded through the *`getData`* functions are usually in NetCDF format. The *`prepareData`* functions enable to import these data as ready-to-use `raster` objects, eventually pre-processing them if relevant (e.g. projection, flipping).
 
 ## Example
 
-Say you want to download  over a 3500km^2^ region of interest:
+We want to download over 3500 km^2^ wide given region of interest :
 
-- a 40 days time series of [MODIS Terrra Land Surface Temperature (LST)](https://dx.doi.org/10.5067/MODIS/MOD11A1.006) (daily time resolution);
-- the same 40 days times series of [Global Precipitation Measurement (GPM)](https://doi.org/10.5067/GPM/IMERGDF/DAY/06) (daily time resolution) :
+- a 40 days time series of [MODIS Terrra Land Surface Temperature (LST)](https://dx.doi.org/10.5067/MODIS/MOD11A1.006) (daily temporal resolution);
+- the same 40 days times series of [Global Precipitation Measurement (GPM)](https://doi.org/10.5067/GPM/IMERGDF/DAY/06) (daily temporal resolution) :
 
 ```{r example, eval = FALSE}
 library(getRemoteData)
 library(sf)
 library(purrr)
-# Read the region of interest as a sf object. Here : the Korhogo area in Côte D'Ivoire
-roi<-sf::st_read(system.file("extdata/ROI_example.kml", package = "getData"),quiet=T)
-# Set-up your time frame of interest. 
+# Import the region of interest as an sf object. Here : Côte D'Ivoire, Korhogo area
+roi_path<-system.file("extdata/ROI_example.kml", package = "getData")
+roi<-sf::st_read(roi_path,quiet=T)
+# Set-up your time frame of interest (first date, last date)
 time_frame<-c("2017-05-01","2017-06-10")
 # Set-up your credentials to EarthData
 username_EarthData<-"my.earthdata.username"
@@ -108,10 +113,10 @@ dl_modis<-getRemoteData::getData_modis(timeRange = time_frame,
                                      roi = roi,
                                      collection="MOD11A1.006",
                                      dimensions=c("LST_Day_1km","LST_Night_1km"),
-                                     download = T,
                                      destFolder=getwd(),
                                      username=username_EarthData,
                                      password=password_EarthData,
+                                     download = T,
                                      parallelDL=T #setting to F will download the data linearly
                                      )
 head(dl_modis)
@@ -120,10 +125,10 @@ dl_gpm<-getRemoteData::getData_gpm(timeRange = time_frame,
                                      roi = roi,
                                      collection="GPM_3IMERGDF.06",
                                      dimensions=c("precipitationCal"),
-                                     download = T,
                                      destFolder=getwd(),
                                      username=username_EarthData,
                                      password=password_EarthData,
+                                     download = T,
                                      parallelDL=T
                                      )
 head(dl_gpm)
@@ -138,11 +143,11 @@ rasts_gpm<-dl_gpm$destfile %>%
   set_names(dl_gpm$name)
 ```
 
-Have a look at the vignette [Automatic extraction of spatial-temporal environmental data within buffers around sampling points](https://ptaconet.github.io/malamodpkg/articles/import_tidy_transform_envdata.html) to get an example of what you can do with `getRemoteData` !
+Have a look at the vignette [Automatic extraction of spatial-temporal environmental data within buffers around sampling points](https://ptaconet.github.io/malamodpkg/articles/import_tidy_transform_envdata.html) to get a more developed example of what you can do with `getRemoteData` !
 
 ## Current limitations
 
-The package is at a very early stage of development. Here are some of the current limitations and ideas of future developments : 
+The package is at a an early stage of development. Here are some of the current limitations, and ideas for future developments : 
 
 - MODIS data cannot be downloaded if your area of interest covers multiple MODIS tiles (for an overview of MODIS tiles go [here](https://modis.ornl.gov/files/modis_sin.kmz));
 
@@ -156,4 +161,5 @@ If long time series are queried, `getRemoteData` enables to speed-up the downloa
 - [`getSpatialData`](http://jxsw.de/getSpatialData/)
 - [`MODIS`] and [`MODISTools`] and [`MODISTsp`]
 - GPM ?
+- SMAP ?
 
