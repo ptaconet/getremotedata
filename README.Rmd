@@ -30,7 +30,7 @@ Modeling an ecological phenomenon (e.g. species distribution) using environmenta
 
 Data of interest for a specific study are usually heterogeneous (various providers and formats). Downloading long time series of several environmental data "manually" (e.g. through user-friendly web portals) is time consuming, not reproducible and prone to errors. In addition, when downloaded manually, spatial datasets might cover quite large areas, or include many dimensions (e.g. the multiple bands for a MODIS product). If your aera of interest is smaller or if you do not need all the dimensions, why downloading the whole dataset ? Whenever possible (i.e. made possible by the data provider - check section [Behind the scene... how it  works](#behind-the-scene-...-how-it-works)), `getRemoteData` enables to download the data strictly for your region and dimensions of interest.
 
-Finally, `getRemoteData` relies as much as possible on open and standard data access protocols (eg. [OPeNDAP](https://en.wikipedia.org/wiki/OPeNDAP)), which makes the package (and by extension, your script) less vulnerable to external changes than packages or applications relying on APIs.
+Finally, `getRemoteData` relies as much as possible on open and standard data access protocols (eg. [OPeNDAP](https://en.wikipedia.org/wiki/OPeNDAP)), which makes the package (and by extension, the scripts that use it) less vulnerable to external changes than packages or applications relying on APIs.
 
 **When should you use `getRemoteData` ?**
 

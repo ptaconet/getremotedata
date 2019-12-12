@@ -50,8 +50,8 @@ and dimensions of interest.
 Finally, `getRemoteData` relies as much as possible on open and standard
 data access protocols (eg.
 [OPeNDAP](https://en.wikipedia.org/wiki/OPeNDAP)), which makes the
-package (and by extension, your script) less vulnerable to external
-changes than packages or applications relying on APIs.
+package (and by extension, the scripts that use it) less vulnerable to
+external changes than packages or applications relying on APIs.
 
 **When should you use `getRemoteData` ?**
 
