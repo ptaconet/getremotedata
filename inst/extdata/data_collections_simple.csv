@@ -1,8 +1,7 @@
 Product,Type,Provider,Collections,Function download,Function import,Additional information
-MODIS,"Surface temperature, evoptranspiration, vegetation indices, etc.",NASA/USGS,"MOD11A1.v006, MYD11A1.v006, MOD11A2.v006, MYD11A2.v006, MOD13Q1.v006, MYD13Q1.v006, MOD16A2.v006, MYD16A2.v006
-",getData_modis_vnp(),importData_modis_vnp(),https://modis.gsfc.nasa.gov/
-VNP,"Surface temperature, vegetation indices, etc.",NASA/NOAA,"VNP21A1D.v001, VNP21A1N.v001, VNP21A2.v001
-",getData_modis_vnp(),importData_modis_vnp(),https://lpdaac.usgs.gov/search/?query=VNP
+MODIS & VNP,"Surface temperature, evoptranspiration, vegetation indices, etc.",NASA/USGS/NOAA,"MOD11A1.v006, MYD11A1.v006, MOD11A2.v006, MYD11A2.v006, MOD13Q1.v006, MYD13Q1.v006, MOD16A2.v006, MYD16A2.v006,VNP21A1D.v001, VNP21A1N.v001, VNP21A2.v001
+
+",getData_modis_vnp(),importData_modis_vnp(),"https://modis.gsfc.nasa.gov/, https://lpdaac.usgs.gov/search/?query=VNP"
 GPM,Precipitation,NASA/JAXA,"GPM_3IMERGDF, GPM_3IMERGHH
 ",getData_gpm(),importData_gpm(),https://pmm.nasa.gov/GPM
 SMAP,Soil moisture,NASA,SPL3SMP_E,getData_smap(),importData_smap(),https://smap.jpl.nasa.gov/
