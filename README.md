@@ -23,7 +23,16 @@ decade squared degrees. For larger areas, other packages might be more
 relevant (see section [Other relevant
 packages](#other-relevant-packages) ).
 
-**Why such a package ?**
+`getRemoteData` is :
+
+  - **efficient** because it enables to subset the data to download
+    (spatially/temporally/dimensionnally) at the downloading phase
+  - **sustainable** because it uses open and standard data access
+    protocols to download the data
+
+Keep on reading to get more information \!
+
+## Why such a package ? (à réécrire)
 
 Modeling an ecological phenomenon (e.g. species distribution) using
 environmental data (e.g. temperature, rainfall) is quite a common task
@@ -53,7 +62,7 @@ data access protocols (eg.
 package (and by extension the scripts that use it) less vulnerable to
 external changes than packages or applications relying on APIs.
 
-**When should you use `getRemoteData` ?**
+## When should you use `getRemoteData` ?
 
 `getRemoteData` can hopefully help if you work at a local to regional
 spatial scale and need to download long time-series of various climatic
@@ -63,7 +72,7 @@ data that is needed, resulting in a reduction of i) the physical size of
 the data that is retrieved and ii) the overall downloading time.
 
 Apart from these performance considerations, ethical considerations have
-drived to the development of this package : i) reduction of the
+driven the development of this package : i) reduction of the
 environmental impact of our digital work and ii) promotion of open
 protocols and standards for data access.
 

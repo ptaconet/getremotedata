@@ -21,7 +21,14 @@ knitr::opts_chunk$set(
 
 `getRemoteData` is an R package that offers a common framework to download and import remote data (i.e. data stored on the cloud) from heterogeneous sources. Overall, this package attempts to **facilitate** and **speed-up** the painfull and time-consuming **data import / download** process for some well-known and widely used environmental / climatic data (e.g. [MODIS](https://modis.gsfc.nasa.gov/), [VNP](https://lpdaac.usgs.gov/search/?query=VNP&page=2), [GPM](https://www.nasa.gov/mission_pages/GPM/main/index.html), etc.) as well as other sources (e.g. [VIIRS DNB](https://ngdc.noaa.gov/eog/viirs/download_dnb_composites.html), etc.). You will take the best of `getRemoteData` if you work at **local to regional** spatial scales, i.e. typically from few decimals to a decade squared degrees. For larger areas, other packages might be more relevant (see section [Other relevant packages](#other-relevant-packages) ).
 
-**Why such a package ?**  
+`getRemoteData` is : 
+
+- **efficient** because it enables to subset the data to download (spatially/temporally/dimensionnally) at the downloading phase 
+- **sustainable** because it uses open and standard data access protocols to download the data
+
+Keep on reading to get more information ! 
+
+## Why such a package ?  (à réécrire)
 
 Modeling an ecological phenomenon (e.g. species distribution) using environmental data (e.g. temperature, rainfall) is quite a common task in ecology. The data analysis workflow generally consists in : 
 
@@ -32,11 +39,11 @@ Data of interest for a specific study are usually heterogeneous (various provide
 
 Finally, `getRemoteData` relies as much as possible on open and standard data access protocols (eg. [OPeNDAP](https://en.wikipedia.org/wiki/OPeNDAP)), which makes the package (and by extension the scripts that use it) less vulnerable to external changes than packages or applications relying on APIs.
 
-**When should you use `getRemoteData` ?**
+## When should you use `getRemoteData` ?
 
 `getRemoteData` can hopefully help if you work at a local to regional spatial scale and need to download long time-series of various climatic / environmental spatialized products. By filtering the data directly at the downloading phase, `getRemoteData` enables to import strictly the data that is needed, resulting in a reduction of i) the physical size of the data that is retrieved and ii) the overall downloading time. 
 
-Apart from these performance considerations, ethical considerations have drived to the development of this package : i) reduction of the environmental impact of our digital work and ii) promotion of open protocols and standards for data access. 
+Apart from these performance considerations, ethical considerations have driven the development of this package : i) reduction of the environmental impact of our digital work and ii) promotion of open protocols and standards for data access. 
 
 ## Installation
 
