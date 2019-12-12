@@ -48,9 +48,10 @@ scene… how it works](#behind-the-scene-...-how-it-works)),
 and dimensions of interest.
 
 Finally, getRemoteData relies as much as possible on open and standard
-data access protocols (eg. OPeNDAP), which makes it (and by extension,
-your script) less vulnerable to external changes than packages or
-applications relying on APIs.
+data access protocols (eg.
+[OPeNDAP](https://en.wikipedia.org/wiki/OPeNDAP)), which makes it (and
+by extension, your script) less vulnerable to external changes than
+packages or applications relying on APIs.
 
 **When should you use `getRemoteData` ?**
 
@@ -3078,7 +3079,7 @@ The functions of `getRemoteData` all work the same way :
     `collection`, `dimensions`,`username`,`password`)
 
 Absence of the `timeRange` (resp. `roi`) arguments in a function means
-that the data of interest do not have any time (resp. spatial)
+that the data of interest do not have any temporal (resp. spatial)
 dimension.
 
 Have a look at the vignette [Automatic extraction of spatial-temporal
@@ -3098,14 +3099,14 @@ the current limitations and ideas of future developments :
 ## Behind the scene… how it works
 
 As much as possible, when implemented by the data providers,
-`getRemoteData` uses web services or APIs to download the data. Web
-services are in few words standard web protocols that enable to filter
-the data directly at the downloading phase. Filters can be spatial,
-temporal, dimensional, etc. Example of widely-used web services / data
-transfer protocols for geospatial timeseries are [OGC
+`getRemoteData` uses open and standard data access protocols to download
+the data. These standard protocols enable to filter the data directly at
+the downloading phase. Filters can be spatial, temporal or dimensional.
+Example of widely-used standard data access protocols for geospatial
+timeseries are [OGC
 WFS](https://en.wikipedia.org/wiki/Web_Feature_Service) or
 [OPeNDAP](https://en.wikipedia.org/wiki/OPeNDAP). If long time series
-are queried, `getRemoteData` speeds-up the downloading time by
+are queried, `getRemoteData` enables to speed-up the downloading time by
 parallelizing it.
 
 ## Other relevant packages
