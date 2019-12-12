@@ -1,0 +1,12 @@
+Product,Type,Provider,Collections,Function download,Function import,Additional information
+MODIS,"Surface temperature, evoptranspiration, vegetation indices, etc.",NASA/USGS,"MOD11A1.v006, MYD11A1.v006, MOD11A2.v006, MYD11A2.v006, MOD13Q1.v006, MYD13Q1.v006, MOD16A2.v006, MYD16A2.v006
+",getData_modis_vnp(),importData_modis_vnp(),https://modis.gsfc.nasa.gov/
+VNP,"Surface temperature, vegetation indices, etc.",NASA/NOAA,"VNP21A1D.v001, VNP21A1N.v001, VNP21A2.v001
+",getData_modis_vnp(),importData_modis_vnp(),https://lpdaac.usgs.gov/search/?query=VNP
+GPM,Precipitation,NASA/JAXA,"GPM_3IMERGDF, GPM_3IMERGHH
+",getData_gpm(),importData_gpm(),https://pmm.nasa.gov/GPM
+SMAP,Soil moisture,NASA,SPL3SMP_E,getData_smap(),importData_smap(),https://smap.jpl.nasa.gov/
+VIIRS/NPP,Nigth lights,NASA/NOAA,VIIRS DNB,getData_viirsDnb(),importData_viirsDnb(),https://ncc.nesdis.noaa.gov/VIIRS/
+TAMSAT,Precipitation,University of Reading,"daily individual rainfall estimate, yearly individual rainfall estimate, monthly individual rainfall estimate, monthly individual rainfall estimate, monthly individual anomaly",getData_tamsat(),importData_tamsat(),https://www.tamsat.org.uk/about
+ERA5,"Wind, etc.",Copernicus,"10m_u_component_of_wind,10m_v_component_of_wind",getData_era5(),importData_era5(),https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels?tab=overview
+SRTM,Elevation,NASA/NGA,SRTMGL1_v003,getData_srtm(),importData_srtm(),https://lpdaac.usgs.gov/products/srtmgl1v003/

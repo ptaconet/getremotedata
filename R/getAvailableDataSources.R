@@ -6,6 +6,7 @@
 #'
 #' @usage getAvailableDataSources()
 #'
+#' @param detailed Boolean. Return detailed information on each available data collection available ? TRUE by default. FALSE returns a summarized version of the available sources of data.
 #' @return a data.frame with the data sources / collections dealt by getData, along with details on each data collection
 #'
 #' @details The output data.frame columns are:
@@ -25,7 +26,11 @@
 #'
 
 
-getAvailableDataSources<-function(){
+getAvailableDataSources<-function(detailed=TRUE){
+  if (detailed==TRUE){
   df_AvailableDataSources<-utils::read.csv(system.file("extdata/data_collections.csv", package = "getRemoteData"),stringsAsFactors=F)
+  } else {
+  df_AvailableDataSources<-utils::read.csv(system.file("extdata/data_collections_simple.csv", package = "getRemoteData"),stringsAsFactors=F)
+  }
   return(df_AvailableDataSources)
 }

@@ -40,7 +40,7 @@ Finally, getRemoteData relies as much as possible on open and standard data acce
 - need to import data from various sources (e.g. MODIS, GPM, etc.) ;
 - are interested in importing long climatic / environmental time-series ; 
 - have a slow internet connection ; 
-- care about the digital environmental impact of your work.
+- care about the environmental impact of your digital work.
 
 `getRemoteData` is developed in the frame of PhD project, and the sources of data implemented in the package are hence those that I use in my work. Sources of data are mostly environmental / climatic data, but not exclusively. Have a look at the function `getAvailableDataSources` to check which sources are already implemented ! 
 
@@ -55,18 +55,19 @@ devtools::install_github("ptaconet/getRemoteData")
 
 ## Get the data sources implemented in `getRemoteData`
 
-You can get the data sources/collections downloadable with `getRemoteData` and details about each of them with : 
+The `getAvailableDataSources` function provides information on the data sources/collections implemented in `getRemoteData`
 
 ```{r getAvailableDataSources_call, eval = FALSE, echo=T, warning=F, message=F}
-getRemoteData::getAvailableDataSources()
+getRemoteData::getAvailableDataSources(detailed=FALSE)
 ```
 ```{r, eval = TRUE, echo=F}
 library(kableExtra)
-getRemoteData::getAvailableDataSources() %>%
-  dplyr::select(-citation) %>%
+getRemoteData::getAvailableDataSources(detailed=FALSE) %>%
   kable() %>%
   kable_styling()
 ```
+
+Turn the argument `detailed` to `TRUE` to get more detailed information on each data collection tested and validated.
 
 ## Example
 

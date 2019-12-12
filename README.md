@@ -63,7 +63,7 @@ more of the following points :
   - are interested in importing long climatic / environmental
     time-series ;
   - have a slow internet connection ;
-  - care about the digital environmental impact of your work.
+  - care about the environmental impact of your digital work.
 
 `getRemoteData` is developed in the frame of PhD project, and the
 sources of data implemented in the package are hence those that I use in
@@ -83,11 +83,11 @@ devtools::install_github("ptaconet/getRemoteData")
 
 ## Get the data sources implemented in `getRemoteData`
 
-You can get the data sources/collections downloadable with
-`getRemoteData` and details about each of them with :
+The `getAvailableDataSources` function provides information on the data
+sources/collections implemented in `getRemoteData`
 
 ``` r
-getRemoteData::getAvailableDataSources()
+getRemoteData::getAvailableDataSources(detailed=FALSE)
 ```
 
     #> Warning: replacing previous import 'dplyr::intersect' by
@@ -109,109 +109,43 @@ getRemoteData::getAvailableDataSources()
 
 <th style="text-align:left;">
 
-source
+Product
 
 </th>
 
 <th style="text-align:left;">
 
-covariate
+Type
 
 </th>
 
 <th style="text-align:left;">
 
-collection
+Provider
 
 </th>
 
 <th style="text-align:left;">
 
-getRemoteData\_import\_func
+Collections
 
 </th>
 
 <th style="text-align:left;">
 
-getRemoteData\_prepare\_func
+Function.download
 
 </th>
 
 <th style="text-align:left;">
 
-url\_metadata
+Function.import
 
 </th>
 
 <th style="text-align:left;">
 
-is\_timeSeries
-
-</th>
-
-<th style="text-align:left;">
-
-provider
-
-</th>
-
-<th style="text-align:left;">
-
-long\_name
-
-</th>
-
-<th style="text-align:right;">
-
-version
-
-</th>
-
-<th style="text-align:left;">
-
-DOI
-
-</th>
-
-<th style="text-align:right;">
-
-spatial\_resolution\_m
-
-</th>
-
-<th style="text-align:right;">
-
-temporal\_resolution
-
-</th>
-
-<th style="text-align:left;">
-
-temporal\_resolution\_unit
-
-</th>
-
-<th style="text-align:left;">
-
-spatial\_coverage
-
-</th>
-
-<th style="text-align:left;">
-
-url\_programmatic\_access
-
-</th>
-
-<th style="text-align:left;">
-
-url\_manual\_access
-
-</th>
-
-<th style="text-align:left;">
-
-status
+Additional.information
 
 </th>
 
@@ -231,891 +165,38 @@ MODIS
 
 <td style="text-align:left;">
 
-Temperature
+Surface temperature, evoptranspiration, vegetation indices, etc.
 
 </td>
 
 <td style="text-align:left;">
 
-MOD11A1.v006
+NASA/USGS
 
 </td>
 
 <td style="text-align:left;">
 
-getData\_modis()
+MOD11A1.v006, MYD11A1.v006, MOD11A2.v006, MYD11A2.v006, MOD13Q1.v006,
+MYD13Q1.v006, MOD16A2.v006, MYD16A2.v006
 
 </td>
 
 <td style="text-align:left;">
 
-prepareData\_modis()
+getData\_modis\_vnp()
 
 </td>
 
 <td style="text-align:left;">
 
-<https://lpdaac.usgs.gov/products/mod11a1v006/>
+importData\_modis\_vnp()
 
 </td>
 
 <td style="text-align:left;">
 
-TRUE
-
-</td>
-
-<td style="text-align:left;">
-
-NASA
-
-</td>
-
-<td style="text-align:left;">
-
-MODIS/Terra Land Surface Temperature/Emissivity Daily L3 Global 1km SIN
-Grid V006
-
-</td>
-
-<td style="text-align:right;">
-
-6
-
-</td>
-
-<td style="text-align:left;">
-
-<https://dx.doi.org/10.5067/MODIS/MOD11A1.006>
-
-</td>
-
-<td style="text-align:right;">
-
-1000
-
-</td>
-
-<td style="text-align:right;">
-
-1
-
-</td>
-
-<td style="text-align:left;">
-
-day
-
-</td>
-
-<td style="text-align:left;">
-
-Global
-
-</td>
-
-<td style="text-align:left;">
-
-<https://opendap.cr.usgs.gov/opendap/hyrax/MOD11A1.006/contents.html>
-
-</td>
-
-<td style="text-align:left;">
-
-<https://search.earthdata.nasa.gov/search?q=MOD11A1&ok=MOD11A1>
-
-</td>
-
-<td style="text-align:left;">
-
-Implemented
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left;">
-
-MODIS
-
-</td>
-
-<td style="text-align:left;">
-
-Temperature
-
-</td>
-
-<td style="text-align:left;">
-
-MYD11A1.v006
-
-</td>
-
-<td style="text-align:left;">
-
-getData\_modis()
-
-</td>
-
-<td style="text-align:left;">
-
-prepareData\_modis()
-
-</td>
-
-<td style="text-align:left;">
-
-<https://lpdaac.usgs.gov/products/myd11a1v006/>
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-<td style="text-align:left;">
-
-NASA
-
-</td>
-
-<td style="text-align:left;">
-
-MODIS/Aqua Land Surface Temperature/Emissivity Daily L3 Global 1km SIN
-Grid V006
-
-</td>
-
-<td style="text-align:right;">
-
-6
-
-</td>
-
-<td style="text-align:left;">
-
-<https://dx.doi.org/10.5067/MODIS/MYD11A1.006>
-
-</td>
-
-<td style="text-align:right;">
-
-1000
-
-</td>
-
-<td style="text-align:right;">
-
-1
-
-</td>
-
-<td style="text-align:left;">
-
-day
-
-</td>
-
-<td style="text-align:left;">
-
-Global
-
-</td>
-
-<td style="text-align:left;">
-
-<https://opendap.cr.usgs.gov/opendap/hyrax/MYD11A1.006/contents.html>
-
-</td>
-
-<td style="text-align:left;">
-
-<https://search.earthdata.nasa.gov/search?q=MYD11A1&ok=MYD11A1>
-
-</td>
-
-<td style="text-align:left;">
-
-Implemented
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left;">
-
-MODIS
-
-</td>
-
-<td style="text-align:left;">
-
-Temperature
-
-</td>
-
-<td style="text-align:left;">
-
-MOD11A2.v006
-
-</td>
-
-<td style="text-align:left;">
-
-getData\_modis()
-
-</td>
-
-<td style="text-align:left;">
-
-prepareData\_modis()
-
-</td>
-
-<td style="text-align:left;">
-
-<https://lpdaac.usgs.gov/products/mod11a2v006/>
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-<td style="text-align:left;">
-
-NASA
-
-</td>
-
-<td style="text-align:left;">
-
-MODIS/Terra Land Surface Temperature/Emissivity 8-Day L3 Global 1 km SIN
-Grid V006
-
-</td>
-
-<td style="text-align:right;">
-
-6
-
-</td>
-
-<td style="text-align:left;">
-
-<https://dx.doi.org/10.5067/MODIS/MOD11A2.006>
-
-</td>
-
-<td style="text-align:right;">
-
-1000
-
-</td>
-
-<td style="text-align:right;">
-
-8
-
-</td>
-
-<td style="text-align:left;">
-
-day
-
-</td>
-
-<td style="text-align:left;">
-
-Global
-
-</td>
-
-<td style="text-align:left;">
-
-<https://opendap.cr.usgs.gov/opendap/hyrax/MOD11A2.006/contents.html>
-
-</td>
-
-<td style="text-align:left;">
-
-<https://search.earthdata.nasa.gov/search?q=MOD11A2&ok=MOD11A2>
-
-</td>
-
-<td style="text-align:left;">
-
-Implemented
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left;">
-
-MODIS
-
-</td>
-
-<td style="text-align:left;">
-
-Temperature
-
-</td>
-
-<td style="text-align:left;">
-
-MYD11A2.v006
-
-</td>
-
-<td style="text-align:left;">
-
-getData\_modis()
-
-</td>
-
-<td style="text-align:left;">
-
-prepareData\_modis()
-
-</td>
-
-<td style="text-align:left;">
-
-<https://lpdaac.usgs.gov/products/myd11a2v006/>
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-<td style="text-align:left;">
-
-NASA
-
-</td>
-
-<td style="text-align:left;">
-
-MODIS/Aqua Land Surface Temperature/Emissivity 8-Day L3 Global 1 km SIN
-Grid V006
-
-</td>
-
-<td style="text-align:right;">
-
-6
-
-</td>
-
-<td style="text-align:left;">
-
-<https://dx.doi.org/10.5067/MODIS/MYD11A2.006>
-
-</td>
-
-<td style="text-align:right;">
-
-1000
-
-</td>
-
-<td style="text-align:right;">
-
-8
-
-</td>
-
-<td style="text-align:left;">
-
-day
-
-</td>
-
-<td style="text-align:left;">
-
-Global
-
-</td>
-
-<td style="text-align:left;">
-
-<https://opendap.cr.usgs.gov/opendap/hyrax/MYD11A2.006/contents.html>
-
-</td>
-
-<td style="text-align:left;">
-
-<https://search.earthdata.nasa.gov/search?q=MYD11A2&ok=MYD11A2>
-
-</td>
-
-<td style="text-align:left;">
-
-Implemented
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left;">
-
-MODIS
-
-</td>
-
-<td style="text-align:left;">
-
-Vegetation indices
-
-</td>
-
-<td style="text-align:left;">
-
-MOD13Q1.v006
-
-</td>
-
-<td style="text-align:left;">
-
-getData\_modis()
-
-</td>
-
-<td style="text-align:left;">
-
-prepareData\_modis()
-
-</td>
-
-<td style="text-align:left;">
-
-<https://lpdaac.usgs.gov/products/mod13q1v006/>
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-<td style="text-align:left;">
-
-NASA
-
-</td>
-
-<td style="text-align:left;">
-
-MODIS/Terra Vegetation Indices 16-Day L3 Global 250m SIN Grid V006
-
-</td>
-
-<td style="text-align:right;">
-
-6
-
-</td>
-
-<td style="text-align:left;">
-
-<https://dx.doi.org/10.5067/MODIS/MOD13Q1.006>
-
-</td>
-
-<td style="text-align:right;">
-
-250
-
-</td>
-
-<td style="text-align:right;">
-
-16
-
-</td>
-
-<td style="text-align:left;">
-
-day
-
-</td>
-
-<td style="text-align:left;">
-
-Global
-
-</td>
-
-<td style="text-align:left;">
-
-<https://opendap.cr.usgs.gov/opendap/hyrax/MOD13Q1.006/contents.html>
-
-</td>
-
-<td style="text-align:left;">
-
-<https://search.earthdata.nasa.gov/search?q=MOD13Q1&ok=MOD13Q1>
-
-</td>
-
-<td style="text-align:left;">
-
-Implemented
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left;">
-
-MODIS
-
-</td>
-
-<td style="text-align:left;">
-
-Vegetation indices
-
-</td>
-
-<td style="text-align:left;">
-
-MYD13Q1.v006
-
-</td>
-
-<td style="text-align:left;">
-
-getData\_modis()
-
-</td>
-
-<td style="text-align:left;">
-
-prepareData\_modis()
-
-</td>
-
-<td style="text-align:left;">
-
-<https://lpdaac.usgs.gov/products/myd13q1v006/>
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-<td style="text-align:left;">
-
-NASA
-
-</td>
-
-<td style="text-align:left;">
-
-MODIS/Aqua Vegetation Indices 16-Day L3 Global 250m SIN Grid V006
-
-</td>
-
-<td style="text-align:right;">
-
-6
-
-</td>
-
-<td style="text-align:left;">
-
-<https://dx.doi.org/10.5067/MODIS/MYD13Q1.006>
-
-</td>
-
-<td style="text-align:right;">
-
-250
-
-</td>
-
-<td style="text-align:right;">
-
-16
-
-</td>
-
-<td style="text-align:left;">
-
-day
-
-</td>
-
-<td style="text-align:left;">
-
-Global
-
-</td>
-
-<td style="text-align:left;">
-
-<https://opendap.cr.usgs.gov/opendap/hyrax/MYD13Q1.006/contents.html>
-
-</td>
-
-<td style="text-align:left;">
-
-<https://search.earthdata.nasa.gov/search?q=MYD13Q1&ok=MYD13Q1>
-
-</td>
-
-<td style="text-align:left;">
-
-Implemented
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left;">
-
-MODIS
-
-</td>
-
-<td style="text-align:left;">
-
-Evapotranspiration
-
-</td>
-
-<td style="text-align:left;">
-
-MOD16A2.v006
-
-</td>
-
-<td style="text-align:left;">
-
-getData\_modis()
-
-</td>
-
-<td style="text-align:left;">
-
-prepareData\_modis()
-
-</td>
-
-<td style="text-align:left;">
-
-<https://lpdaac.usgs.gov/products/mod16a2v006/>
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-<td style="text-align:left;">
-
-NASA
-
-</td>
-
-<td style="text-align:left;">
-
-MODIS/Terra Net Evapotranspiration 8-Day L4 Global 500m SIN Grid V006
-
-</td>
-
-<td style="text-align:right;">
-
-6
-
-</td>
-
-<td style="text-align:left;">
-
-<https://dx.doi.org/10.5067/MODIS/MOD16A2.006>
-
-</td>
-
-<td style="text-align:right;">
-
-500
-
-</td>
-
-<td style="text-align:right;">
-
-8
-
-</td>
-
-<td style="text-align:left;">
-
-day
-
-</td>
-
-<td style="text-align:left;">
-
-Global
-
-</td>
-
-<td style="text-align:left;">
-
-<https://opendap.cr.usgs.gov/opendap/hyrax/MOD16A2.006/contents.html>
-
-</td>
-
-<td style="text-align:left;">
-
-<https://search.earthdata.nasa.gov/search?q=MOD16A2&ok=MOD16A2>
-
-</td>
-
-<td style="text-align:left;">
-
-Implemented
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left;">
-
-MODIS
-
-</td>
-
-<td style="text-align:left;">
-
-Evapotranspiration
-
-</td>
-
-<td style="text-align:left;">
-
-MYD16A2.v006
-
-</td>
-
-<td style="text-align:left;">
-
-getData\_modis()
-
-</td>
-
-<td style="text-align:left;">
-
-prepareData\_modis()
-
-</td>
-
-<td style="text-align:left;">
-
-<https://lpdaac.usgs.gov/products/myd16a2v006/>
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-<td style="text-align:left;">
-
-NASA
-
-</td>
-
-<td style="text-align:left;">
-
-MODIS/Aqua Net Evapotranspiration 8-Day L4 Global 500m SIN Grid V006
-
-</td>
-
-<td style="text-align:right;">
-
-6
-
-</td>
-
-<td style="text-align:left;">
-
-<https://dx.doi.org/10.5067/MODIS/MYD16A2.006>
-
-</td>
-
-<td style="text-align:right;">
-
-500
-
-</td>
-
-<td style="text-align:right;">
-
-8
-
-</td>
-
-<td style="text-align:left;">
-
-day
-
-</td>
-
-<td style="text-align:left;">
-
-Global
-
-</td>
-
-<td style="text-align:left;">
-
-<https://opendap.cr.usgs.gov/opendap/hyrax/MYD16A2.006/contents.html>
-
-</td>
-
-<td style="text-align:left;">
-
-<https://search.earthdata.nasa.gov/search?q=MYD16A2&ok=MYD16A2>
-
-</td>
-
-<td style="text-align:left;">
-
-Implemented
+<https://modis.gsfc.nasa.gov/>
 
 </td>
 
@@ -1131,330 +212,37 @@ VNP
 
 <td style="text-align:left;">
 
-Temperature
+Surface temperature, vegetation indices, etc.
 
 </td>
 
 <td style="text-align:left;">
 
-VNP21A1D.v001
+NASA/NOAA
 
 </td>
 
 <td style="text-align:left;">
 
-getData\_modis()
+VNP21A1D.v001, VNP21A1N.v001, VNP21A2.v001
 
 </td>
 
 <td style="text-align:left;">
 
-prepareData\_modis()
+getData\_modis\_vnp()
 
 </td>
 
 <td style="text-align:left;">
 
-<https://lpdaac.usgs.gov/products/vnp21a1dv001/>
+importData\_modis\_vnp()
 
 </td>
 
 <td style="text-align:left;">
 
-TRUE
-
-</td>
-
-<td style="text-align:left;">
-
-NASA
-
-</td>
-
-<td style="text-align:left;">
-
-VIIRS/NPP Land Surface Temperature and Emissivity Daily L3 Global 1 km
-SIN Grid Day
-
-</td>
-
-<td style="text-align:right;">
-
-1
-
-</td>
-
-<td style="text-align:left;">
-
-<https://dx.doi.org/10.5067/MODIS/VNP21A1D.001>
-
-</td>
-
-<td style="text-align:right;">
-
-1000
-
-</td>
-
-<td style="text-align:right;">
-
-1
-
-</td>
-
-<td style="text-align:left;">
-
-day
-
-</td>
-
-<td style="text-align:left;">
-
-Global
-
-</td>
-
-<td style="text-align:left;">
-
-<https://opendap.cr.usgs.gov/opendap/hyrax/VNP21A1D.001/contents.html>
-
-</td>
-
-<td style="text-align:left;">
-
-<https://search.earthdata.nasa.gov/search?q=VNP21A1D&ok=VNP21A1D>
-
-</td>
-
-<td style="text-align:left;">
-
-Implemented
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left;">
-
-VNP
-
-</td>
-
-<td style="text-align:left;">
-
-Temperature
-
-</td>
-
-<td style="text-align:left;">
-
-VNP21A1N.v001
-
-</td>
-
-<td style="text-align:left;">
-
-getData\_modis()
-
-</td>
-
-<td style="text-align:left;">
-
-prepareData\_modis()
-
-</td>
-
-<td style="text-align:left;">
-
-<https://lpdaac.usgs.gov/products/vnp21a1nv001/>
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-<td style="text-align:left;">
-
-NASA
-
-</td>
-
-<td style="text-align:left;">
-
-VIIRS/NPP Land Surface Temperature and Emissivity Daily L3 Global 1 km
-SIN Grid Night
-
-</td>
-
-<td style="text-align:right;">
-
-1
-
-</td>
-
-<td style="text-align:left;">
-
-<https://dx.doi.org/10.5067/MODIS/VNP21A1N.001>
-
-</td>
-
-<td style="text-align:right;">
-
-1000
-
-</td>
-
-<td style="text-align:right;">
-
-1
-
-</td>
-
-<td style="text-align:left;">
-
-day
-
-</td>
-
-<td style="text-align:left;">
-
-Global
-
-</td>
-
-<td style="text-align:left;">
-
-<https://opendap.cr.usgs.gov/opendap/hyrax/VNP21A1N.001/contents.html>
-
-</td>
-
-<td style="text-align:left;">
-
-<https://search.earthdata.nasa.gov/search?q=VNP21A1N&ok=VNP21A1N>
-
-</td>
-
-<td style="text-align:left;">
-
-Implemented
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left;">
-
-VNP
-
-</td>
-
-<td style="text-align:left;">
-
-Temperature
-
-</td>
-
-<td style="text-align:left;">
-
-VNP21A2.v001
-
-</td>
-
-<td style="text-align:left;">
-
-getData\_modis()
-
-</td>
-
-<td style="text-align:left;">
-
-prepareData\_modis()
-
-</td>
-
-<td style="text-align:left;">
-
-<https://lpdaac.usgs.gov/products/vnp21a2v001/>
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-<td style="text-align:left;">
-
-NASA
-
-</td>
-
-<td style="text-align:left;">
-
-VIIRS/NPP Land Surface Temperature and Emissivity 8-Day L3 Global 1 km
-SIN Grid
-
-</td>
-
-<td style="text-align:right;">
-
-1
-
-</td>
-
-<td style="text-align:left;">
-
-<https://dx.doi.org/10.5067/MODIS/VNP21A2.001>
-
-</td>
-
-<td style="text-align:right;">
-
-1000
-
-</td>
-
-<td style="text-align:right;">
-
-8
-
-</td>
-
-<td style="text-align:left;">
-
-day
-
-</td>
-
-<td style="text-align:left;">
-
-Global
-
-</td>
-
-<td style="text-align:left;">
-
-<https://opendap.cr.usgs.gov/opendap/hyrax/VNP21A2.001/contents.html>
-
-</td>
-
-<td style="text-align:left;">
-
-<https://search.earthdata.nasa.gov/search?q=VNP21A2&ok=VNP21A2>
-
-</td>
-
-<td style="text-align:left;">
-
-Implemented
+<https://lpdaac.usgs.gov/search/?query=VNP>
 
 </td>
 
@@ -1470,125 +258,19 @@ GPM
 
 <td style="text-align:left;">
 
-Rainfall
+Precipitation
 
 </td>
 
 <td style="text-align:left;">
 
-GPM\_3IMERGDF
+NASA/JAXA
 
 </td>
 
 <td style="text-align:left;">
 
-getData\_gpm()
-
-</td>
-
-<td style="text-align:left;">
-
-prepareData\_gpm()
-
-</td>
-
-<td style="text-align:left;">
-
-<https://disc.gsfc.nasa.gov/datasets/GPM_3IMERGDF_06/summary>
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-<td style="text-align:left;">
-
-NASA
-
-</td>
-
-<td style="text-align:left;">
-
-GPM IMERG Final Precipitation L3 1 day 0.1 degree x 0.1 degree V06
-
-</td>
-
-<td style="text-align:right;">
-
-6
-
-</td>
-
-<td style="text-align:left;">
-
-<https://doi.org/10.5067/GPM/IMERGDF/DAY/06>
-
-</td>
-
-<td style="text-align:right;">
-
-10000
-
-</td>
-
-<td style="text-align:right;">
-
-1
-
-</td>
-
-<td style="text-align:left;">
-
-day
-
-</td>
-
-<td style="text-align:left;">
-
-Global
-
-</td>
-
-<td style="text-align:left;">
-
-<https://gpm1.gesdisc.eosdis.nasa.gov/opendap/GPM_L3/GPM_3IMERGDF.06/>
-
-</td>
-
-<td style="text-align:left;">
-
-<https://search.earthdata.nasa.gov/search?q=GPM_3IMERGDF_06>
-
-</td>
-
-<td style="text-align:left;">
-
-Implemented
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left;">
-
-GPM
-
-</td>
-
-<td style="text-align:left;">
-
-Rainfall - Night of catch
-
-</td>
-
-<td style="text-align:left;">
-
-GPM\_3IMERGHH
+GPM\_3IMERGDF, GPM\_3IMERGHH
 
 </td>
 
@@ -1600,83 +282,13 @@ getData\_gpm()
 
 <td style="text-align:left;">
 
-prepareData\_gpm()
+importData\_gpm()
 
 </td>
 
 <td style="text-align:left;">
 
-<https://disc.gsfc.nasa.gov/datasets/GPM_3IMERGHH_06/summary>
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-<td style="text-align:left;">
-
-NASA
-
-</td>
-
-<td style="text-align:left;">
-
-GPM IMERG Final Precipitation L3 Half Hourly 0.1 degree x 0.1 degree V06
-
-</td>
-
-<td style="text-align:right;">
-
-6
-
-</td>
-
-<td style="text-align:left;">
-
-<https://doi.org/10.5067/GPM/IMERG/3B-HH/06>
-
-</td>
-
-<td style="text-align:right;">
-
-10000
-
-</td>
-
-<td style="text-align:right;">
-
-30
-
-</td>
-
-<td style="text-align:left;">
-
-minute
-
-</td>
-
-<td style="text-align:left;">
-
-Global
-
-</td>
-
-<td style="text-align:left;">
-
-<https://gpm1.gesdisc.eosdis.nasa.gov/opendap/GPM_L3/GPM_3IMERGHH.06/>
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-Implemented
+<https://pmm.nasa.gov/GPM>
 
 </td>
 
@@ -1692,7 +304,13 @@ SMAP
 
 <td style="text-align:left;">
 
-Soil Moisture Active Passive
+Soil moisture
+
+</td>
+
+<td style="text-align:left;">
+
+NASA
 
 </td>
 
@@ -1710,85 +328,59 @@ getData\_smap()
 
 <td style="text-align:left;">
 
-prepareData\_smap()
+importData\_smap()
 
 </td>
 
 <td style="text-align:left;">
 
-<https://nsidc.org/data/spl3smp_e#sm>
+<https://smap.jpl.nasa.gov/>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+VIIRS/NPP
 
 </td>
 
 <td style="text-align:left;">
 
-TRUE
+Nigth lights
 
 </td>
 
 <td style="text-align:left;">
 
-NASA
+NASA/NOAA
 
 </td>
 
 <td style="text-align:left;">
 
-SMAP Enhanced L3 Radiometer Global Daily 9 km EASE-Grid Soil Moisture,
-Version
-3
-
-</td>
-
-<td style="text-align:right;">
-
-3
+VIIRS DNB
 
 </td>
 
 <td style="text-align:left;">
 
-<https://doi.org/10.5067/T90W6VRLCBHI>
-
-</td>
-
-<td style="text-align:right;">
-
-9000
-
-</td>
-
-<td style="text-align:right;">
-
-1
+getData\_viirsDnb()
 
 </td>
 
 <td style="text-align:left;">
 
-day
+importData\_viirsDnb()
 
 </td>
 
 <td style="text-align:left;">
 
-Global
-
-</td>
-
-<td style="text-align:left;">
-
-<https://n5eil02u.ecs.nsidc.org/opendap/SMAP/SPL3SMP_E.002/contents.html>
-
-</td>
-
-<td style="text-align:left;">
-
-<https://nsidc.org/data/spl3smp_e?qt-data_set_tabs=1#qt-data_set_tabs>
-
-</td>
-
-<td style="text-align:left;">
+<https://ncc.nesdis.noaa.gov/VIIRS/>
 
 </td>
 
@@ -1804,13 +396,21 @@ TAMSAT
 
 <td style="text-align:left;">
 
-Rainfall
+Precipitation
 
 </td>
 
 <td style="text-align:left;">
 
-TAMSAT
+University of Reading
+
+</td>
+
+<td style="text-align:left;">
+
+daily individual rainfall estimate, yearly individual rainfall estimate,
+monthly individual rainfall estimate, monthly individual rainfall
+estimate, monthly individual anomaly
 
 </td>
 
@@ -1822,86 +422,13 @@ getData\_tamsat()
 
 <td style="text-align:left;">
 
-prepareData\_tamsat()
+importData\_tamsat()
 
 </td>
 
 <td style="text-align:left;">
 
 <https://www.tamsat.org.uk/about>
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-<td style="text-align:left;">
-
-TAMSAT
-
-</td>
-
-<td style="text-align:left;">
-
-Tropical Applications of Meteorology using SATellite data and
-ground-based observations
-
-</td>
-
-<td style="text-align:right;">
-
-3
-
-</td>
-
-<td style="text-align:left;">
-
-<http://doi.org/10.1038/sdata.2017.63>
-
-</td>
-
-<td style="text-align:right;">
-
-4000
-
-</td>
-
-<td style="text-align:right;">
-
-1
-
-</td>
-
-<td style="text-align:left;">
-
-day
-
-</td>
-
-<td style="text-align:left;">
-
-Africa
-
-</td>
-
-<td style="text-align:left;">
-
-<https://www.tamsat.org.uk/data/archive>
-
-</td>
-
-<td style="text-align:left;">
-
-<https://www.tamsat.org.uk/data/rfe/index.cgi>
-
-</td>
-
-<td style="text-align:left;">
-
-Implemented
 
 </td>
 
@@ -1917,14 +444,20 @@ ERA5
 
 <td style="text-align:left;">
 
-Wind - Night of
-catch
+Wind,
+etc.
 
 </td>
 
 <td style="text-align:left;">
 
-ERA5
+Copernicus
+
+</td>
+
+<td style="text-align:left;">
+
+10m\_u\_component\_of\_wind,10m\_v\_component\_of\_wind
 
 </td>
 
@@ -1936,7 +469,7 @@ getData\_era5()
 
 <td style="text-align:left;">
 
-prepareData\_era5()
+importData\_era5()
 
 </td>
 
@@ -1946,306 +479,25 @@ prepareData\_era5()
 
 </td>
 
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-<td style="text-align:left;">
-
-Copenicus
-
-</td>
-
-<td style="text-align:left;">
-
-ERA5
-
-</td>
-
-<td style="text-align:right;">
-
-5
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:right;">
-
-27000
-
-</td>
-
-<td style="text-align:right;">
-
-1
-
-</td>
-
-<td style="text-align:left;">
-
-hour
-
-</td>
-
-<td style="text-align:left;">
-
-Global
-
-</td>
-
-<td style="text-align:left;">
-
-<https://dominicroye.github.io/en/2018/access-to-climate-reanalysis-data-from-r/>
-
-</td>
-
-<td style="text-align:left;">
-
-<https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels?tab=form>
-
-</td>
-
-<td style="text-align:left;">
-
-Implemented
-
-</td>
-
 </tr>
 
 <tr>
 
 <td style="text-align:left;">
 
-MIRIADE
+SRTM
 
 </td>
 
 <td style="text-align:left;">
 
-Apparent magnitude of the Moon - Night of catch
+Elevation
 
 </td>
 
 <td style="text-align:left;">
 
-MIRIADE
-
-</td>
-
-<td style="text-align:left;">
-
-getData\_miriade()
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-<http://vo.imcce.fr/webservices/miriade/>
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-<td style="text-align:left;">
-
-IMCCE
-
-</td>
-
-<td style="text-align:left;">
-
-The Virtual Observatory Solar System Object Ephemeris Generator
-
-</td>
-
-<td style="text-align:right;">
-
-2
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:right;">
-
-NA
-
-</td>
-
-<td style="text-align:right;">
-
-NA
-
-</td>
-
-<td style="text-align:left;">
-
-NA
-
-</td>
-
-<td style="text-align:left;">
-
-Global
-
-</td>
-
-<td style="text-align:left;">
-
-<http://vo.imcce.fr/webservices/miriade/?ephemcc>
-
-</td>
-
-<td style="text-align:left;">
-
-<http://vo.imcce.fr/webservices/miriade/?forms>
-
-</td>
-
-<td style="text-align:left;">
-
-Implemented
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left;">
-
-VIIRS DNB
-
-</td>
-
-<td style="text-align:left;">
-
-Nighttime lights - Night of catch
-
-</td>
-
-<td style="text-align:left;">
-
-VIIRS DNB
-
-</td>
-
-<td style="text-align:left;">
-
-getData\_viirsdnb()
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-<https://eogdata.mines.edu/download_dnb_composites.html>
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-<td style="text-align:left;">
-
-NOAA
-
-</td>
-
-<td style="text-align:left;">
-
-Visible Infrared Imaging Radiometer Suite (VIIRS) Day/Night Band
-(DNB)
-
-</td>
-
-<td style="text-align:right;">
-
-NA
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:right;">
-
-450
-
-</td>
-
-<td style="text-align:right;">
-
-1
-
-</td>
-
-<td style="text-align:left;">
-
-month
-
-</td>
-
-<td style="text-align:left;">
-
-Global
-
-</td>
-
-<td style="text-align:left;">
-
-<https://gis.ngdc.noaa.gov/arcgis/rest/services/NPP_VIIRS_DNB/Monthly_AvgRadiance/ImageServer/>
-
-</td>
-
-<td style="text-align:left;">
-
-<https://ngdc.noaa.gov/eog/viirs/download_dnb_composites.html>
-
-</td>
-
-<td style="text-align:left;">
-
-Implemented
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left;">
-
-SRTMGL1\_v004
-
-</td>
-
-<td style="text-align:left;">
-
-Elevation and elevation derivatives
+NASA/NGA
 
 </td>
 
@@ -2263,6 +515,8 @@ getData\_srtm()
 
 <td style="text-align:left;">
 
+importData\_srtm()
+
 </td>
 
 <td style="text-align:left;">
@@ -2271,738 +525,14 @@ getData\_srtm()
 
 </td>
 
-<td style="text-align:left;">
-
-FALSE
-
-</td>
-
-<td style="text-align:left;">
-
-NASA
-
-</td>
-
-<td style="text-align:left;">
-
-Digital Elevation Model from the NASA Shuttle Radar Topography Mission
-Global 1 arc
-second
-
-</td>
-
-<td style="text-align:right;">
-
-3
-
-</td>
-
-<td style="text-align:left;">
-
-<https://dx.doi.org/10.5067/MEASURES/SRTM/SRTMGL1.003>
-
-</td>
-
-<td style="text-align:right;">
-
-30
-
-</td>
-
-<td style="text-align:right;">
-
-NA
-
-</td>
-
-<td style="text-align:left;">
-
-NA
-
-</td>
-
-<td style="text-align:left;">
-
-Global
-
-</td>
-
-<td style="text-align:left;">
-
-<https://e4ftl01.cr.usgs.gov/MEASURES/SRTMGL1.003/2000.02.11/>
-
-</td>
-
-<td style="text-align:left;">
-
-<https://search.earthdata.nasa.gov/search/collection-details?p=C1000000240-LPDAAC_ECS&q=SRTM&ok=SRTM>
-
-</td>
-
-<td style="text-align:left;">
-
-Implemented
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left;">
-
-CGLS-LC101
-
-</td>
-
-<td style="text-align:left;">
-
-Land cover
-
-</td>
-
-<td style="text-align:left;">
-
-CGLS-LC100
-
-</td>
-
-<td style="text-align:left;">
-
-getData\_cgls()
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-<https://land.copernicus.eu/global/products/lc>
-
-</td>
-
-<td style="text-align:left;">
-
-FALSE
-
-</td>
-
-<td style="text-align:left;">
-
-Copernicus Global Land Operations
-
-</td>
-
-<td style="text-align:left;">
-
-Moderate dynamic land cover 100m 2015
-
-</td>
-
-<td style="text-align:right;">
-
-2
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:right;">
-
-100
-
-</td>
-
-<td style="text-align:right;">
-
-1
-
-</td>
-
-<td style="text-align:left;">
-
-year
-
-</td>
-
-<td style="text-align:left;">
-
-Global
-
-</td>
-
-<td style="text-align:left;">
-
-NA
-
-</td>
-
-<td style="text-align:left;">
-
-<https://lcviewer.vito.be/download>
-
-</td>
-
-<td style="text-align:left;">
-
-Not implemented
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left;">
-
-CCI\_LC\_S2\_AFRICA
-
-</td>
-
-<td style="text-align:left;">
-
-Land cover
-
-</td>
-
-<td style="text-align:left;">
-
-CCI-LS
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-<http://2016africalandcover20m.esrin.esa.int/>
-
-</td>
-
-<td style="text-align:left;">
-
-FALSE
-
-</td>
-
-<td style="text-align:left;">
-
-Climate Change Initiative Land Cover (ESA)
-
-</td>
-
-<td style="text-align:left;">
-
-S2 prototype Land Cover 20m map of Africa 2016
-
-</td>
-
-<td style="text-align:right;">
-
-NA
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:right;">
-
-20
-
-</td>
-
-<td style="text-align:right;">
-
-NA
-
-</td>
-
-<td style="text-align:left;">
-
-NA
-
-</td>
-
-<td style="text-align:left;">
-
-Africa
-
-</td>
-
-<td style="text-align:left;">
-
-NA
-
-</td>
-
-<td style="text-align:left;">
-
-<http://2016africalandcover20m.esrin.esa.int/download.php>
-
-</td>
-
-<td style="text-align:left;">
-
-Not implemented
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left;">
-
-HRSL
-
-</td>
-
-<td style="text-align:left;">
-
-Built-up, Population
-
-</td>
-
-<td style="text-align:left;">
-
-HRSL
-
-</td>
-
-<td style="text-align:left;">
-
-getData\_hrsl()
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-<https://ciesin.columbia.edu/repository/hrsl/#over>
-
-</td>
-
-<td style="text-align:left;">
-
-FALSE
-
-</td>
-
-<td style="text-align:left;">
-
-Facebook Connectivity Lab and Center for International Earth Science
-Information Network
-
-</td>
-
-<td style="text-align:left;">
-
-High Resolution Settlement Layer
-
-</td>
-
-<td style="text-align:right;">
-
-1
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:right;">
-
-30
-
-</td>
-
-<td style="text-align:right;">
-
-NA
-
-</td>
-
-<td style="text-align:left;">
-
-NA
-
-</td>
-
-<td style="text-align:left;">
-
-Available for some countries : see list here :
-<https://ciesin.columbia.edu/repository/hrsl/#data>
-
-</td>
-
-<td style="text-align:left;">
-
-NA
-
-</td>
-
-<td style="text-align:left;">
-
-<https://ciesin.columbia.edu/repository/hrsl/#data>
-
-</td>
-
-<td style="text-align:left;">
-
-Not
-implemented
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left;">
-
-WorldPop\_100m\_Population
-
-</td>
-
-<td style="text-align:left;">
-
-Population
-
-</td>
-
-<td style="text-align:left;">
-
-WorldPop\_100m\_Population
-
-</td>
-
-<td style="text-align:left;">
-
-getData\_worldpop()
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-<https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0107042>
-
-</td>
-
-<td style="text-align:left;">
-
-FALSE
-
-</td>
-
-<td style="text-align:left;">
-
-WorldPop
-
-</td>
-
-<td style="text-align:left;">
-
-Alpha version 2014 estimates of numbers of people per grid square, with
-national totals adjusted to match UN population division estimates
-
-</td>
-
-<td style="text-align:right;">
-
-3
-
-</td>
-
-<td style="text-align:left;">
-
-10.5258/SOTON/WP00033 10.5258/SOTON/WP00065
-
-</td>
-
-<td style="text-align:right;">
-
-100
-
-</td>
-
-<td style="text-align:right;">
-
-NA
-
-</td>
-
-<td style="text-align:left;">
-
-NA
-
-</td>
-
-<td style="text-align:left;">
-
-Africa, Asia, South America, Oceania
-
-</td>
-
-<td style="text-align:left;">
-
-NA
-
-</td>
-
-<td style="text-align:left;">
-
-<https://www.worldpop.org/geodata/listing?id=16>
-
-</td>
-
-<td style="text-align:left;">
-
-Not implemented
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left;">
-
-OpenSteetMap
-
-</td>
-
-<td style="text-align:left;">
-
-Roads
-
-</td>
-
-<td style="text-align:left;">
-
-OpenSteetMap
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-<https://www.openstreetmap.org/about>
-
-</td>
-
-<td style="text-align:left;">
-
-FALSE
-
-</td>
-
-<td style="text-align:left;">
-
-OpenSteetMap
-
-</td>
-
-<td style="text-align:left;">
-
-OpenSteetMap
-
-</td>
-
-<td style="text-align:right;">
-
-NA
-
-</td>
-
-<td style="text-align:left;">
-
-NA
-
-</td>
-
-<td style="text-align:right;">
-
-NA
-
-</td>
-
-<td style="text-align:right;">
-
-NA
-
-</td>
-
-<td style="text-align:left;">
-
-NA
-
-</td>
-
-<td style="text-align:left;">
-
-Global
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-<https://www.openstreetmap.org/>
-
-</td>
-
-<td style="text-align:left;">
-
-Not implemented
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left;">
-
-Global\_Surface\_Water
-
-</td>
-
-<td style="text-align:left;">
-
-Open waters /
-Wetlands
-
-</td>
-
-<td style="text-align:left;">
-
-Global\_Surface\_Water
-
-</td>
-
-<td style="text-align:left;">
-
-getData\_gsw()
-
-</td>
-
-<td style="text-align:left;">
-
-</td>
-
-<td style="text-align:left;">
-
-<https://storage.cloud.google.com/global-surface-water/downloads_ancillary/DataUsersGuidev2018.pdf>
-
-</td>
-
-<td style="text-align:left;">
-
-FALSE
-
-</td>
-
-<td style="text-align:left;">
-
-JRC
-
-</td>
-
-<td style="text-align:left;">
-
-Global Surface Water
-
-</td>
-
-<td style="text-align:right;">
-
-1
-
-</td>
-
-<td style="text-align:left;">
-
-10.1038/nature20584
-
-</td>
-
-<td style="text-align:right;">
-
-30
-
-</td>
-
-<td style="text-align:right;">
-
-1
-
-</td>
-
-<td style="text-align:left;">
-
-year
-
-</td>
-
-<td style="text-align:left;">
-
-Global
-
-</td>
-
-<td style="text-align:left;">
-
-NA
-
-</td>
-
-<td style="text-align:left;">
-
-<https://global-surface-water.appspot.com/download>
-
-</td>
-
-<td style="text-align:left;">
-
-Not implemented
-
-</td>
-
 </tr>
 
 </tbody>
 
 </table>
+
+Turn the argument `detailed` to `TRUE` to get more detailed information
+on each data collection tested and validated.
 
 ## Example
 
