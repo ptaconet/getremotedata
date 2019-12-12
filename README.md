@@ -49,9 +49,9 @@ and dimensions of interest.
 
 Finally, getRemoteData relies as much as possible on open and standard
 data access protocols (eg.
-[OPeNDAP](https://en.wikipedia.org/wiki/OPeNDAP)), which makes it (and
-by extension, your script) less vulnerable to external changes than
-packages or applications relying on APIs.
+[OPeNDAP](https://en.wikipedia.org/wiki/OPeNDAP)), which makes the
+package (and by extension, your script) less vulnerable to external
+changes than packages or applications relying on APIs.
 
 **When should you use `getRemoteData` ?**
 
@@ -534,6 +534,30 @@ importData\_srtm()
 Turn the argument `detailed` to `TRUE` to get more detailed information
 on each data collection tested and validated.
 
+## Syntax
+
+The functions of `getRemoteData` all have the following arguments :
+
+  - `timeRange` : date / time frame of interest (eventually including
+    hours for the data with less that daily resolution) ;
+  - `roi` : area of interest (either point or polygon) ;
+  - `collection` : {for multi-collection data only} : collections of
+    interest (eg. MOD11A1.v006)
+  - `dimensions` : {for multi-dimension data only} : dimensions to
+    download (eg. c(“LST\_Day\_1km”,“LST\_Night\_1km”) )
+  - `username` and `password` : {for data that require to log-in only} :
+    credentials
+  - `destfolder` : data destination folder ;
+
+By default, the function does not download the dataset. It returns a
+data.frame with the URL(s) to download the dataset(s) of interest given
+the input arguments. To download the data, set the *download* argument
+to TRUE ;
+
+Other optional arguments might be provided (see documentation). Absence
+of the `timeRange` (resp. `roi`) arguments in a function means that the
+data of interest do not have any temporal (resp. spatial) dimension.
+
 ## Example
 
 Say you want to download over a 3500km<sup>2</sup> region of interest:
@@ -593,24 +617,6 @@ rasts_gpm<-dl_gpm$destfile %>%
   purrr::map(~getRemoteData::prepareData_gpm(.,"precipitationCal")) %>%
   set_names(dl_gpm$name)
 ```
-
-The functions of `getRemoteData` all work the same way :
-
-  - `timeRange` is your date / time frame of interest (eventually
-    including hours for the data with less that daily resolution) ;
-  - `roi` is your area of interest (as an `sf` object, either point or
-    polygon) ;
-  - `destfolder` is the data destination folder ;
-  - by default, the function does not download the dataset. It returns a
-    data.frame with the URL(s) to download the dataset(s) of interest
-    given the input arguments. To download the data, set the *download*
-    argument to TRUE ;
-  - other arguments are specific to each data product (e.g.
-    `collection`, `dimensions`,`username`,`password`)
-
-Absence of the `timeRange` (resp. `roi`) arguments in a function means
-that the data of interest do not have any temporal (resp. spatial)
-dimension.
 
 Have a look at the vignette [Automatic extraction of spatial-temporal
 environmental data within buffers around sampling
