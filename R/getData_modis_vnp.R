@@ -1,5 +1,5 @@
 #' @name getData_modis
-#' @aliases getData_modis
+#' @aliases getData_modis_vnp
 #' @title Download MODIS or VNP collections time series data
 #' @description This function enables to retrieve URLs of MODIS datasets for a given ROI and time frame, and eventually download the data
 #' @export
@@ -47,7 +47,7 @@
 #' timeRange<-c("2017-01-01","2017-01-30") %>% as.Date()
 #'
 #' \dontrun{
-#' getData_modis(timeRange=timeRange,
+#' getData_modis_vnp(timeRange=timeRange,
 #' roi=roi,
 #' collection="MOD11A1.006",
 #' dimensions=c("LST_Day_1km","LST_Night_1km"),
@@ -57,7 +57,7 @@
 #' )
 #'}
 
-getData_modis<-function(timeRange=as.Date(c("2010-01-01","2010-01-30")), # mandatory. either a time range (e.g. c(date_start,date_end) ) or a single date e.g. ( date_start )
+getData_modis_vnp<-function(timeRange=as.Date(c("2010-01-01","2010-01-30")), # mandatory. either a time range (e.g. c(date_start,date_end) ) or a single date e.g. ( date_start )
                         roi=st_read(system.file("extdata/ROI_example.kml", package = "getRemoteData"),quiet=T), # either provide roi (sf point or polygon) or provide roiSpatialIndexBound. if roiSpatialIndexBound is not provided, it will be calculated from roi
                         collection="MOD11A1.006", # mandatory
                         dimensions=c("LST_Day_1km","LST_Night_1km"), # mandatory
