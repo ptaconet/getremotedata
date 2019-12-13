@@ -6,6 +6,9 @@
 \usage{
 getAvailableDataSources()
 }
+\arguments{
+\item{detailed}{Boolean. Return detailed information on each available data collection available ? TRUE by default. FALSE returns a summarized version of the available sources of data.}
+}
 \value{
 a data.frame with the data sources / collections dealt by getData, along with details on each data collection
 }

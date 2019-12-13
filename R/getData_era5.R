@@ -35,7 +35,7 @@
 #'
 #' @family getData
 #'
-#' @import reticulate sf dplyr
+#' @import reticulate sf tidyverse
 #'
 #' @examples
 #'

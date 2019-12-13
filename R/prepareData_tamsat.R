@@ -13,7 +13,7 @@
 #'
 #' @family prepareData
 #'
-#' @import raster
+#' @import raster tidyverse sf
 #'
 #' @examples
 #'

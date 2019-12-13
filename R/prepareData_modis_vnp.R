@@ -1,4 +1,4 @@
-#' @name prepareData_modis
+#' @name getData_modis_vnp
 #' @aliases getData_modis_vnp
 #' @title Open a MODIS product as a \code{raster} object
 #' @description This function opens as a \code{raster} object a MODIS product that was downloaded via the \code{getData_modis} and \code{dowloadData} functions

@@ -26,8 +26,8 @@ rast_era5<-prepareData_modis(path_to_raw_era5=path_to_era5)
 
 }
 \seealso{
-Other prepareData: \code{\link{prepareData_gpm}},
-  \code{\link{prepareData_modis}},
+Other prepareData: \code{\link{getData_modis_vnp}},
+  \code{\link{prepareData_gpm}},
   \code{\link{prepareData_smap}},
   \code{\link{prepareData_tamsat}}
 }

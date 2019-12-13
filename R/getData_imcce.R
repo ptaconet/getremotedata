@@ -26,7 +26,7 @@
 #'
 #' @family getData
 #'
-#' @import  sf dplyr
+#' @import  sf tidyverse
 #'
 #' @examples
 #'

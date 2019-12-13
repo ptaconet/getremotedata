@@ -1,4 +1,4 @@
-#' @name getData_modis
+#' @name getData_modis_vnp
 #' @aliases getData_modis_vnp
 #' @title Download MODIS or VNP collections time series data
 #' @description This function enables to retrieve URLs of MODIS datasets for a given ROI and time frame, and eventually download the data
@@ -38,7 +38,7 @@
 #'
 #' @family getData
 #'
-#' @import purrr sf dplyr
+#' @import tidyverse sf
 #'
 #' @examples
 #'

@@ -35,7 +35,7 @@
 #'
 #' @family getData
 #'
-#' @import purrr sf dplyr lubridate
+#' @import tidyverse sf lubridate
 #'
 #' @examples
 #'

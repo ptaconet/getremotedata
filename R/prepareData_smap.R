@@ -13,7 +13,7 @@
   #'
   #' @family prepareData
   #'
-  #' @import raster
+  #' @import raster ncdf4
   #'
   #' @examples
   #'

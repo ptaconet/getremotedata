@@ -76,7 +76,8 @@ download=FALSE
 }
 \seealso{
 Other getData: \code{\link{getData_gpm}},
-  \code{\link{getData_imcce}}, \code{\link{getData_modis}},
+  \code{\link{getData_imcce}},
+  \code{\link{getData_modis_vnp}},
   \code{\link{getData_srtm}}, \code{\link{getData_tamsat}},
   \code{\link{getData_viirsDnb}}
 }

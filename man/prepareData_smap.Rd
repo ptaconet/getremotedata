@@ -28,9 +28,9 @@ var_name="Soil_Moisture_Retrieval_Data_AM_soil_moisture")
 
 }
 \seealso{
-Other prepareData: \code{\link{prepareData_era5}},
+Other prepareData: \code{\link{getData_modis_vnp}},
+  \code{\link{prepareData_era5}},
   \code{\link{prepareData_gpm}},
-  \code{\link{prepareData_modis}},
   \code{\link{prepareData_tamsat}}
 }
 \author{

@@ -1,5 +1,6 @@
 Package: getRemoteData
-Title: Download and pre-process multiple kind of data
+Title: R functions to download & import efficiently various
+    spatio-temporal data
 Version: 0.0.0.9000
 Authors@R: 
     person(given = "Paul",
@@ -23,12 +24,12 @@ Imports:
     lubridate,
     ncdf4,
     parallel,
-    purrr,
     raster,
     reticulate,
     sf,
     stringr,
     tibble,
+    tidyverse,
     utils
 Suggests: 
     knitr,

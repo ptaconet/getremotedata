@@ -7,12 +7,12 @@
 
 <!-- badges: end -->
 
-`getRemoteData` is an R package that offers a common framework to
-download and import remote data (i.e. data stored on the cloud) from
+The R package `getRemoteData` offers a common framework to download and
+import in R remote data (i.e. data stored on the cloud) from
 heterogeneous sources. Overall, this package attempts to **facilitate**
 and **speed-up** the painfull and time-consuming **data import /
 download** process for some well-known and widely used environmental /
-climatic data (e.g. [MODIS](https://modis.gsfc.nasa.gov/),
+climatic products (e.g. [MODIS](https://modis.gsfc.nasa.gov/),
 [VNP](https://lpdaac.usgs.gov/search/?query=VNP&page=2),
 [GPM](https://www.nasa.gov/mission_pages/GPM/main/index.html), etc.) as
 well as other sources (e.g. [VIIRS
@@ -23,14 +23,9 @@ decade squared degrees. For larger areas, other packages might be more
 relevant (see section [Other relevant
 packages](#other-relevant-packages) ).
 
-`getRemoteData` is :
-
-  - **efficient** because it enables to subset the data to download
-    (spatially/temporally/dimensionnally) at the downloading phase
-  - **sustainable** because it uses open and standard data access
-    protocols to download the data
-
-Keep on reading to get more information \!
+`getRemoteData` makes it efficient to import remote multidimensional
+data since it uses data access protocols that enable to subset them
+(spatially/temporally/dimensionnally) directly at the downloading phase.
 
 ## Why such a package ? (à réécrire)
 
@@ -59,8 +54,8 @@ and dimensions of interest.
 Finally, `getRemoteData` relies as much as possible on open and standard
 data access protocols (eg.
 [OPeNDAP](https://en.wikipedia.org/wiki/OPeNDAP)), which makes the
-package (and by extension the scripts that use it) less vulnerable to
-external changes than packages or applications relying on APIs.
+package less vulnerable to external changes than packages or
+applications relying on APIs.
 
 ## When should you use `getRemoteData` ?
 
@@ -96,14 +91,6 @@ getRemoteData::getAvailableDataSources(detailed=FALSE)
 # Turn the argument `detailed` to `TRUE` (default) to get a more detailed table (details for each collection).
 ```
 
-    #> Warning: replacing previous import 'dplyr::intersect' by
-    #> 'lubridate::intersect' when loading 'getRemoteData'
-    #> Warning: replacing previous import 'dplyr::union' by 'lubridate::union'
-    #> when loading 'getRemoteData'
-    #> Warning: replacing previous import 'dplyr::setdiff' by 'lubridate::setdiff'
-    #> when loading 'getRemoteData'
-    #> Warning: replacing previous import 'dplyr::select' by 'raster::select' when
-    #> loading 'getRemoteData'
     #> Warning: replacing previous import 'lubridate::origin' by 'raster::origin'
     #> when loading 'getRemoteData'
 
@@ -507,25 +494,25 @@ The functions of `getRemoteData` can be split into two families :
     range, region of interest, collection, etc. - see below), and
     eventually download them. There is one *`getData`* function for each
     product (e.g. `getData_modis_vnp()`, `getData_gpm()`, etc.)
-  - **The *`prepareData`* family** : functions to import a dataset
-    retrieved through a `getData` function (usually as an object of
-    class `raster`). Similarly, there is one *`prepareData`* function
-    for each product (e.g. `prepareData_modis_vnp()`,
-    `prepareData_gpm()`, etc.)
+  - **The *`prepareData`* family** : functions to import in R (usually
+    as an object of class `raster`) a dataset that has been downnloaded
+    *via* a function of the `getData` family. Similarly, there is one
+    *`prepareData`* function for each product (e.g.
+    `prepareData_modis_vnp()`, `prepareData_gpm()`, etc.)
 
-The function `downloadData()` takes as input the output of a *`getData`*
-function and downloads the products.
+The ancillary function `downloadData()` takes as input the output of a
+*`getData`* function and downloads the products.
 
-The functions of the *`getData`* family have the following mutual
-arguments :
+The functions of the *`getData`* family share the following arguments :
 
-  - `timeRange` : date / time frame of interest (eventually including
+  - `timeRange` : date or time frame of interest (eventually including
     hours for sub-daily resolution data) ;
   - `roi` : area of interest (either point or polygon) ;
   - `collection` {for multi-collection products only} : collection of
     interest (eg. `"MOD11A1.v006"`)
-  - `dimensions` {for multi-dimension products only} : dimensions to
-    download (eg. `c("LST_Day_1km","LST_Night_1km")`)
+  - `dimensions` {for multi-dimension products only} : dimensions of the
+    product of interest to download (eg.
+    `c("LST_Day_1km","LST_Night_1km")`)
   - `username` and `password` {for products that require to log-in only}
     : login credentials
   - `destfolder` : data destination folder
@@ -545,15 +532,14 @@ them if relevant (e.g. projection, flipping).
 
 ## Example
 
-We want to download over 3500 km<sup>2</sup> wide given region of
-interest :
+We want to download over 3500 km<sup>2</sup> wide region of interest :
 
   - a 40 days time series of [MODIS Terrra Land Surface Temperature
-    (LST)](https://dx.doi.org/10.5067/MODIS/MOD11A1.006) (daily temporal
-    resolution);
+    (LST)](https://dx.doi.org/10.5067/MODIS/MOD11A1.006) (with a daily
+    temporal resolution);
   - the same 40 days times series of [Global Precipitation Measurement
-    (GPM)](https://doi.org/10.5067/GPM/IMERGDF/DAY/06) (daily temporal
-    resolution) :
+    (GPM)](https://doi.org/10.5067/GPM/IMERGDF/DAY/06) (with a daily
+    temporal resolution) :
 
 <!-- end list -->
 
@@ -613,8 +599,8 @@ to get a more developed example of what you can do with `getRemoteData`
 
 ## Current limitations
 
-The package is at a an early stage of development. Here are some of the
-current limitations, and ideas for future developments :
+The package is still at a an early stage of development. Here are some
+of the current limitations, and ideas for future developments :
 
   - MODIS data cannot be downloaded if your area of interest covers
     multiple MODIS tiles (for an overview of MODIS tiles go

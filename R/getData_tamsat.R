@@ -28,7 +28,7 @@
 #'
 #' @family getData
 #'
-#' @import purrr dplyr
+#' @import tidyverse
 #'
 #' @examples
 #'

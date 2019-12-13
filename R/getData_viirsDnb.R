@@ -30,7 +30,7 @@
 #'
 #' @family getData
 #'
-#' @import sf dplyr lubridate
+#' @import sf tidyverse lubridate
 #'
 #' @examples
 #'

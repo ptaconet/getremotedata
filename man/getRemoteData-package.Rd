@@ -4,7 +4,7 @@
 \name{getRemoteData-package}
 \alias{getRemoteData}
 \alias{getRemoteData-package}
-\title{getRemoteData: Download and pre-process multiple kind of data}
+\title{getRemoteData: R functions to download & import efficiently various spatio-temporal data}
 \description{
 This package contains functions to download
     and pre-process public domain data, eventually containing spatial and

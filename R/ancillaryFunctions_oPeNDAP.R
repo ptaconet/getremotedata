@@ -4,7 +4,7 @@
 #' @description A set of ancillary functions to retrieve data using OpenDAP
 #' @export getOpenDAPvector getOpenDapURL_dimensions getOpenDAPtimeIndex_modis
 #'
-#' @import httr purrr
+#' @import httr tidyverse
 #'
 #' @author Paul Taconet, \email{paul.taconet@@ird.fr}
 #'

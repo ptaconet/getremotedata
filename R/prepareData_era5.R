@@ -13,7 +13,7 @@
 #'
 #' @family prepareData
 #'
-#' @import ncdf4 lubridate
+#' @import ncdf4 lubridate raster
 #'
 #' @examples
 #'

@@ -6,7 +6,7 @@
 #'
 #' @param roi sf polygon object. a region of interest
 #'
-#' @import sf dplyr stringr geojsonsf
+#' @import sf tidyverse geojsonsf
 #'
 #' @author Paul Taconet, \email{paul.taconet@@ird.fr}
 #'
