@@ -2,11 +2,9 @@
 #' @aliases ancillaryFunctions_general
 #' @title A set of ancillary functions
 #' @description A set of ancillary functions
-#' @export convertMetersToDegrees getUTMepsg getMODIStileNames getSRTMtileNames
+#' @export convertMetersToDegrees convertMetersToDegrees getUTMepsg getMODIStileNames getSRTMtileNames .testCollVal
 #'
 #' @param roi sf polygon object. a region of interest
-#'
-#' @import sf tidyverse geojsonsf
 #'
 #' @author Paul Taconet, \email{paul.taconet@@ird.fr}
 #'
@@ -19,9 +17,9 @@ convertMetersToDegrees<-function(length_meters,
   return(length_degrees)
 }
 
-  getUTMepsg<-function(roi){
+getUTMepsg<-function(roi){
 
-  bbox<-st_bbox(roi)
+  bbox<-sf::st_bbox(roi)
   #  cat("Warning: ROIs overlapping more than 1 UTM zone are currently not adapted in this workflow\n")
   utm_zone_number<-(floor((bbox$xmin + 180)/6) %% 60) + 1
   if(bbox$ymin>0){ # if latitudes are North
@@ -37,8 +35,8 @@ convertMetersToDegrees<-function(length_meters,
 getMODIStileNames<-function(roi){
 
   options(warn=-1)
-  modis_tile = read_sf("https://modis.ornl.gov/files/modis_sin.kmz") %>%
-    st_intersection(roi) %>%
+  modis_tile = sf::read_sf("https://modis.ornl.gov/files/modis_sin.kmz") %>%
+    sf::st_intersection(roi) %>%
     as.data.frame() %>%
     dplyr::select(Name) %>%
     as.character()
@@ -73,3 +71,13 @@ getSRTMtileNames<-function(roi){
   return(SRTMtileNames)
 }
 
+# Check is the collection has been tested and validated
+.testCollVal<-function(source_,collection_){
+  collections_validated<-getRemoteData::getAvailableDataSources() %>%
+    filter(source %in% source_ & collection==collection_)
+
+  if(nrow(collections_validated)==0){
+    stop("The collection specified is not valid or has not been validated.\n Check out which collections are available with the function getAvailableDataSources()")
+  }
+
+}

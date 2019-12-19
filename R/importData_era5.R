@@ -1,5 +1,5 @@
-#' @name prepareData_era5
-#' @aliases prepareData_era5
+#' @name importData_era5
+#' @aliases importData_era5
 #' @title Open a ERA-5 product as a \code{raster} object
 #' @description This function opens as a \code{raster} object a ERA-5 product that was downloaded via the \code{getData_era5} function
 #' @export
@@ -11,9 +11,8 @@
 #'
 #' @author Paul Taconet, IRD \email{paul.taconet@ird.fr}
 #'
-#' @family prepareData
+#' @family importData
 #'
-#' @import ncdf4 lubridate raster
 #'
 #' @examples
 #'
@@ -23,7 +22,7 @@
 #' #plot(rast_era5)
 #'
 
-prepareData_era5<-function(path_to_raw_era5){
+importData_era5<-function(path_to_raw_era5){
 
   # Open netcdf
   nc <- ncdf4::nc_open(path_to_raw_era5)
@@ -42,7 +41,7 @@ prepareData_era5<-function(path_to_raw_era5){
   #variable <- ncdf4::ncvar_get(nc,var_name)
   variable <- ncdf4::ncvar_get(nc)
 
-  rast <- raster(t(variable), xmn=min(lon)-0.125, xmx=max(lon)+0.125, ymn=min(lat)-0.125, ymx=max(lat)+0.125, crs="+init=epsg:4326 +proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
+  rast <- raster::raster(t(variable), xmn=min(lon)-0.125, xmx=max(lon)+0.125, ymn=min(lat)-0.125, ymx=max(lat)+0.125, crs="+init=epsg:4326 +proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
 
   return(list(rast,timestamp))
 }

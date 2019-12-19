@@ -1,0 +1,139 @@
+#' @name getUrl_gpm
+#' @aliases getUrl_gpm
+#' @title Query and download GPM collections
+#' @description This function enables to retrieve URLs of GPM datasets for a given ROI and time frame, and eventually download the data
+#' @export
+#'
+#' @inheritParams getUrl_modis_vnp
+#'
+#' @inherit getUrl_modis_vnp return
+#'
+#' @details
+#' Argument \code{optionals_opendap} is optional. This parameter is automatically calculated within the function if it is not provided. However, providing it optimizes the performances of the function (i.e. fasten the processing time).
+#' It might be particularly useful to provide it if looping over the same ROI or dates is planned.
+#' The parameter can be retrieved outside the function with the function \link[getRemoteData]{getOpendapOptArguments_gpm}.
+#'
+#' Argument \code{timeRange} can be provided either as a single date (e.g. \code{as.Date("2017-01-01"))} or time frame provided as two bounding dates ( e.g. \code{as.Date(c("2010-01-01","2010-01-30"))}) or as a POSIXlt single time or time range (e.g. "2010-01-01 18:00:00") for the half-hourly collection (GPM_3IMERGHH.06). If POSIXlt, times must be in UTC.
+#'
+#' @author Paul Taconet, IRD \email{paul.taconet@ird.fr}
+#'
+#' @family getUrl
+#'
+#'
+#' @examples
+#'
+#'require(sf)
+#'require(purrr)
+#'
+#' # Set credentials to EarthData servers
+#' my.earthdata.username<-"username"
+#' my.earthdata.pw<-"password"
+#'
+#' # Set ROI and time range of interest
+#' roi=sf::st_read(system.file("extdata/ROI_example.kml", package = "getRemoteData"),quiet=TRUE)
+#' timeRange<-as.Date(c("2017-01-01","2017-01-30"))
+#'
+#' # Retrieve the URLs to download GPM Daily precipitation final run (GPM_3IMERGDF.06) (band precipitationCal)
+#' \dontrun{
+#' df_data_to_dl<-getUrl_gpm(
+#' timeRange=timeRange,
+#' roi=roi,
+#' collection="GPM_3IMERGDF.06",
+#' dimensions=c("precipitationCal"),
+#' username=my.earthdata.username,
+#' password=my.earthdata.pw
+#' )
+#'}
+#'
+
+getUrl_gpm<-function(timeRange, # mandatory. either a time range (e.g. c(date_start,date_end) ) or a single date e.g. ( date_start ) / or a as.POSIXlt single date or time range (e.g. "2010-01-01 18:00:00")
+                      roi, # either provide roi (sf point or polygon) or provide roiSpatialIndexBound. if roiSpatialIndexBound is not provided, it will be calculated from roi
+                      collection, # mandatory
+                      dimensions, # mandatory
+                      optionals_opendap=NULL,
+                      username=NULL, # EarthData user name
+                      password=NULL # EarthData password
+                      ){
+
+  # Check is the collection has been tested and validated
+  getRemoteData::.testCollVal("GPM",collection)
+
+  OpenDAPServerUrl="https://gpm1.gesdisc.eosdis.nasa.gov/opendap/GPM_L3"
+  SpatialOpenDAPXVectorName="lon"
+  SpatialOpenDAPYVectorName="lat"
+
+  # Retrieve info to build url
+  if(collection=="GPM_3IMERGHH.06"){
+
+    #times_gpm_hhourly<-seq(from=as.POSIXlt(paste0(this_date_hlc," ",hh_rainfall_hour_begin,":00:00")),to=as.POSIXlt(as.POSIXlt(paste0(this_date_hlc+1," ",hh_rainfall_hour_end,":00:00"))),by="30 min")
+    timeRange=as.POSIXlt(timeRange,tz="GMT")
+
+    datesToRetrieve<-seq(from=timeRange[2],to=timeRange[1],by="-30 min") %>%
+      data.frame(stringsAsFactors = F) %>%
+      purrr::set_names("date") %>%
+      dplyr::mutate(date_character=as.character(as.Date(date))) %>%
+      dplyr::mutate(year=format(date,'%Y')) %>%
+      dplyr::mutate(month=format(date,'%m')) %>%
+      dplyr::mutate(day=sprintf("%03d",lubridate::yday(date))) %>%
+      dplyr::mutate(hour_start=paste0(sprintf("%02d",lubridate::hour(date)),sprintf("%02d",lubridate::minute(date)),sprintf("%02d",lubridate::second(date)))) %>%
+      dplyr::mutate(hour_end=date+lubridate::minutes(29)+lubridate::seconds(59)) %>%
+      dplyr::mutate(hour_end=paste0(sprintf("%02d",lubridate::hour(hour_end)),sprintf("%02d",lubridate::minute(hour_end)),sprintf("%02d",lubridate::second(hour_end)))) %>%
+      dplyr::mutate(number_minutes_from_start_day=sprintf("%04d",difftime(date,as.POSIXlt(paste0(as.Date(date)," 00:00:00"),tz="GMT"),units="mins")))
+
+    urls<-datesToRetrieve %>%
+      dplyr::mutate(product_name=paste0("3B-HHR.MS.MRG.3IMERG.",gsub("-","",date_character),"-S",hour_start,"-E",hour_end,".",number_minutes_from_start_day,".V06B.HDF5")) %>%
+      dplyr::mutate(url_product=paste(OpenDAPServerUrl,collection,year,day,product_name,sep="/"))
+
+  } else if(collection=="GPM_3IMERGDF.06"){
+
+    timeRange=as.Date(timeRange,origin="1970-01-01")
+
+    datesToRetrieve<-seq(timeRange[2],timeRange[1],-1) %>%
+      data.frame(stringsAsFactors = F) %>%
+      purrr::set_names("date") %>%
+      dplyr::mutate(date_character=substr(date,1,10)) %>%
+      dplyr::mutate(year=format(date,'%Y')) %>%
+      dplyr::mutate(month=format(date,'%m'))
+
+    urls<-datesToRetrieve %>%
+      dplyr::mutate(product_name=paste0("3B-DAY.MS.MRG.3IMERG.",gsub("-","",date_character),"-S000000-E235959.V06.nc4")) %>%
+      dplyr::mutate(url_product=paste(OpenDAPServerUrl,collection,year,month,product_name,sep="/"))
+
+  } else if(collection=="GPM_3IMERGM.06"){
+
+    timeRange=as.Date(timeRange,origin="1970-01-01")
+
+    datesToRetrieve<-seq(timeRange[2],timeRange[1],-1) %>%
+      lubridate::floor_date(x, unit = "month") %>%
+      unique() %>%
+      data.frame(stringsAsFactors = F) %>%
+      purrr::set_names("date") %>%
+      dplyr::mutate(date_character=substr(date,1,10)) %>%
+      dplyr::mutate(year=format(date,'%Y')) %>%
+      dplyr::mutate(month=format(date,'%m'))
+
+    urls<-datesToRetrieve %>%
+      dplyr::mutate(product_name=paste0("3B-MO.MS.MRG.3IMERG.",year,month,"01-S000000-E235959.",month,".V06B.HDF5")) %>%
+      dplyr::mutate(url_product=paste(OpenDAPServerUrl,collection,year,product_name,sep="/"))
+  }
+
+  if(is.null(optionals_opendap)){
+    optionals_opendap<-getRemoteData::.getOpendapOptArguments_gpm(roi,username,password)
+  }
+
+  roiSpatialIndexBound<-optionals_opendap$roiSpatialIndexBound
+  # Build URL to download data in NetCDF format
+
+  dim<-dimensions %>%
+    purrr::map(~paste0(.x,"[0:0][",roiSpatialIndexBound[3],":",roiSpatialIndexBound[4],"][",roiSpatialIndexBound[1],":",roiSpatialIndexBound[2],"],time[0:0],",SpatialOpenDAPYVectorName,"[",roiSpatialIndexBound[1],":",roiSpatialIndexBound[2],"],",SpatialOpenDAPXVectorName,"[",roiSpatialIndexBound[3],":",roiSpatialIndexBound[4],"]")) %>%
+    unlist() %>%
+    paste(collapse=",")
+
+  table_urls<-urls %>%
+    dplyr::mutate(url=paste0(url_product,".nc4","?",dim)) #%>%
+    #dplyr::mutate(destfile=file.path(destFolder,paste0(collection,product_name,".nc4")))
+
+  res<-data.frame(time_start=table_urls$date_character,url=table_urls$url,stringsAsFactors = F)
+
+  return(res)
+}

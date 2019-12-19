@@ -4,22 +4,21 @@
 #' @description This function enables to download datasets, enventually parallelizing the download.
 #' @export
 #'
-#' @import parallel tidyverse httr
 
 downloadData<-function(df_to_dl,username=NULL,password=NULL,parallelDL=FALSE){
 
   # check which data is already downloaded
   data_dl<-df_to_dl %>%
-    mutate(fileDl=map_lgl(destfile,file.exists)) %>%
-    mutate(dlStatus=ifelse(fileDl==TRUE,3,NA))
+    dplyr::mutate(fileDl=map_lgl(destfile,file.exists)) %>%
+    dplyr::mutate(dlStatus=ifelse(fileDl==TRUE,3,NA))
 
   # data already downloaded
   data_already_exist<-data_dl %>%
-    filter(fileDl==TRUE)
+    dplyr::filter(fileDl==TRUE)
 
   # data to download
   data_to_download<-data_dl %>%
-    filter(fileDl==FALSE)
+    dplyr::filter(fileDl==FALSE)
 
   if (nrow(data_to_download)>0){
   # Create directories if they do not exist
@@ -48,8 +47,8 @@ downloadData<-function(df_to_dl,username=NULL,password=NULL,parallelDL=FALSE){
   }
 }
   data_dl<-data_to_download %>%
-    mutate(fileDl=map_lgl(destfile,file.exists)) %>%
-    mutate(dlStatus=ifelse(fileDl==TRUE,1,2))  %>%
+    dplyr::mutate(fileDl=purrr::map_lgl(destfile,file.exists)) %>%
+    dplyr::mutate(dlStatus=ifelse(fileDl==TRUE,1,2))  %>%
     rbind(data_already_exist)
 
   # 1 : download ok

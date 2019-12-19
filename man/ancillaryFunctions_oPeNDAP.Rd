@@ -2,10 +2,10 @@
 % Please edit documentation in R/ancillaryFunctions_oPeNDAP.R
 \name{ancillaryFunctions_oPeNDAP}
 \alias{ancillaryFunctions_oPeNDAP}
-\alias{getOpenDAPvector}
+\alias{.getOpenDAPvector}
 \title{A set of ancillary functions to retrieve data using OpenDAP}
 \usage{
-getOpenDAPvector(OpenDAPUrl, variableName)
+.getOpenDAPvector(OpenDAPUrl, variableName, username, password)
 }
 \description{
 A set of ancillary functions to retrieve data using OpenDAP

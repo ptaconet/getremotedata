@@ -1,5 +1,5 @@
-  #' @name prepareData_smap
-  #' @aliases prepareData_smap
+  #' @name importData_smap
+  #' @aliases importData_smap
   #' @title Open a SMAP product as a \code{raster} object
   #' @description This function opens as a \code{raster} object a SMAP product that was downloaded via the \code{getData_smap} and \code{dowloadData} functions
   #' @export
@@ -11,20 +11,19 @@
   #'
   #' @author Paul Taconet, IRD \email{paul.taconet@ird.fr}
   #'
-  #' @family prepareData
+  #' @family importData
   #'
-  #' @import raster ncdf4
   #'
   #' @examples
   #'
   #' path_to_gpm<-system.file("extdata/smap_example.nc4", package = "getRemoteData")
   #'
-  #' rast_smap<-prepareData_smap(path_to_raw_smap=path_to_smap,
+  #' rast_smap<-importData_smap(path_to_raw_smap=path_to_smap,
   #' var_name="Soil_Moisture_Retrieval_Data_AM_soil_moisture")
   #' #plot(rast_smap)
   #'
 
-      prepareData_smap<-function(path_to_raw_smap,var_name,minLon,minLat,maxLon,maxLat){
+importData_smap<-function(path_to_raw_smap,var_name,minLon,minLat,maxLon,maxLat){
 
     if(file.info(path_to_raw_smap)$size<2000){
       r <- "no data available"
@@ -62,7 +61,7 @@
     #  r <- "no data available"
     #}
 
-     r <- raster(t(nc_soilmosture), xmn=minLon, xmx=maxLon, ymn=minLat, ymx=maxLat, crs=CRS("+init=epsg:6933"))
+     r <- raster::raster(t(nc_soilmosture), xmn=minLon, xmx=maxLon, ymn=minLat, ymx=maxLat, crs=CRS("+init=epsg:6933"))
 
 
     }

@@ -16,7 +16,6 @@
 #' \item{"...": }{...TODO : finish description}
 #' }
 #'
-#'
 #' @examples
 #'
 #' sources<-getAvailableDataSources()

@@ -1,11 +1,11 @@
 Product,Type,Provider,Collections,Function download,Function import,Additional information
-MODIS & VNP,"Surface temperature, evoptranspiration, vegetation indices, etc.",NASA/USGS/NOAA,"MOD11A1.v006, MYD11A1.v006, MOD11A2.v006, MYD11A2.v006, MOD13Q1.v006, MYD13Q1.v006, MOD16A2.v006, MYD16A2.v006,VNP21A1D.v001, VNP21A1N.v001, VNP21A2.v001
+MODIS & VNP,"Surface temperature, evoptranspiration, vegetation indices, etc.",NASA/USGS/NOAA,"MOD11A1.006, MYD11A1.006, MOD11A2.006, MYD11A2.006, MOD13Q1.006, MYD13Q1.006, MOD16A2.006, MYD16A2.006,VNP21A1D.001, VNP21A1N.001, VNP21A2.001
 
-",getData_modis_vnp(),importData_modis_vnp(),"https://modis.gsfc.nasa.gov/, https://lpdaac.usgs.gov/search/?query=VNP"
-GPM,Precipitation,NASA/JAXA,"GPM_3IMERGDF, GPM_3IMERGHH
-",getData_gpm(),importData_gpm(),https://pmm.nasa.gov/GPM
-SMAP,Soil moisture,NASA,SPL3SMP_E,getData_smap(),importData_smap(),https://smap.jpl.nasa.gov/
-VIIRS/NPP,Nigth lights,NASA/NOAA,VIIRS DNB,getData_viirsDnb(),importData_viirsDnb(),https://ncc.nesdis.noaa.gov/VIIRS/
-TAMSAT,Precipitation,University of Reading,"daily individual rainfall estimate, yearly individual rainfall estimate, monthly individual rainfall estimate, monthly individual rainfall estimate, monthly individual anomaly",getData_tamsat(),importData_tamsat(),https://www.tamsat.org.uk/about
-ERA5,"Wind, etc.",Copernicus,"10m_u_component_of_wind,10m_v_component_of_wind",getData_era5(),importData_era5(),https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels?tab=overview
-SRTM,Elevation,NASA/NGA,SRTMGL1_v003,getData_srtm(),importData_srtm(),https://lpdaac.usgs.gov/products/srtmgl1v003/
+",getUrl_modis_vnp(),importData_modis_vnp(),"https://modis.gsfc.nasa.gov/, https://lpdaac.usgs.gov/search/?query=VNP"
+GPM,Precipitation,NASA/JAXA,"GPM_3IMERGDF.06, GPM_3IMERGHH.06
+",getUrl_gpm(),importData_gpm(),https://pmm.nasa.gov/GPM
+SMAP,Soil moisture,NASA,SPL3SMP_E.003,getUrl_smap(),importData_smap(),https://smap.jpl.nasa.gov/
+VIIRS/NPP,Nigth lights,NASA/NOAA,VIIRS DNB,getUrl_viirsDnb(),importData_viirsDnb(),https://ncc.nesdis.noaa.gov/VIIRS/
+TAMSAT,Precipitation,University of Reading,"daily individual rainfall estimate, yearly individual rainfall estimate, monthly individual rainfall estimate, monthly individual rainfall estimate, monthly individual anomaly",getUrl_tamsat(),importData_tamsat(),https://www.tamsat.org.uk/about
+ERA5,"Wind, etc.",Copernicus,"10m_u_component_of_wind,10m_v_component_of_wind",getUrl_era5(),importData_era5(),https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels?tab=overview
+SRTM,Elevation,NASA/NGA,SRTMGL1_v003,getUrl_srtm(),importData_srtm(),https://lpdaac.usgs.gov/products/srtmgl1v003/

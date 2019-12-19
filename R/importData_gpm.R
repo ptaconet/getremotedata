@@ -1,5 +1,5 @@
-#' @name prepareData_gpm
-#' @aliases prepareData_gpm
+#' @name importData_gpm
+#' @aliases importData_gpm
 #' @title Open a GPM product as a \code{raster} object
 #' @description This function opens as a \code{raster} object a GPM product that was downloaded via the \code{getData_modis} and \code{dowloadData} functions
 #' @export
@@ -11,7 +11,7 @@
 #'
 #' @author Paul Taconet, IRD \email{paul.taconet@ird.fr}
 #'
-#' @family prepareData
+#' @family ImportData
 #'
 #' @import raster
 #'
@@ -19,20 +19,20 @@
 #'
 #' path_to_gpm<-system.file("extdata/gpm_example.nc4", package = "getRemoteData")
 #'
-#' rast_gpm<-prepareData_gpm(path_to_raw_gpm=path_to_gpm,
+#' rast_gpm<-importData_gpm(path_to_raw_gpm=path_to_gpm,
 #' var_name="precipitationCal")
 #' #plot(rast_modis)
 #'
 
 
-prepareData_gpm<-function(path_to_raw_gpm,var_name){
+importData_gpm<-function(path_to_raw_gpm,var_name){
 
-  rast<-raster(path_to_raw_gpm,varname=var_name)
-  projection(rast)<-"+init=epsg:4326 +proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0 "
+  rast<-raster::raster(path_to_raw_gpm,varname=var_name)
+  raster::projection(rast)<-"+init=epsg:4326 +proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0 "
   # The raster has to be flipped. Output was validated with the data from 2017-09-20 (see https://docserver.gesdisc.eosdis.nasa.gov/public/project/GPM/browse/GPM_3IMERGDF.png)
-  rast <- t(rast)
-  rast <- flip(rast,'y')
-  rast <- flip(rast,'x')
+  rast <- raster::t(rast)
+  rast <- raster::flip(rast,'y')
+  rast <- raster::flip(rast,'x')
 
   return(rast)
 
