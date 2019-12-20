@@ -23,9 +23,10 @@ getUrl_gpm(timeRange, roi, collection, dimensions,
 \item{password}{string. EarthData password}
 }
 \value{
-a data.frame with one row for each dataset and 2 columns  :
+a data.frame with one row for each dataset and 3 columns  :
  \itemize{
  \item{"time_start": }{Date or time start}
+ \item{"name": }{A name for the dataset. Name is indicative}
  \item{"url": }{URL of the dataset}
  }
 }
@@ -52,16 +53,28 @@ my.earthdata.pw<-"password"
 roi=sf::st_read(system.file("extdata/ROI_example.kml", package = "getRemoteData"),quiet=TRUE)
 timeRange<-as.Date(c("2017-01-01","2017-01-30"))
 
-# Retrieve the URLs to download GPM Daily precipitation final run (GPM_3IMERGDF.06) (band precipitationCal)
+# Retrieve the URLs to download GPM Daily precipitation final run (GPM_3IMERGDF.06) (band precipitationCal and precipitationCal_cnt)
 \dontrun{
 df_data_to_dl<-getUrl_gpm(
 timeRange=timeRange,
 roi=roi,
 collection="GPM_3IMERGDF.06",
-dimensions=c("precipitationCal"),
+dimensions=c("precipitationCal","precipitationCal_cnt"),
 username=my.earthdata.username,
 password=my.earthdata.pw
 )
+
+# Set destination folder
+df_data_to_dl$destfile<-file.path(getwd(),df_data_to_dl$name)
+
+# Download the data
+res_dl<-getRemoteData::downloadData(df_data_to_dl,my.earthdata.username,my.earthdata.pw)
+
+# Open the LST_Day_1km bands as a list of rasters
+rasts_gpm_day<-purrr::map(res_dl$destfile,~getRemoteData::importData_gpm(.,"precipitationCal")) \%>\%
+purrr::set_names(res_dl$name)
+
+
 }
 
 }

@@ -64,12 +64,12 @@ getUrl_viirsDnb<-function(timeRange, # mandatory. either a time range (e.g. c(da
     dplyr::slice(rep(1:dplyr::n(), each = length(dimensions))) %>%
     dplyr::mutate(date=as.character(paste(year,month,"01",sep="-"))) %>%
     dplyr::mutate(dimensions=rep(dimensions,n()/2)) %>%
-    dplyr::mutate(url=paste0(url_noaa_nighttime_webservice,dimensions,"/ImageServer/exportImage?bbox=",roi_bbox$xmin,",",roi_bbox$ymin,",",roi_bbox$xmax,",",roi_bbox$ymax,"&time=",format(time_start,scientific=FALSE),",",format(time_end,scientific=FALSE),"&format=tiff&f=image")) #%>%
-    #dplyr::mutate(product_name=paste0(dimensions,"_",year,month)) %>%
-    #dplyr::mutate(destfile=file.path(destFolder,paste0(product_name,".tif")))
+    dplyr::mutate(url=paste0(url_noaa_nighttime_webservice,dimensions,"/ImageServer/exportImage?bbox=",roi_bbox$xmin,",",roi_bbox$ymin,",",roi_bbox$xmax,",",roi_bbox$ymax,"&time=",format(time_start,scientific=FALSE),",",format(time_end,scientific=FALSE),"&format=tiff&f=image")) %>%
+    dplyr::mutate(name=paste0(dimensions,"_",year,month,".tif"))
+    #dplyr::mutate(destfile=file.path(destFolder,paste0(name,".tif")))
 
 
-  res<-data.frame(time_start=table_urls$date,url=table_urls$url,stringsAsFactors = F)
+  res<-data.frame(time_start=table_urls$date,name=table_urls$name,url=table_urls$url,stringsAsFactors = F)
 
   return(res)
 

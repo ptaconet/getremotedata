@@ -36,9 +36,9 @@ getUrl_srtm<-function(roi){
 
   #destfiles<-file.path(destFolder,paste0(srtm_tiles,".SRTMGL1.hgt.zip"))
 
-  #names<-srtm_tiles
+  names<-paste0(srtm_tiles,".SRTMGL1.hgt.zip")
 
-  res<-data.frame(time_start=NA,url=urls,stringsAsFactors = F)
+  res<-data.frame(time_start=NA,name=names,surl=urls,stringsAsFactors = F)
 
   return(res)
 

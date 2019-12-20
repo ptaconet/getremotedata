@@ -23,9 +23,10 @@ getUrl_smap(timeRange, roi, collection, dimensions,
 \item{password}{string. EarthData password}
 }
 \value{
-a data.frame with one row for each dataset and 2 columns  :
+a data.frame with one row for each dataset and 3 columns  :
  \itemize{
  \item{"time_start": }{Date or time start}
+ \item{"name": }{A name for the dataset. Name is indicative}
  \item{"url": }{URL of the dataset}
  }
 }

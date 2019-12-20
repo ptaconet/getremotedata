@@ -51,11 +51,10 @@ getUrl_imcce<-function(timeRange,
     purrr::set_names("date")
 
   table_urls<-datesToRetrieve %>%
-    dplyr::mutate(url=paste0(url_imcce_webservice,"-name=s:Moon&-type=Satellite&-ep=",date,"T23:30:00&-nbd=1d&-step=1h&-tscale=UTC&-observer=",mean(c(roi_bbox$xmin,roi_bbox$xmax)),"%20",mean(c(roi_bbox$ymin,roi_bbox$ymax)),"%200.0&-theory=INPOP&-teph=1&-tcoor=1&-mime=text/csv&-output=--jd&-extrap=0&-from=MiriadeDoc")) #%>%
-    #dplyr::mutate(product_name=gsub("-","",date)) %>%
-    #dplyr::mutate(destfile=file.path(destFolder,paste0(product_name,".csv")))
+    dplyr::mutate(url=paste0(url_imcce_webservice,"-name=s:Moon&-type=Satellite&-ep=",date,"T23:30:00&-nbd=1d&-step=1h&-tscale=UTC&-observer=",mean(c(roi_bbox$xmin,roi_bbox$xmax)),"%20",mean(c(roi_bbox$ymin,roi_bbox$ymax)),"%200.0&-theory=INPOP&-teph=1&-tcoor=1&-mime=text/csv&-output=--jd&-extrap=0&-from=MiriadeDoc")) %>%
+    dplyr::mutate(name=paste0(gsub("-","",date),".csv"))
 
-  res<-data.frame(time_start=table_urls$date,url=table_urls$url,stringsAsFactors = F)
+  res<-data.frame(time_start=table_urls$date,name=table_urls$name,url=table_urls$url,stringsAsFactors = F)
 
   return(res)
 

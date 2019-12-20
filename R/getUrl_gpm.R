@@ -33,16 +33,28 @@
 #' roi=sf::st_read(system.file("extdata/ROI_example.kml", package = "getRemoteData"),quiet=TRUE)
 #' timeRange<-as.Date(c("2017-01-01","2017-01-30"))
 #'
-#' # Retrieve the URLs to download GPM Daily precipitation final run (GPM_3IMERGDF.06) (band precipitationCal)
+#' # Retrieve the URLs to download GPM Daily precipitation final run (GPM_3IMERGDF.06) (band precipitationCal and precipitationCal_cnt)
 #' \dontrun{
 #' df_data_to_dl<-getUrl_gpm(
 #' timeRange=timeRange,
 #' roi=roi,
 #' collection="GPM_3IMERGDF.06",
-#' dimensions=c("precipitationCal"),
+#' dimensions=c("precipitationCal","precipitationCal_cnt"),
 #' username=my.earthdata.username,
 #' password=my.earthdata.pw
 #' )
+#'
+#'# Set destination folder
+#' df_data_to_dl$destfile<-file.path(getwd(),df_data_to_dl$name)
+#'
+#'# Download the data
+#'res_dl<-getRemoteData::downloadData(df_data_to_dl,my.earthdata.username,my.earthdata.pw)
+#'
+#'# Open the LST_Day_1km bands as a list of rasters
+#'rasts_gpm_day<-purrr::map(res_dl$destfile,~getRemoteData::importData_gpm(.,"precipitationCal")) %>%
+#' purrr::set_names(res_dl$name)
+#'
+#'
 #'}
 #'
 
@@ -130,10 +142,10 @@ getUrl_gpm<-function(timeRange, # mandatory. either a time range (e.g. c(date_st
     paste(collapse=",")
 
   table_urls<-urls %>%
-    dplyr::mutate(url=paste0(url_product,".nc4","?",dim)) #%>%
-    #dplyr::mutate(destfile=file.path(destFolder,paste0(collection,product_name,".nc4")))
+    dplyr::mutate(url=paste0(url_product,".nc4","?",dim)) %>%
+    dplyr::mutate(name=paste0(collection,product_name))
 
-  res<-data.frame(time_start=table_urls$date_character,url=table_urls$url,stringsAsFactors = F)
+  res<-data.frame(time_start=table_urls$date_character,name=table_urls$name,url=table_urls$url,stringsAsFactors = F)
 
   return(res)
 }

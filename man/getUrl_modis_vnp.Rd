@@ -28,9 +28,10 @@ getUrl_modis_vnp(timeRange, roi, collection, dimensions,
 \item{single_ncfile}{boolean. Get the data as a single netcdf file encompassing the whole time frame (TRUE) or as multiple files (1 for each time step) (FALSE). Default to TRUE}
 }
 \value{
-a data.frame with one row for each dataset and 2 columns  :
+a data.frame with one row for each dataset and 3 columns  :
  \itemize{
  \item{"time_start": }{Date or time start}
+ \item{"name": }{A name for the dataset. Name is indicative}
  \item{"url": }{URL of the dataset}
  }
 }
@@ -68,7 +69,12 @@ my.earthdata.pw<-"password"
 roi=sf::st_read(system.file("extdata/ROI_example.kml", package = "getRemoteData"),quiet=TRUE)
 timeRange<-as.Date(c("2017-01-01","2017-01-30"))
 
-# Retrieve the URLs to download MODIS LST Daily (MOD11A1.006) Day + Night bands (LST_Day_1km,LST_Night_1km)
+### Retrieve the URLs to download MODIS LST Daily (MOD11A1.006) Day + Night bands (LST_Day_1km,LST_Night_1km) for the whole time frame by two means
+1) separate NetCDF files (1 for each date) with the parameter single_ncfile set to FALSE
+2) one single NetCDF file encompassing the whole time frame with the parameter single_ncfile set to TRUE
+
+
+## 1) separate NetCDF files (1 for each date) with the parameter single_ncfile set to FALSE
 \dontrun{
 df_data_to_dl<-getRemoteData::getUrl_modis_vnp(
 timeRange=timeRange,
@@ -76,15 +82,44 @@ roi=roi,
 collection="MOD11A1.006",
 dimensions=c("LST_Day_1km","LST_Night_1km"),
 username=my.earthdata.username,
-password=my.earthdata.pw
+password=my.earthdata.pw,
+single_ncfile=FALSE
 )
 
+# Set destination folder
+df_data_to_dl$destfile<-file.path(getwd(),df_data_to_dl$name)
+
 # Download the data
-res_dl<-getRemoteData::downloadData(df_data_to_dl)
+res_dl<-getRemoteData::downloadData(df_data_to_dl,my.earthdata.username,my.earthdata.pw)
 
 # Open the LST_Day_1km bands as a list of rasters
 rasts_modis_lst_day<-purrr::map(res_dl$destfile,~getRemoteData::prepareData_modis_vnp(.,"LST_Day_1km")) \%>\%
 purrr::set_names(res_dl$name)
+
+# or :
+
+# Open all the datasets (all dates and bands) as a unique stars object
+stars_modis = stars::read_stars(res_dl$destfile, quiet = TRUE)
+
+## 2) one single NetCDF file encompassing the whole time frame with the parameter single_ncfile set to TRUE
+
+df_data_to_dl<-getRemoteData::getUrl_modis_vnp(
+timeRange=timeRange,
+roi=roi,
+collection="MOD11A1.006",
+dimensions=c("LST_Day_1km","LST_Night_1km"),
+username=my.earthdata.username,
+password=my.earthdata.pw,
+single_ncfile=TRUE
+)
+
+# Download the data
+res_dl<-getRemoteData::downloadData(df_data_to_dl,my.earthdata.username,my.earthdata.pw)
+
+# Open the data as a stars object
+require(stars)
+stars_modis = stars::read_stars(res_dl$destfile, quiet = TRUE)
+
 
 }
 }

@@ -14,9 +14,10 @@
 #' @param password string. EarthData password
 #' @param single_ncfile boolean. Get the data as a single netcdf file encompassing the whole time frame (TRUE) or as multiple files (1 for each time step) (FALSE). Default to TRUE
 #'
-#' @return a data.frame with one row for each dataset and 2 columns  :
+#' @return a data.frame with one row for each dataset and 3 columns  :
 #'  \itemize{
 #'  \item{"time_start": }{Date or time start}
+#'  \item{"name": }{A name for the dataset. Name is indicative}
 #'  \item{"url": }{URL of the dataset}
 #'  }
 #'
@@ -73,17 +74,20 @@
 #' single_ncfile=FALSE
 #' )
 #'
-#'# Set detination files
-#' df_data_to_dl <- df_data_to_dl %>%
-#' dplyr::mutate(destfile=paste0(gsub("-","_",time_start),".nc4")) %>%
-#' dplyr::mutate(destfile=file.path("MOD11A1.006",destfile))
+#'# Set destination folder
+#' df_data_to_dl$destfile<-file.path(getwd(),df_data_to_dl$name)
 #'
 #'# Download the data
-#'res_dl<-getRemoteData::downloadData(df_data_to_dl)
+#'res_dl<-getRemoteData::downloadData(df_data_to_dl,my.earthdata.username,my.earthdata.pw)
 #'
 #'# Open the LST_Day_1km bands as a list of rasters
 #'rasts_modis_lst_day<-purrr::map(res_dl$destfile,~getRemoteData::prepareData_modis_vnp(.,"LST_Day_1km")) %>%
 #' purrr::set_names(res_dl$name)
+#'
+#' # or :
+#'
+#' # Open all the datasets (all dates and bands) as a unique stars object
+#'stars_modis = stars::read_stars(res_dl$destfile, quiet = TRUE)
 #'
 #' ## 2) one single NetCDF file encompassing the whole time frame with the parameter single_ncfile set to TRUE
 #'
@@ -97,18 +101,12 @@
 #' single_ncfile=TRUE
 #' )
 #'
-#'# Set detination files
-#' df_data_to_dl <- df_data_to_dl %>%
-#' dplyr::mutate(destfile=paste0(gsub("-","_",time_start),".nc4")) %>%
-#' dplyr::mutate(destfile=file.path("MOD11A1.006",destfile))
-#'
 #'# Download the data
-#'res_dl<-getRemoteData::downloadData(df_data_to_dl)
+#'res_dl<-getRemoteData::downloadData(df_data_to_dl,my.earthdata.username,my.earthdata.pw)
 #'
 #'# Open the data as a stars object
 #'require(stars)
-#'
-#'stars_modis = stars::read_ncdf(res_dl$destfile)
+#'stars_modis = stars::read_stars(res_dl$destfile, quiet = TRUE)
 #'
 #'
 #'}
@@ -168,7 +166,8 @@ getUrl_modis_vnp<-function(timeRange, # mandatory. either a time range (e.g. c(d
     do.call(rbind.data.frame,.) %>%
     purrr::set_names("ideal_date","date_closest_to_ideal_date","days_sep_from_ideal_date","index_opendap_closest_to_date") %>%
     dplyr::mutate(ideal_date=as.Date(ideal_date,origin="1970-01-01")) %>%
-    dplyr::mutate(date_closest_to_ideal_date=as.Date(date_closest_to_ideal_date,origin="1970-01-01"))
+    dplyr::mutate(date_closest_to_ideal_date=as.Date(date_closest_to_ideal_date,origin="1970-01-01"))  %>%
+    dplyr::mutate(name=paste0(collection,".",lubridate::year(date_closest_to_ideal_date),sprintf("%03d",lubridate::yday(date_closest_to_ideal_date)),".",modisTile,".nc4"))
 
   # Build URL to download data in NetCDF format
 
@@ -177,13 +176,15 @@ getUrl_modis_vnp<-function(timeRange, # mandatory. either a time range (e.g. c(d
   url<-getRemoteData::.getOpenDapURL_dimensions2(dimensions,timeIndex,roiSpatialIndexBound,OpenDAPtimeVectorName,SpatialOpenDAPXVectorName,SpatialOpenDAPYVectorName)
   url<-paste0(OpenDAPServerUrl,"/",collection,"/",modisTile,".ncml.nc4?",gridDimensionName,",",url)
 
-  res<-data.frame(time_start=min(timeIndices_of_interest$date_closest_to_ideal_date),url=url,stringsAsFactors = F)
+  name=paste0(collection,".",lubridate::year(min(timeIndices_of_interest$date_closest_to_ideal_date)),sprintf("%03d",lubridate::yday(min(timeIndices_of_interest$date_closest_to_ideal_date))),"_",lubridate::year(max(timeIndices_of_interest$date_closest_to_ideal_date)),sprintf("%03d",lubridate::yday(max(timeIndices_of_interest$date_closest_to_ideal_date))),".",modisTile,".nc4")
+
+  res<-data.frame(time_start=min(timeIndices_of_interest$date_closest_to_ideal_date),name=name,url=url,stringsAsFactors = F)
   } else { # download data in multiple netcdf files (1/each time frame)
   table_urls<-timeIndices_of_interest %>%
     dplyr::mutate(dimensions_url=map(.x=index_opendap_closest_to_date,.f=~getRemoteData::.getOpenDapURL_dimensions(dimensions,.x,roiSpatialIndexBound,OpenDAPtimeVectorName,SpatialOpenDAPXVectorName,SpatialOpenDAPYVectorName))) %>%
     dplyr::mutate(url=paste0(OpenDAPServerUrl,"/",collection,"/",modisTile,".ncml.nc4?",gridDimensionName,",",dimensions_url))
 
-  res<-data.frame(time_start=table_urls$date_closest_to_ideal_date,url=table_urls$url,stringsAsFactors = F)
+  res<-data.frame(time_start=table_urls$date_closest_to_ideal_date,name=table_urls$name,url=table_urls$url,stringsAsFactors = F)
   }
 
   return(res)

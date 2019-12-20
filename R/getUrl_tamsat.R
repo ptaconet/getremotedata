@@ -84,7 +84,7 @@ getUrl_tamsat<-function(timeRange, # mandatory. either a time range (e.g. c(date
 
   #res<-data.frame(name=urls[,1],url=urls[,2],destfile=urls[,3],stringsAsFactors = F)
 
-  res<-data.frame(time_start=urls[,3],url=urls[,2],stringsAsFactors = F)
+  res<-data.frame(time_start=urls[,3],name=urls$product_name_daily_rain_individual,url=urls[,2],stringsAsFactors = F)
 
   return(res)
 

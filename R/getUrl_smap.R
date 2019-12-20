@@ -49,7 +49,6 @@ getUrl_smap<-function(timeRange, # mandatory. either a time range (e.g. c(date_s
   # Check is the collection has been tested and validated
   getRemoteData::.testCollVal("SMAP",collection)
 
-
   OpenDAPServerUrl="https://n5eil02u.ecs.nsidc.org/opendap/SMAP"
   SpatialOpenDAPXVectorName="Soil_Moisture_Retrieval_Data_AM_longitude"
   SpatialOpenDAPYVectorName="Soil_Moisture_Retrieval_Data_AM_latitude"
@@ -83,10 +82,10 @@ getUrl_smap<-function(timeRange, # mandatory. either a time range (e.g. c(date_s
      paste(collapse=",")
 
   table_urls<-urls %>%
-    dplyr::mutate(url=paste0(url_product,".nc4","?",dim)) #%>%
-    #dplyr::mutate(destfile=file.path(destFolder,paste0(collection,product_name,".nc4")))
+    dplyr::mutate(url=paste0(url_product,".nc4","?",dim)) %>%
+    dplyr::mutate(name=paste0(collection,product_name,".nc4"))
 
-  res<-data.frame(time_start=table_urls$date_character,url=table_urls$url,stringsAsFactors = F)
+  res<-data.frame(time_start=table_urls$date_character,name=table_urls$name,url=table_urls$url,stringsAsFactors = F)
 
   return(res)
 }

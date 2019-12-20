@@ -37,10 +37,3 @@ importData_gpm<-function(path_to_raw_gpm,var_name){
   return(rast)
 
 }
-
-#  if(resample){
-#resample_output_res<-convertMetersToDegrees(resample_output_res,latitude_4326=mean(c(extent(rast)[3],extent(rast)[4])))
-#r<-rast
-#res(r)<-resample_output_res
-#rast<-raster::resample(rast,r,method='bilinear')
-#}
