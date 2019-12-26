@@ -8,7 +8,7 @@ getUrl_smap(timeRange, roi, collection, dimensions,
   optionals_opendap = NULL, username = NULL, password = NULL)
 }
 \arguments{
-\item{timeRange}{Date(s) of interest (single date or time frame) (see details)}
+\item{timeRange}{Date(s) of interest (single date/datetime or time frame) (see details)}
 
 \item{roi}{sf POINT or POLYGON. Region of interest (EPSG 4326)}
 
@@ -16,7 +16,7 @@ getUrl_smap(timeRange, roi, collection, dimensions,
 
 \item{dimensions}{string vector. Names of the dimensions to retrieve for the collection of interest}
 
-\item{optionals_opendap}{list of optional arguments (see details). to retrieve outside the function to fasten the processing time}
+\item{optionals_opendap}{list of optional arguments (see details)}
 
 \item{username}{string. EarthData username}
 
@@ -25,9 +25,9 @@ getUrl_smap(timeRange, roi, collection, dimensions,
 \value{
 a data.frame with one row for each dataset and 3 columns  :
  \itemize{
- \item{"time_start": }{Date or time start}
- \item{"name": }{A name for the dataset. Name is indicative}
- \item{"url": }{URL of the dataset}
+ \item{*time_start*: }{Start Date/time for the dataset}
+ \item{*name*: }{An indicative name for the dataset}
+ \item{*url*: }{URL of the dataset}
  }
 }
 \description{

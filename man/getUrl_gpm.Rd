@@ -8,7 +8,7 @@ getUrl_gpm(timeRange, roi, collection, dimensions,
   optionals_opendap = NULL, username = NULL, password = NULL)
 }
 \arguments{
-\item{timeRange}{Date(s) of interest (single date or time frame) (see details)}
+\item{timeRange}{Date(s) of interest (single date/datetime or time frame) (see details)}
 
 \item{roi}{sf POINT or POLYGON. Region of interest (EPSG 4326)}
 
@@ -16,7 +16,7 @@ getUrl_gpm(timeRange, roi, collection, dimensions,
 
 \item{dimensions}{string vector. Names of the dimensions to retrieve for the collection of interest}
 
-\item{optionals_opendap}{list of optional arguments (see details). to retrieve outside the function to fasten the processing time}
+\item{optionals_opendap}{list of optional arguments (see details)}
 
 \item{username}{string. EarthData username}
 
@@ -25,9 +25,9 @@ getUrl_gpm(timeRange, roi, collection, dimensions,
 \value{
 a data.frame with one row for each dataset and 3 columns  :
  \itemize{
- \item{"time_start": }{Date or time start}
- \item{"name": }{A name for the dataset. Name is indicative}
- \item{"url": }{URL of the dataset}
+ \item{*time_start*: }{Start Date/time for the dataset}
+ \item{*name*: }{An indicative name for the dataset}
+ \item{*url*: }{URL of the dataset}
  }
 }
 \description{
@@ -45,13 +45,19 @@ Argument \code{timeRange} can be provided either as a single date (e.g. \code{as
 require(sf)
 require(purrr)
 
-# Set credentials to EarthData servers
+# Identify which collections are available and get details about each one
+coll_available<-getRemoteData::getAvailableDataSources() \%>\%
+filter(source \%in\% c("GPM"))
+
+# Set ROI and time range of interest
+roi<-sf::st_read(system.file("extdata/ROI_example.kml", package = "getRemoteData"),quiet=TRUE)
+timeRange<-as.Date(c("2017-01-01","2017-01-30"))
+
+#' # Connect to EarthData servers
 my.earthdata.username<-"username"
 my.earthdata.pw<-"password"
 
-# Set ROI and time range of interest
-roi=sf::st_read(system.file("extdata/ROI_example.kml", package = "getRemoteData"),quiet=TRUE)
-timeRange<-as.Date(c("2017-01-01","2017-01-30"))
+getRemoteData::login_earthdata(my.earthdata.username,my.earthdata.pw)
 
 # Retrieve the URLs to download GPM Daily precipitation final run (GPM_3IMERGDF.06) (band precipitationCal and precipitationCal_cnt)
 \dontrun{
@@ -59,21 +65,18 @@ df_data_to_dl<-getUrl_gpm(
 timeRange=timeRange,
 roi=roi,
 collection="GPM_3IMERGDF.06",
-dimensions=c("precipitationCal","precipitationCal_cnt"),
-username=my.earthdata.username,
-password=my.earthdata.pw
+dimensions=c("precipitationCal","precipitationCal_cnt")
 )
 
 # Set destination folder
 df_data_to_dl$destfile<-file.path(getwd(),df_data_to_dl$name)
 
 # Download the data
-res_dl<-getRemoteData::downloadData(df_data_to_dl,my.earthdata.username,my.earthdata.pw)
+res_dl<-getRemoteData::downloadData(df_data_to_dl,parallelDL=TRUE,data_source="earthdata")
 
 # Open the LST_Day_1km bands as a list of rasters
 rasts_gpm_day<-purrr::map(res_dl$destfile,~getRemoteData::importData_gpm(.,"precipitationCal")) \%>\%
 purrr::set_names(res_dl$name)
-
 
 }
 

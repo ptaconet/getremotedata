@@ -38,6 +38,8 @@ getUrl_viirsDnb<-function(timeRange, # mandatory. either a time range (e.g. c(da
                            dimensions # mandatory
                            ){
 
+  if(!is(timeRange,"Date")){stop("Argument timeRange is not of class Date")}
+
   url_noaa_nighttime_webservice<-"https://gis.ngdc.noaa.gov/arcgis/rest/services/NPP_VIIRS_DNB/"
 
   roi_bbox<-sf::st_bbox(st_transform(roi,4326))

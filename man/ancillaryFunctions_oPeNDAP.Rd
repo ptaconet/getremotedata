@@ -5,7 +5,8 @@
 \alias{.getOpenDAPvector}
 \title{A set of ancillary functions to retrieve data using OpenDAP}
 \usage{
-.getOpenDAPvector(OpenDAPUrl, variableName, username, password)
+.getOpenDAPvector(OpenDAPUrl, variableName, username = NULL,
+  password = NULL)
 }
 \description{
 A set of ancillary functions to retrieve data using OpenDAP

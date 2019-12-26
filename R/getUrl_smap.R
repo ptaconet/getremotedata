@@ -42,12 +42,18 @@ getUrl_smap<-function(timeRange, # mandatory. either a time range (e.g. c(date_s
                       collection, # mandatory
                       dimensions, # mandatory
                       optionals_opendap=NULL,
-                      username=NULL, # EarthData user name
+                      username=NULL, # EarthData username
                       password=NULL # EarthData password
                       ){
 
+  if(!is.null(username) || is.null(getOption("earthdata_login"))){
+    login<-getRemoteData::login_earthdata(username,password)
+  }
+
   # Check is the collection has been tested and validated
   getRemoteData::.testCollVal("SMAP",collection)
+
+  if(!is(timeRange,"Date")){stop("Argument timeRange is not of class Date")}
 
   OpenDAPServerUrl="https://n5eil02u.ecs.nsidc.org/opendap/SMAP"
   SpatialOpenDAPXVectorName="Soil_Moisture_Retrieval_Data_AM_longitude"
@@ -70,7 +76,7 @@ getUrl_smap<-function(timeRange, # mandatory. either a time range (e.g. c(date_s
   }
 
   if(is.null(optionals_opendap)){
-      optionals_opendap<-getRemoteData::.getOpendapOptArguments_smap(roi,username,password)
+      optionals_opendap<-getRemoteData::.getOpendapOptArguments_smap(roi)
   }
 
   roiSpatialIndexBound<-optionals_opendap$roiSpatialIndexBound

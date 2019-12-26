@@ -10,9 +10,14 @@
 
 .getOpenDAPvector<-function(OpenDAPUrl,
                            variableName,
-                           username,
-                           password){
-  httr::set_config(authenticate(user=username, password=password, type = "basic"))
+                           username=NULL,
+                           password=NULL){
+
+  if(!is.null(username) || is.null(getOption("earthdata_login"))){
+    login<-getRemoteData::login_earthdata(username,password)
+  }
+
+  httr::set_config(httr::authenticate(user=getOption("earthdata_user"), password=getOption("earthdata_pass"), type = "basic"))
   vector_response<-httr::GET(paste0(OpenDAPUrl,".ascii?",variableName))
   vector<-httr::content(vector_response,"text")
   vector<-strsplit(vector,",")
@@ -60,7 +65,9 @@
 
 
 
-.getOpendapOptArguments_modis_vnp<-function(roi,collection,username,password,modisTile=NULL){
+.getOpendapOptArguments_modis_vnp<-function(roi,collection,username=NULL,password=NULL,modisTile=NULL){
+
+  if(!is(roi,"sf")){stop("roi is not of class sf")}
 
   SpatialOpenDAPXVectorName="XDim"
   SpatialOpenDAPYVectorName="YDim"
@@ -92,7 +99,9 @@
 }
 
 
-.getOpendapOptArguments_gpm<-function(roi,username,password){
+.getOpendapOptArguments_gpm<-function(roi,username=NULL,password=NULL){
+
+  if(!is(roi,"sf")){stop("roi is not of class sf")}
 
   SpatialOpenDAPXVectorName="lon"
   SpatialOpenDAPYVectorName="lat"
@@ -114,7 +123,9 @@
 }
 
 
-.getOpendapOptArguments_smap<-function(roi,username,password){
+.getOpendapOptArguments_smap<-function(roi,username=NULL,password=NULL){
+
+  if(!is(roi,"sf")){stop("roi is not of class sf")}
 
   SpatialOpenDAPXVectorName="x"
   SpatialOpenDAPYVectorName="y"

@@ -9,7 +9,7 @@ getUrl_modis_vnp(timeRange, roi, collection, dimensions,
   password = NULL, single_ncfile = TRUE)
 }
 \arguments{
-\item{timeRange}{Date(s) of interest (single date or time frame) (see details)}
+\item{timeRange}{Date(s) of interest (single date/datetime or time frame) (see details)}
 
 \item{roi}{sf POINT or POLYGON. Region of interest (EPSG 4326)}
 
@@ -19,7 +19,7 @@ getUrl_modis_vnp(timeRange, roi, collection, dimensions,
 
 \item{modisTile}{string. optional. The MODIS tile identifier}
 
-\item{optionals_opendap}{list of optional arguments (see details). to retrieve outside the function to fasten the processing time}
+\item{optionals_opendap}{list of optional arguments (see details)}
 
 \item{username}{string. EarthData username}
 
@@ -30,9 +30,9 @@ getUrl_modis_vnp(timeRange, roi, collection, dimensions,
 \value{
 a data.frame with one row for each dataset and 3 columns  :
  \itemize{
- \item{"time_start": }{Date or time start}
- \item{"name": }{A name for the dataset. Name is indicative}
- \item{"url": }{URL of the dataset}
+ \item{*time_start*: }{Start Date/time for the dataset}
+ \item{*name*: }{An indicative name for the dataset}
+ \item{*url*: }{URL of the dataset}
  }
 }
 \description{
@@ -56,20 +56,23 @@ The parameters can be retrieved outside the function respectively with the funct
 
 require(sf)
 require(purrr)
+require(tidyverse)
 
 # Identify which collections are available and get details about each one
 coll_available<-getRemoteData::getAvailableDataSources() \%>\%
 filter(source \%in\% c("MODIS","VNP"))
 
-# Set credentials to EarthData servers
+# Set ROI and time range of interest
+roi<-sf::st_read(system.file("extdata/ROI_example.kml", package = "getRemoteData"),quiet=TRUE)
+timeRange<-as.Date(c("2017-01-01","2017-01-30"))
+
+#' # Connect to EarthData servers
 my.earthdata.username<-"username"
 my.earthdata.pw<-"password"
 
-# Set ROI and time range of interest
-roi=sf::st_read(system.file("extdata/ROI_example.kml", package = "getRemoteData"),quiet=TRUE)
-timeRange<-as.Date(c("2017-01-01","2017-01-30"))
+getRemoteData::login_earthdata(my.earthdata.username,my.earthdata.pw)
 
-### Retrieve the URLs to download MODIS LST Daily (MOD11A1.006) Day + Night bands (LST_Day_1km,LST_Night_1km) for the whole time frame by two means
+### Retrieve the URLs to download MODIS LST Daily (MOD11A1.006) Day + Night bands (LST_Day_1km,LST_Night_1km) for the whole time frame by two means :
 1) separate NetCDF files (1 for each date) with the parameter single_ncfile set to FALSE
 2) one single NetCDF file encompassing the whole time frame with the parameter single_ncfile set to TRUE
 
@@ -81,8 +84,6 @@ timeRange=timeRange,
 roi=roi,
 collection="MOD11A1.006",
 dimensions=c("LST_Day_1km","LST_Night_1km"),
-username=my.earthdata.username,
-password=my.earthdata.pw,
 single_ncfile=FALSE
 )
 
@@ -90,7 +91,7 @@ single_ncfile=FALSE
 df_data_to_dl$destfile<-file.path(getwd(),df_data_to_dl$name)
 
 # Download the data
-res_dl<-getRemoteData::downloadData(df_data_to_dl,my.earthdata.username,my.earthdata.pw)
+res_dl<-getRemoteData::downloadData(df_data_to_dl,parallelDL=TRUE,data_source="earthdata")
 
 # Open the LST_Day_1km bands as a list of rasters
 rasts_modis_lst_day<-purrr::map(res_dl$destfile,~getRemoteData::prepareData_modis_vnp(.,"LST_Day_1km")) \%>\%
@@ -108,13 +109,11 @@ timeRange=timeRange,
 roi=roi,
 collection="MOD11A1.006",
 dimensions=c("LST_Day_1km","LST_Night_1km"),
-username=my.earthdata.username,
-password=my.earthdata.pw,
 single_ncfile=TRUE
 )
 
 # Download the data
-res_dl<-getRemoteData::downloadData(df_data_to_dl,my.earthdata.username,my.earthdata.pw)
+res_dl<-getRemoteData::downloadData(df_data_to_dl,parallelDL=TRUE,data_source="earthdata")
 
 # Open the data as a stars object
 require(stars)

@@ -21,7 +21,7 @@
 #'
 #' @examples
 #'
-#' timeRange<-c("2017-01-01","2017-01-30") %>% as.Date()
+#' timeRange<-as.Date(c("2017-01-01","2017-01-30"))
 #'
 #' \dontrun{
 #' getUrl_tamsat(timeRange=timeRange,
@@ -38,6 +38,11 @@ getUrl_tamsat<-function(timeRange, # mandatory. either a time range (e.g. c(date
                          output_product, # {rainfall_estimate,anomaly (only if output_time_step==monthly) ,climatology (only if output_time_step==monthly)}
                          output_output # {individual,yearly}
                          ){
+
+  if(!is(timeRange,"Date")){stop("Argument timeRange is not of class Date")}
+  if(!(output_time_step %in% c("daily","monthly"))){stop("Wrong value in argument output_time_step")}
+  if(!(output_product %in% c("rainfall_estimate","anomaly"))){stop("Wrong value in argument output_product")}
+  if(!(output_output %in% c("individual","yearly"))){stop("Wrong value in argument output_output")}
 
   url_tamsat_data<-"https://www.tamsat.org.uk/public_data/TAMSAT3"
 

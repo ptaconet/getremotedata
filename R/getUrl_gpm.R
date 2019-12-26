@@ -25,13 +25,19 @@
 #'require(sf)
 #'require(purrr)
 #'
-#' # Set credentials to EarthData servers
+#' # Identify which collections are available and get details about each one
+#' coll_available<-getRemoteData::getAvailableDataSources() %>%
+#' filter(source %in% c("GPM"))
+#'
+#' # Set ROI and time range of interest
+#' roi<-sf::st_read(system.file("extdata/ROI_example.kml", package = "getRemoteData"),quiet=TRUE)
+#' timeRange<-as.Date(c("2017-01-01","2017-01-30"))
+#'
+#'#' # Connect to EarthData servers
 #' my.earthdata.username<-"username"
 #' my.earthdata.pw<-"password"
 #'
-#' # Set ROI and time range of interest
-#' roi=sf::st_read(system.file("extdata/ROI_example.kml", package = "getRemoteData"),quiet=TRUE)
-#' timeRange<-as.Date(c("2017-01-01","2017-01-30"))
+#' getRemoteData::login_earthdata(my.earthdata.username,my.earthdata.pw)
 #'
 #' # Retrieve the URLs to download GPM Daily precipitation final run (GPM_3IMERGDF.06) (band precipitationCal and precipitationCal_cnt)
 #' \dontrun{
@@ -39,21 +45,18 @@
 #' timeRange=timeRange,
 #' roi=roi,
 #' collection="GPM_3IMERGDF.06",
-#' dimensions=c("precipitationCal","precipitationCal_cnt"),
-#' username=my.earthdata.username,
-#' password=my.earthdata.pw
+#' dimensions=c("precipitationCal","precipitationCal_cnt")
 #' )
 #'
 #'# Set destination folder
 #' df_data_to_dl$destfile<-file.path(getwd(),df_data_to_dl$name)
 #'
 #'# Download the data
-#'res_dl<-getRemoteData::downloadData(df_data_to_dl,my.earthdata.username,my.earthdata.pw)
+#'res_dl<-getRemoteData::downloadData(df_data_to_dl,parallelDL=TRUE,data_source="earthdata")
 #'
 #'# Open the LST_Day_1km bands as a list of rasters
 #'rasts_gpm_day<-purrr::map(res_dl$destfile,~getRemoteData::importData_gpm(.,"precipitationCal")) %>%
 #' purrr::set_names(res_dl$name)
-#'
 #'
 #'}
 #'
@@ -67,8 +70,14 @@ getUrl_gpm<-function(timeRange, # mandatory. either a time range (e.g. c(date_st
                       password=NULL # EarthData password
                       ){
 
+  if(!is.null(username) || is.null(getOption("earthdata_login"))){
+    login<-getRemoteData::login_earthdata(username,password)
+  }
+
   # Check is the collection has been tested and validated
   getRemoteData::.testCollVal("GPM",collection)
+
+  if(!is(timeRange,"Date") || !is(timeRange,"POSIXlt")){stop("Argument timeRange is not of class Date or POSIXlt")}
 
   OpenDAPServerUrl="https://gpm1.gesdisc.eosdis.nasa.gov/opendap/GPM_L3"
   SpatialOpenDAPXVectorName="lon"
@@ -130,7 +139,7 @@ getUrl_gpm<-function(timeRange, # mandatory. either a time range (e.g. c(date_st
   }
 
   if(is.null(optionals_opendap)){
-    optionals_opendap<-getRemoteData::.getOpendapOptArguments_gpm(roi,username,password)
+    optionals_opendap<-getRemoteData::.getOpendapOptArguments_gpm(roi)
   }
 
   roiSpatialIndexBound<-optionals_opendap$roiSpatialIndexBound

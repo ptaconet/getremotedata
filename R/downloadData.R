@@ -5,7 +5,7 @@
 #' @export
 #'
 
-downloadData<-function(df_to_dl,username=NULL,password=NULL,parallelDL=FALSE){
+downloadData<-function(df_to_dl,parallelDL=FALSE,username=NULL,password=NULL,data_source=NULL){
 
   # check which data is already downloaded
   data_dl<-df_to_dl %>%
@@ -30,9 +30,16 @@ downloadData<-function(df_to_dl,username=NULL,password=NULL,parallelDL=FALSE){
   #    httr::GET(data_to_download$url[i],httr::authenticate(username,password),write_disk(data_to_download$destfile[i]))
   # }
 
-  if(is.null(username)){
-    username<-password<-"no_auth"
+  if(data_source=="earthdata"){
+    if(!is.null(username) || is.null(getOption("earthdata_login"))){
+      login<-getRemoteData::login_earthdata(username,password)
+     }
+    username<-getOption("earthdata_user")
+    password<-getOption("earthdata_pass")
+  } else {
+    username <- password <- "no_auth"
   }
+
   dl_func<-function(url,output,username,password) {httr::GET(url,httr::authenticate(username,password),httr::write_disk(output),httr::progress())}
 
   if (parallelDL){

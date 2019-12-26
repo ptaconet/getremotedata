@@ -45,6 +45,7 @@ getUrl_era5<-function(timeRange, # mandatory. either a time range (e.g. c(date_s
                        destFolder=getwd(),
                        ...){
 
+  if(!is(timeRange,"Date")){stop("Argument timeRange is not of class Date")}
 
   # Check : https://dominicroye.github.io/en/2018/access-to-climate-reanalysis-data-from-r/
 

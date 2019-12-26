@@ -4,8 +4,8 @@
 \alias{downloadData}
 \title{Wrapper to download several datasets}
 \usage{
-downloadData(df_to_dl, username = NULL, password = NULL,
-  parallelDL = FALSE)
+downloadData(df_to_dl, parallelDL = FALSE, username = NULL,
+  password = NULL, data_source = NULL)
 }
 \description{
 This function enables to download datasets, enventually parallelizing the download.

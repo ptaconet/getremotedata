@@ -7,7 +7,7 @@
 getUrl_tamsat(timeRange, output_time_step, output_product, output_output)
 }
 \arguments{
-\item{timeRange}{Date(s) of interest (single date or time frame) (see details)}
+\item{timeRange}{Date(s) of interest (single date/datetime or time frame) (see details)}
 
 \item{output_time_step}{blabla}
 
@@ -18,9 +18,9 @@ getUrl_tamsat(timeRange, output_time_step, output_product, output_output)
 \value{
 a data.frame with one row for each dataset and 3 columns  :
  \itemize{
- \item{"time_start": }{Date or time start}
- \item{"name": }{A name for the dataset. Name is indicative}
- \item{"url": }{URL of the dataset}
+ \item{*time_start*: }{Start Date/time for the dataset}
+ \item{*name*: }{An indicative name for the dataset}
+ \item{*url*: }{URL of the dataset}
  }
 }
 \description{
@@ -31,7 +31,7 @@ Additional information : https://www.tamsat.org.uk/data/archive
 }
 \examples{
 
-timeRange<-c("2017-01-01","2017-01-30") \%>\% as.Date()
+timeRange<-as.Date(c("2017-01-01","2017-01-30"))
 
 \dontrun{
 getUrl_tamsat(timeRange=timeRange,

@@ -38,6 +38,9 @@ getUrl_imcce<-function(timeRange,
                         roi
                         ){
 
+  if(!is(timeRange,"Date")){stop("Argument timeRange is not of class Date")}
+  if(!is(roi,"sf")){stop("roi is not of class sf")}
+
   url_imcce_webservice<-"http://vo.imcce.fr/webservices/miriade/ephemcc_query.php?"
 
   if(length(timeRange)==1){

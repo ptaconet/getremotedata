@@ -12,9 +12,9 @@ getUrl_srtm(roi)
 \value{
 a data.frame with one row for each dataset and 3 columns  :
  \itemize{
- \item{"time_start": }{Date or time start}
- \item{"name": }{A name for the dataset. Name is indicative}
- \item{"url": }{URL of the dataset}
+ \item{*time_start*: }{Start Date/time for the dataset}
+ \item{*name*: }{An indicative name for the dataset}
+ \item{*url*: }{URL of the dataset}
  }
 }
 \description{

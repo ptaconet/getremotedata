@@ -4,21 +4,21 @@
 #' @description This function enables to retrieve OPeNDAP URLs of MODIS or VNP products given a collection, a ROI, a time frame and a set of dimensions of interest.
 #' @export
 #'
-#' @param timeRange Date(s) of interest (single date or time frame) (see details)
+#' @param timeRange Date(s) of interest (single date/datetime or time frame) (see details)
 #' @param roi sf POINT or POLYGON. Region of interest (EPSG 4326)
 #' @param collection string. Collection of interest
 #' @param dimensions string vector. Names of the dimensions to retrieve for the collection of interest
 #' @param modisTile string. optional. The MODIS tile identifier
-#' @param optionals_opendap list of optional arguments (see details). to retrieve outside the function to fasten the processing time
+#' @param optionals_opendap list of optional arguments (see details)
 #' @param username string. EarthData username
 #' @param password string. EarthData password
 #' @param single_ncfile boolean. Get the data as a single netcdf file encompassing the whole time frame (TRUE) or as multiple files (1 for each time step) (FALSE). Default to TRUE
 #'
 #' @return a data.frame with one row for each dataset and 3 columns  :
 #'  \itemize{
-#'  \item{"time_start": }{Date or time start}
-#'  \item{"name": }{A name for the dataset. Name is indicative}
-#'  \item{"url": }{URL of the dataset}
+#'  \item{*time_start*: }{Start Date/time for the dataset}
+#'  \item{*name*: }{An indicative name for the dataset}
+#'  \item{*url*: }{URL of the dataset}
 #'  }
 #'
 #' @details
@@ -44,20 +44,23 @@
 #'
 #'require(sf)
 #'require(purrr)
+#'require(tidyverse)
 #'
 #' # Identify which collections are available and get details about each one
 #' coll_available<-getRemoteData::getAvailableDataSources() %>%
 #' filter(source %in% c("MODIS","VNP"))
 #'
-#' # Set credentials to EarthData servers
+#' # Set ROI and time range of interest
+#' roi<-sf::st_read(system.file("extdata/ROI_example.kml", package = "getRemoteData"),quiet=TRUE)
+#' timeRange<-as.Date(c("2017-01-01","2017-01-30"))
+#'
+#'#' # Connect to EarthData servers
 #' my.earthdata.username<-"username"
 #' my.earthdata.pw<-"password"
 #'
-#' # Set ROI and time range of interest
-#' roi=sf::st_read(system.file("extdata/ROI_example.kml", package = "getRemoteData"),quiet=TRUE)
-#' timeRange<-as.Date(c("2017-01-01","2017-01-30"))
+#' getRemoteData::login_earthdata(my.earthdata.username,my.earthdata.pw)
 #'
-#' ### Retrieve the URLs to download MODIS LST Daily (MOD11A1.006) Day + Night bands (LST_Day_1km,LST_Night_1km) for the whole time frame by two means
+#' ### Retrieve the URLs to download MODIS LST Daily (MOD11A1.006) Day + Night bands (LST_Day_1km,LST_Night_1km) for the whole time frame by two means :
 #' 1) separate NetCDF files (1 for each date) with the parameter single_ncfile set to FALSE
 #' 2) one single NetCDF file encompassing the whole time frame with the parameter single_ncfile set to TRUE
 #'
@@ -69,8 +72,6 @@
 #' roi=roi,
 #' collection="MOD11A1.006",
 #' dimensions=c("LST_Day_1km","LST_Night_1km"),
-#' username=my.earthdata.username,
-#' password=my.earthdata.pw,
 #' single_ncfile=FALSE
 #' )
 #'
@@ -78,7 +79,7 @@
 #' df_data_to_dl$destfile<-file.path(getwd(),df_data_to_dl$name)
 #'
 #'# Download the data
-#'res_dl<-getRemoteData::downloadData(df_data_to_dl,my.earthdata.username,my.earthdata.pw)
+#'res_dl<-getRemoteData::downloadData(df_data_to_dl,parallelDL=TRUE,data_source="earthdata")
 #'
 #'# Open the LST_Day_1km bands as a list of rasters
 #'rasts_modis_lst_day<-purrr::map(res_dl$destfile,~getRemoteData::prepareData_modis_vnp(.,"LST_Day_1km")) %>%
@@ -96,13 +97,11 @@
 #' roi=roi,
 #' collection="MOD11A1.006",
 #' dimensions=c("LST_Day_1km","LST_Night_1km"),
-#' username=my.earthdata.username,
-#' password=my.earthdata.pw,
 #' single_ncfile=TRUE
 #' )
 #'
 #'# Download the data
-#'res_dl<-getRemoteData::downloadData(df_data_to_dl,my.earthdata.username,my.earthdata.pw)
+#'res_dl<-getRemoteData::downloadData(df_data_to_dl,parallelDL=TRUE,data_source="earthdata")
 #'
 #'# Open the data as a stars object
 #'require(stars)
@@ -112,7 +111,7 @@
 #'}
 
 getUrl_modis_vnp<-function(timeRange, # mandatory. either a time range (e.g. c(date_start,date_end) ) or a single date e.g. ( date_start )
-                        roi, # either provide roi (sf point or polygon) or provide roiSpatialIndexBound. if roiSpatialIndexBound is not provided, it will be calculated from roi
+                        roi,
                         collection, # mandatory
                         dimensions, # mandatory
                         modisTile=NULL,
@@ -122,8 +121,18 @@ getUrl_modis_vnp<-function(timeRange, # mandatory. either a time range (e.g. c(d
                         single_ncfile=TRUE
                         ){
 
-  # Check is the collection has been tested and validated
+  ### Checks
+  # connection to earthdata
+  if(!is.null(username) || is.null(getOption("earthdata_login"))){
+    login<-getRemoteData::login_earthdata(username,password)
+  }
+
+  # Check if the collection has been tested and validated
   getRemoteData::.testCollVal(c("MODIS","VNP"),collection)
+
+  if(!is(timeRange,"Date")){stop("Argument timeRange is not of class Date")}
+
+  if(!is.logical(single_ncfile)){stop("Argument single_ncfile is not logical")}
 
   OpenDAPServerUrl="https://opendap.cr.usgs.gov/opendap/hyrax"
   OpenDAPtimeVectorName="time"
@@ -147,7 +156,7 @@ getUrl_modis_vnp<-function(timeRange, # mandatory. either a time range (e.g. c(d
   }
 
   if(is.null(optionals_opendap)){
-    optionals_opendap<-getRemoteData::.getOpendapOptArguments_modis_vnp(roi,collection,username,password,modisTile=modisTile)
+    optionals_opendap<-getRemoteData::.getOpendapOptArguments_modis_vnp(roi,collection,modisTile=modisTile)
   }
 
   OpenDAPtimeVector<-optionals_opendap$OpenDAPtimeVector
