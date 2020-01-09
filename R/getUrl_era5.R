@@ -1,18 +1,14 @@
 #' @name getUrl_era5
 #' @aliases getUrl_era5
-#' @title Download Global Precipitation Measurement time series data
-#' @description This function enables to retrieve URLs of GPM datasets for a given ROI and time frame, and eventually download the data
+#' @title Download Copernicus ERA-5 time series data
+#' @description This function enables to retrieve URLs of ERA-5 products given a ROI, a time frame and a set of dimensions of interest.
 #' @export
 #'
 #' @inheritParams getUrl_modis_vnp
+#' @param username string. Copernicus username
+#' @param password string. Copernicus password
 #'
 #' @inherit getUrl_modis_vnp return
-#'
-#' @details
-#'
-#' Argument \code{timeRange} can be provided either as a single date (e.g. \code{as.Date("2017-01-01"))} or time frame provided as two bounding dates ( e.g. \code{as.Date(c("2010-01-01","2010-01-30"))}) or as a POSIXlt single time or time range (e.g. "2010-01-01 18:00:00") for the half-hourly collection (GPM_3IMERGHH.06). If POSIXlt, times must be in UTC.
-#' Arguments \code{OpenDAPOpenDAPXVector}, \code{OpenDAPOpenDAPYVector} and \code{roiSpatialIndexBound} are optional. They are automatically calculated from the other input parameters if not provided. However, providing them optimizes the performances (i.e. fasten the processing time).
-#' It might be particularly useful to provide them when looping with the function over the same ROI.
 #'
 #' @author Paul Taconet, IRD \email{paul.taconet@ird.fr}
 #'
@@ -61,7 +57,7 @@ getUrl_era5<-function(timeRange, # mandatory. either a time range (e.g. c(date_s
       year= year,
       month=month, #formato: "01","01", etc.
       day= day, #stringr::str_pad(1:31,2,"left","0"),
-      time= hour,
+      time= hour, #stringr::str_c(0:23,"00",sep=":")%>%str_pad(5,"left","0"),
       format= "netcdf",
       area = paste0(roi_bbox$ymax+1,"/",roi_bbox$xmin-1,"/",roi_bbox$ymin-1,"/",roi_bbox$xmax+1) # North, West, South, East
     ))
@@ -70,7 +66,7 @@ getUrl_era5<-function(timeRange, # mandatory. either a time range (e.g. c(date_s
 
   }
 
-  roi_bbox<-sf::st_bbox(st_transform(roi,4326))
+  roi_bbox<-sf::st_bbox(sf::st_transform(roi,4326))
 
   timeRange=as.POSIXlt(timeRange,tz="GMT")
 
@@ -100,20 +96,28 @@ if (download){
   cdsapi <- reticulate::import('cdsapi')
   #for this step there must exist the file .cdsapirc in the root directory of the computer (e.g. "/home/ptaconet")
   server = cdsapi$Client() #start the connection
-  for (i in 1:length(res)){
-    for (j in 1:length(res[[i]])){
-      for (k in 1:length(res[[i]][[j]]$destfile)){
-        if (!file.exists(era5Data_md[[i]][[j]]$destfile[k])){
-           server$retrieve("reanalysis-era5-single-levels",
-                           res[[i]][[j]]$url[k][[1]],
-                           res[[i]][[j]]$destfile[k])
-        }
-      }
-    }
+  for (i in 1:nrow(res)){
+    server$retrieve("reanalysis-era5-single-levels",
+                    res$url[[i]],
+                    res$destfile[[i]])
+
+
   }
 
 }
   return(res)
+
+  #for (i in 1:length(res)){
+  #  for (j in 1:length(res[[i]])){
+  #    for (k in 1:length(res[[i]][[j]]$destfile)){
+  #      if (!file.exists(era5Data_md[[i]][[j]]$destfile[k])){
+  #         server$retrieve("reanalysis-era5-single-levels",
+  #                         res[[i]][[j]]$url[k][[1]],
+  #                         res[[i]][[j]]$destfile[k])
+  #      }
+  #    }
+  #  }
+  #}
 
 
   #query the server to get the ncdf for date of catch and date of catch + 1

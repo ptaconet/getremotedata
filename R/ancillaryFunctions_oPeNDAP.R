@@ -2,8 +2,7 @@
 #' @aliases ancillaryFunctions_oPeNDAP
 #' @title A set of ancillary functions to retrieve data using OpenDAP
 #' @description A set of ancillary functions to retrieve data using OpenDAP
-#' @export .getOpenDAPvector .getOpenDapURL_dimensions .getOpenDapURL_dimensions2 .getOpenDAPtimeIndex_modis .getOpendapOptArguments_modis_vnp .getOpendapOptArguments_gpm .getOpendapOptArguments_smap
-#'
+#' @export .getOpenDAPvector .getOpenDapURL_dimensions .getOpenDapURL_dimensions2 .getOpenDAPtimeIndex_modis .getOpendapOptArguments_modis_vnp .getOpendapOptArguments_gpm .getOpendapOptArguments_smap .getOpendapAvailableDimensions .testDimVal
 #'
 #' @author Paul Taconet, \email{paul.taconet@@ird.fr}
 #'
@@ -95,20 +94,28 @@
   Opendap_minLat<-which.min(abs(OpenDAPYVector-roi_bbox$ymax))-1
   roiSpatialIndexBound<-c(Opendap_minLat,Opendap_maxLat,Opendap_minLon,Opendap_maxLon)
 
-  return(list(OpenDAPtimeVector=OpenDAPtimeVector,roiSpatialIndexBound=roiSpatialIndexBound))
+  availableDimensions<-getRemoteData::.getOpendapAvailableDimensions(paste0(OpendapURL,".html"),username,password)
+
+  return(list(OpenDAPtimeVector=OpenDAPtimeVector,roiSpatialIndexBound=roiSpatialIndexBound,availableDimensions=availableDimensions))
 }
 
 
-.getOpendapOptArguments_gpm<-function(roi,username=NULL,password=NULL){
+.getOpendapOptArguments_gpm<-function(roi,collection,username=NULL,password=NULL){
 
   if(!is(roi,"sf")){stop("roi is not of class sf")}
 
   SpatialOpenDAPXVectorName="lon"
   SpatialOpenDAPYVectorName="lat"
 
-  OpendapURL="https://gpm1.gesdisc.eosdis.nasa.gov/opendap/GPM_L3/GPM_3IMERGHH.06/2016/001/3B-HHR.MS.MRG.3IMERG.20160101-S000000-E002959.0000.V06B.HDF5"
+  if (collection=="GPM_3IMERGHH.06"){
+   OpendapURL="https://gpm1.gesdisc.eosdis.nasa.gov/opendap/GPM_L3/GPM_3IMERGHH.06/2016/001/3B-HHR.MS.MRG.3IMERG.20160101-S000000-E002959.0000.V06B.HDF5"
+  } else if (collection %in% c("GPM_3IMERGDF.06","GPM_3IMERGDL.06")){
+    OpendapURL="https://gpm1.gesdisc.eosdis.nasa.gov/opendap/GPM_L3/GPM_3IMERGDF.06/2017/01/3B-DAY.MS.MRG.3IMERG.20170101-S000000-E235959.V06.nc4"
+  } else if (collection=="GPM_3IMERGM.06"){
+    OpendapURL="https://gpm1.gesdisc.eosdis.nasa.gov/opendap/GPM_L3/GPM_3IMERGM.06/2019/3B-MO.MS.MRG.3IMERG.20190101-S000000-E235959.01.V06B.HDF5"
+  }
 
-  roi_bbox<-sf::st_bbox(st_transform(roi,4326))
+  roi_bbox<-sf::st_bbox(sf::st_transform(roi,4326))
 
   OpenDAPXVector<-getRemoteData::.getOpenDAPvector(OpendapURL,SpatialOpenDAPXVectorName,username,password)
   OpenDAPYVector<-getRemoteData::.getOpenDAPvector(OpendapURL,SpatialOpenDAPYVectorName,username,password)
@@ -119,11 +126,13 @@
   Opendap_maxLat<-which.min(abs(OpenDAPYVector-roi_bbox$ymax))+4
   roiSpatialIndexBound<-c(Opendap_minLat,Opendap_maxLat,Opendap_minLon,Opendap_maxLon)
 
-  return(list(roiSpatialIndexBound=roiSpatialIndexBound))
+  availableDimensions<-getRemoteData::.getOpendapAvailableDimensions(paste0(OpendapURL,".html"),username,password)
+
+  return(list(roiSpatialIndexBound=roiSpatialIndexBound,availableDimensions=availableDimensions))
 }
 
 
-.getOpendapOptArguments_smap<-function(roi,username=NULL,password=NULL){
+.getOpendapOptArguments_smap<-function(roi,collection,username=NULL,password=NULL){
 
   if(!is(roi,"sf")){stop("roi is not of class sf")}
 
@@ -141,7 +150,54 @@
   Opendap_maxLon<-which.min(abs(OpenDAPXVector-roi_bbox$xmax))+2
   Opendap_minLat<-which.min(abs(OpenDAPYVector-roi_bbox$ymin))+2
   Opendap_maxLat<-which.min(abs(OpenDAPYVector-roi_bbox$ymax))-2
-  roiSpatialIndexBound<-c(Opendap_minLat,Opendap_maxLat,Opendap_minLon,Opendap_maxLon)
 
-  return(list(roiSpatialIndexBound=roiSpatialIndexBound))
+  minLon<-OpenDAPXVector[Opendap_minLon]
+  maxLon<-OpenDAPXVector[Opendap_maxLon]
+  minLat<-OpenDAPYVector[Opendap_minLat]
+  maxLat<-OpenDAPYVector[Opendap_maxLat]
+
+  roiSpatialIndexBound<-c(Opendap_minLat,Opendap_maxLat,Opendap_minLon,Opendap_maxLon)
+  roiSpatialBound<-c(minLat,maxLat,minLon,maxLon)
+
+  if (collection=="SPL3SMP_E.003"){
+    OpendapURL="https://n5eil02u.ecs.nsidc.org/opendap/SMAP/SPL3SMP_E.003/2017.01.30/SMAP_L3_SM_P_E_20170130_R16510_001.h5"
+  }
+
+  availableDimensions<-getRemoteData::.getOpendapAvailableDimensions(paste0(OpendapURL,".html"),username,password)
+
+  return(list(roiSpatialIndexBound=roiSpatialIndexBound,availableDimensions=availableDimensions,roiSpatialBound=roiSpatialBound))
+}
+
+
+.getOpendapAvailableDimensions<-function(OpenDAPUrl,username=NULL,password=NULL){
+
+  if(!is.null(username) || is.null(getOption("earthdata_login"))){
+    login<-getRemoteData::login_earthdata(username,password)
+  }
+
+  httr::set_config(httr::authenticate(user=getOption("earthdata_user"), password=getOption("earthdata_pass"), type = "basic"))
+
+  vector_response<-httr::GET(gsub("html","dds",OpenDAPUrl))
+
+  vector<-httr::content(vector_response,"text")
+  vector<-strsplit(vector,"\n")
+  vector<-vector[[1]][-length(vector[[1]])]
+  vector<-vector[-1]
+  vector<-gsub("    ","",vector)
+  vector<-gsub("\\["," \\[",vector)
+
+  dimensions_available<-purrr::map_chr(vector,~stringr::word(., 2))
+
+  return(dimensions_available)
+}
+
+# Check is the dimensions specified exist
+.testDimVal<-function(available_dim,dimensions){
+
+ wrong_dim<-setdiff(dimensions,available_dim)
+
+ if(length(wrong_dim)>0){
+    stop(paste0("\nDimension ",paste(wrong_dim,collapse=",")," do(es) not exist."))
+ }
+
 }

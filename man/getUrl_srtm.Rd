@@ -2,7 +2,7 @@
 % Please edit documentation in R/getUrl_srtm.R
 \name{getUrl_srtm}
 \alias{getUrl_srtm}
-\title{Download SRTM DEM}
+\title{Get URLs of SRTM datasets}
 \usage{
 getUrl_srtm(roi)
 }
@@ -20,15 +20,42 @@ a data.frame with one row for each dataset and 3 columns  :
 \description{
 This function enables to retrieve URLs of SRTM DEM datasets for a given ROI, and eventually download the data
 }
+\note{
+\itemize{
+\item{NB1 :}{The	NASA server where the SRTM data are extracted from is located here : http://e4ftl01.cr.usgs.gov/MEASURES/SRTMGL1.003/2000.02.11/}
+}
+}
 \examples{
 
-# Read ROI as sf object
-roi=sf::st_read(system.file("extdata/ROI_example.kml", package = "getRemoteData"),quiet=TRUE)
-
 \dontrun{
-getUrl_srtm(roi=roi,
-download=FALSE
-)
+
+require(sf)
+
+# Set ROI as a sf object
+roi<-sf::st_read(system.file("extdata/roi_example.gpkg", package = "getRemoteData"),quiet=TRUE)
+
+# Connect to EarthData servers
+my.earthdata.username<-"username"
+my.earthdata.pw<-"password"
+
+getRemoteData::login_earthdata(my.earthdata.username,my.earthdata.pw)
+
+### Retrieve the URLs to download SRTM DEM :
+df_data_to_dl<-getRemoteData::getUrl_srtm(roi = roi)
+
+# Set destination folder
+df_data_to_dl$destfile<-file.path(getwd(),df_data_to_dl$name)
+
+# Download the data
+res_dl<-getRemoteData::downloadData(df_data_to_dl,parallelDL=TRUE,data_source="earthdata")
+
+# Open the DEM(s) as a list of rasters
+rasts_srtm<-purrr::map(res_dl$destfile,~unzip(.)) \%>\%
+purrr::map(.,~raster::raster(.))
+
+# plot the first date :
+raster::plot(rasts_srtm[[1]])
+
 }
 }
 \seealso{

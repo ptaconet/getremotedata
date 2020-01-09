@@ -27,9 +27,9 @@
 
 getAvailableDataSources<-function(detailed=TRUE){
   if (detailed==TRUE){
-  df_AvailableDataSources<-utils::read.csv(system.file("extdata/data_collections.csv", package = "getRemoteData"),stringsAsFactors=F)
+    df_AvailableDataSources<-utils::read.csv(system.file("extdata/data_collections.csv", package = "getRemoteData"),stringsAsFactors=F)
   } else {
-  df_AvailableDataSources<-utils::read.csv(system.file("extdata/data_collections_simple.csv", package = "getRemoteData"),stringsAsFactors=F)
+    df_AvailableDataSources<-utils::read.csv(system.file("extdata/data_collections_simple.csv", package = "getRemoteData"),stringsAsFactors=F)
   }
   return(df_AvailableDataSources)
 }

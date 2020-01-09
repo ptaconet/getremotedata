@@ -2,13 +2,13 @@
 % Please edit documentation in R/getUrl_gpm.R
 \name{getUrl_gpm}
 \alias{getUrl_gpm}
-\title{Query and download GPM collections}
+\title{Get URLs of GPM datasets}
 \usage{
 getUrl_gpm(timeRange, roi, collection, dimensions,
   optionals_opendap = NULL, username = NULL, password = NULL)
 }
 \arguments{
-\item{timeRange}{Date(s) of interest (single date/datetime or time frame) (see details)}
+\item{timeRange}{date(s) of interest (single date/datetime or time frame) (see details)}
 
 \item{roi}{sf POINT or POLYGON. Region of interest (EPSG 4326)}
 
@@ -31,26 +31,33 @@ a data.frame with one row for each dataset and 3 columns  :
  }
 }
 \description{
-This function enables to retrieve URLs of GPM datasets for a given ROI and time frame, and eventually download the data
+This function enables to retrieve OPeNDAP URLs of GPM products given a collection, a ROI, a time frame and a set of dimensions of interest.
 }
 \details{
+Argument \code{timeRange} can be provided either as a single date (e.g. \code{as.Date("2017-01-01"))} or time frame provided as two bounding dates ( e.g. \code{as.Date(c("2010-01-01","2010-01-30"))}) or as a POSIXlt single time or time range (e.g. "2010-01-01 18:00:00") for the half-hourly collection (GPM_3IMERGHH.06). If POSIXlt, times must be in UTC.
+
 Argument \code{optionals_opendap} is optional. This parameter is automatically calculated within the function if it is not provided. However, providing it optimizes the performances of the function (i.e. fasten the processing time).
 It might be particularly useful to provide it if looping over the same ROI or dates is planned.
-The parameter can be retrieved outside the function with the function \link[getRemoteData]{getOpendapOptArguments_gpm}.
-
-Argument \code{timeRange} can be provided either as a single date (e.g. \code{as.Date("2017-01-01"))} or time frame provided as two bounding dates ( e.g. \code{as.Date(c("2010-01-01","2010-01-30"))}) or as a POSIXlt single time or time range (e.g. "2010-01-01 18:00:00") for the half-hourly collection (GPM_3IMERGHH.06). If POSIXlt, times must be in UTC.
+The parameter can be retrieved outside the function with the function \link[getRemoteData]{.getOpendapOptArguments_gpm}.
+}
+\note{
+\itemize{
+\item{NB1 :}{Before downloading some data, users should check which GPM collections have been implemented in the package, with the function \link[getRemoteData]{getAvailableDataSources}.}
+\item{NB3 :}{The	NASA/JAXA OPeNDAP server where the GPM data are extracted from is located here : https://gpm1.gesdisc.eosdis.nasa.gov/opendap/}
+}
 }
 \examples{
 
+\dontrun{
 require(sf)
 require(purrr)
 
 # Identify which collections are available and get details about each one
-coll_available<-getRemoteData::getAvailableDataSources() \%>\%
-filter(source \%in\% c("GPM"))
+coll_available <- getRemoteData::getAvailableDataSources()
+coll_available <- coll_available[which(coll_available$source \%in\% c("MODIS","VNP")),]
 
 # Set ROI and time range of interest
-roi<-sf::st_read(system.file("extdata/ROI_example.kml", package = "getRemoteData"),quiet=TRUE)
+roi<-sf::st_read(system.file("extdata/roi_example.gpkg", package = "getRemoteData"),quiet=TRUE)
 timeRange<-as.Date(c("2017-01-01","2017-01-30"))
 
 #' # Connect to EarthData servers
@@ -60,8 +67,7 @@ my.earthdata.pw<-"password"
 getRemoteData::login_earthdata(my.earthdata.username,my.earthdata.pw)
 
 # Retrieve the URLs to download GPM Daily precipitation final run (GPM_3IMERGDF.06) (band precipitationCal and precipitationCal_cnt)
-\dontrun{
-df_data_to_dl<-getUrl_gpm(
+df_data_to_dl<-getRemoteData::getUrl_gpm(
 timeRange=timeRange,
 roi=roi,
 collection="GPM_3IMERGDF.06",
@@ -74,7 +80,7 @@ df_data_to_dl$destfile<-file.path(getwd(),df_data_to_dl$name)
 # Download the data
 res_dl<-getRemoteData::downloadData(df_data_to_dl,parallelDL=TRUE,data_source="earthdata")
 
-# Open the LST_Day_1km bands as a list of rasters
+# Open the precipitationCal bands as a list of rasters
 rasts_gpm_day<-purrr::map(res_dl$destfile,~getRemoteData::importData_gpm(.,"precipitationCal")) \%>\%
 purrr::set_names(res_dl$name)
 

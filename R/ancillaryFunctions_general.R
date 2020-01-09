@@ -2,41 +2,19 @@
 #' @aliases ancillaryFunctions_general
 #' @title A set of ancillary functions
 #' @description A set of ancillary functions
-#' @export convertMetersToDegrees convertMetersToDegrees getUTMepsg getMODIStileNames getSRTMtileNames .testCollVal login_earthdata
+#' @export getMODIStileNames getSRTMtileNames .testCollVal login_earthdata
 #'
 #' @param roi sf polygon object. a region of interest
 #'
+#'
 #' @author Paul Taconet, \email{paul.taconet@@ird.fr}
 #'
-
-convertMetersToDegrees<-function(length_meters,
-                                 latitude_4326){
-
-  length_degrees <- length_meters / (111.32 * 1000 * cos(latitude_4326 * ((pi / 180))))
-
-  return(length_degrees)
-}
-
-getUTMepsg<-function(roi){
-
-  bbox<-sf::st_bbox(roi)
-  #  cat("Warning: ROIs overlapping more than 1 UTM zone are currently not adapted in this workflow\n")
-  utm_zone_number<-(floor((bbox$xmin + 180)/6) %% 60) + 1
-  if(bbox$ymin>0){ # if latitudes are North
-    epsg<-as.numeric(paste0("326",utm_zone_number))
-  } else { # if latitude are South
-    epsg<-as.numeric(paste0("325",utm_zone_number))
-  }
-
-  return(epsg)
-}
-
 
 getMODIStileNames<-function(roi){
 
   if(!is(roi,"sf")){stop("roi is not of class sf")}
   roi<-sf::st_transform(roi,4326)
-  #options(warn=-1)
+  options(warn=-1)
   modis_tile = sf::read_sf("https://modis.ornl.gov/files/modis_sin.kmz") %>%
     sf::st_intersection(roi) %>%
     as.data.frame() %>%
@@ -45,7 +23,7 @@ getMODIStileNames<-function(roi){
   options(warn=0)
 
   if(length(unique(modis_tile))>1){
-    stop("Your ROI is overlapping more than 1 MODIS tile. This workflow is currently not adapted for this case\n")
+    stop("Your ROI is overlapping more than 1 MODIS tile. The package currently does not support multiple MODIS tiles\n")
   } else {
     modis_tile<-modis_tile %>%
       unique() %>%
@@ -76,14 +54,15 @@ getSRTMtileNames<-function(roi){
   return(SRTMtileNames)
 }
 
-# Check is the collection has been tested and validated
+# Check if the collection has been tested and validated
 .testCollVal<-function(source_,collection_){
   collections_validated<-getRemoteData::getAvailableDataSources() %>%
-    filter(source %in% source_ & collection==collection_)
+    dplyr::filter(source %in% source_ & collection==collection_)
 
   if(nrow(collections_validated)==0){
     stop("The collection specified is not valid or has not been validated.\n Check out which collections are available with the function getAvailableDataSources()")
   }
+
 }
 
 # login to earthdata products
@@ -100,7 +79,6 @@ login_earthdata<-function(username,password){
     options(earthdata_user=username)
     options(earthdata_pass=password)
     options(earthdata_login=TRUE)
-    cat("Successfull login to EarthData.\n")
+    cat("\nSuccessfull login to EarthData")
   }
-  return(v)
 }

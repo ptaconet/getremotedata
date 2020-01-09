@@ -2,12 +2,12 @@
 % Please edit documentation in R/getUrl_viirsDnb.R
 \name{getUrl_viirsDnb}
 \alias{getUrl_viirsDnb}
-\title{Download VIIRS DNB time series data}
+\title{Get URLs of VIIRS DNB datasets}
 \usage{
 getUrl_viirsDnb(timeRange, roi, dimensions)
 }
 \arguments{
-\item{timeRange}{Date(s) of interest (single date/datetime or time frame) (see details)}
+\item{timeRange}{date(s) of interest (single date/datetime or time frame) (see details)}
 
 \item{roi}{sf POINT or POLYGON. Region of interest (EPSG 4326)}
 
@@ -22,24 +22,46 @@ a data.frame with one row for each dataset and 3 columns  :
  }
 }
 \description{
-This function enables to retrieve URLs of VIIRS DNB datasets for a given ROI and time frame, and eventually download the data
+This function enables to retrieve URLs of VIIRS DNB products given a ROI, a time frame and a set of dimensions of interest.
 }
 \details{
-Argument \code{timeRange} can be provided either as a single date (e.g. \code{as.Date("2017-01-01"))} or time frame provided as two bounding dates ( e.g. \code{as.Date(c("2010-01-01","2010-01-30"))})
+Argument \code{timeRange} can be provided either as a single date (e.g. \code{as.Date("2017-01-01"))} or time frame provided as two bounding dates ( e.g. \code{as.Date(c("2017-01-01","2017-06-01"))})
+}
+\note{
+\itemize{
+\item{NB1 :}{The	NOAA server where the VIIRS DNB data are extracted from is located here : https://gis.ngdc.noaa.gov/arcgis/rest/services/NPP_VIIRS_DNB/}
+}
 }
 \examples{
 
-# Read ROI as sf object
-roi=sf::st_read(system.file("extdata/ROI_example.kml", package = "getRemoteData"),quiet=TRUE)
-timeRange<-c("2017-01-01","2017-01-30") \%>\% as.Date()
+\dontrun{
+require(sf)
+require(purrr)
 
-getUrl_viirsDnb(timeRange=timeRange,
+# Set ROI and time range of interest
+roi<-sf::st_read(system.file("extdata/roi_example.gpkg", package = "getRemoteData"),quiet=TRUE)
+timeRange<-as.Date(c("2017-01-01","2017-08-30"))
+
+### Retrieve the URLs to download VIIRS DNB products for the whole time frame :
+df_data_to_dl<-getRemoteData::getUrl_viirsDnb(
+timeRange=timeRange,
 roi=roi,
-dimensions=c("Monthly_AvgRadiance","Monthly_CloudFreeCoverage"),
-download=FALSE
+dimensions=c("Monthly_AvgRadiance","Monthly_CloudFreeCoverage")
 )
 
+# Set destination folder
+df_data_to_dl$destfile<-file.path(getwd(),df_data_to_dl$name)
 
+# Download the data
+res_dl<-getRemoteData::downloadData(df_data_to_dl,parallelDL=TRUE)
+
+# Open the Monthly_AvgRadiance bands as a list of rasters
+rasts_viirsdnb<-purrr::map(res_dl$destfile[which(grepl("Monthly_AvgRadiance",res_dl$destfile))],~raster::raster(.))
+
+# plot the first date :
+raster::plot(rasts_viirsdnb[[1]])
+
+}
 }
 \seealso{
 Other getUrl: \code{\link{getUrl_era5}},

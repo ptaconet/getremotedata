@@ -2,7 +2,7 @@ Product,Type,Provider,Collections,Function download,Function import,Additional i
 MODIS & VNP,"Surface temperature, evoptranspiration, vegetation indices, etc.",NASA/USGS/NOAA,"MOD11A1.006, MYD11A1.006, MOD11A2.006, MYD11A2.006, MOD13Q1.006, MYD13Q1.006, MOD16A2.006, MYD16A2.006,VNP21A1D.001, VNP21A1N.001, VNP21A2.001
 
 ",getUrl_modis_vnp(),importData_modis_vnp(),"https://modis.gsfc.nasa.gov/, https://lpdaac.usgs.gov/search/?query=VNP"
-GPM,Precipitation,NASA/JAXA,"GPM_3IMERGDF.06, GPM_3IMERGHH.06
+GPM,Precipitation,NASA/JAXA,"GPM_3IMERGDF.06, GPM_3IMERGHH.06, GPM_3IMERGM.06, GPM_3IMERGDL.06
 ",getUrl_gpm(),importData_gpm(),https://pmm.nasa.gov/GPM
 SMAP,Soil moisture,NASA,SPL3SMP_E.003,getUrl_smap(),importData_smap(),https://smap.jpl.nasa.gov/
 VIIRS/NPP,Nigth lights,NASA/NOAA,VIIRS DNB,getUrl_viirsDnb(),importData_viirsDnb(),https://ncc.nesdis.noaa.gov/VIIRS/

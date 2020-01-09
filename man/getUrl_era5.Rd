@@ -2,21 +2,21 @@
 % Please edit documentation in R/getUrl_era5.R
 \name{getUrl_era5}
 \alias{getUrl_era5}
-\title{Download Global Precipitation Measurement time series data}
+\title{Download Copernicus ERA-5 time series data}
 \usage{
 getUrl_era5(timeRange, roi, dimensions, username = NULL,
   password = NULL, download = FALSE, destFolder = getwd(), ...)
 }
 \arguments{
-\item{timeRange}{Date(s) of interest (single date/datetime or time frame) (see details)}
+\item{timeRange}{date(s) of interest (single date/datetime or time frame) (see details)}
 
 \item{roi}{sf POINT or POLYGON. Region of interest (EPSG 4326)}
 
 \item{dimensions}{string vector. Names of the dimensions to retrieve for the collection of interest}
 
-\item{username}{string. EarthData username}
+\item{username}{string. Copernicus username}
 
-\item{password}{string. EarthData password}
+\item{password}{string. Copernicus password}
 }
 \value{
 a data.frame with one row for each dataset and 3 columns  :
@@ -27,12 +27,7 @@ a data.frame with one row for each dataset and 3 columns  :
  }
 }
 \description{
-This function enables to retrieve URLs of GPM datasets for a given ROI and time frame, and eventually download the data
-}
-\details{
-Argument \code{timeRange} can be provided either as a single date (e.g. \code{as.Date("2017-01-01"))} or time frame provided as two bounding dates ( e.g. \code{as.Date(c("2010-01-01","2010-01-30"))}) or as a POSIXlt single time or time range (e.g. "2010-01-01 18:00:00") for the half-hourly collection (GPM_3IMERGHH.06). If POSIXlt, times must be in UTC.
-Arguments \code{OpenDAPOpenDAPXVector}, \code{OpenDAPOpenDAPYVector} and \code{roiSpatialIndexBound} are optional. They are automatically calculated from the other input parameters if not provided. However, providing them optimizes the performances (i.e. fasten the processing time).
-It might be particularly useful to provide them when looping with the function over the same ROI.
+This function enables to retrieve URLs of ERA-5 products given a ROI, a time frame and a set of dimensions of interest.
 }
 \examples{
 

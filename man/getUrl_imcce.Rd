@@ -7,7 +7,7 @@
 getUrl_imcce(timeRange, roi)
 }
 \arguments{
-\item{timeRange}{Date(s) of interest (single date/datetime or time frame) (see details)}
+\item{timeRange}{date(s) of interest (single date/datetime or time frame) (see details)}
 
 \item{roi}{sf POINT or POLYGON. Region of interest (EPSG 4326)}
 }

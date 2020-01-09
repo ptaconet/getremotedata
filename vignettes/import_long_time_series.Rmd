@@ -1,0 +1,169 @@
+---
+title: "Automatic import of MODIS time-series and extraction within buffers around sampling points"
+author: "Paul Taconet"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Import long time series}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Introduction
+
+In this vignette we show how to import long time series of various MODIS/VNP products over a given ROI, 
+
+## Code
+
+```{r setup_packages,  results='hide', eval = F, echo=T, message=F, warning=F}
+require(sf)
+require(tidyvers)
+require(getRemoteData)
+```
+
+### Case n°1 : Single time frame, single collection
+
+This case is dealt in the Readme file
+
+### Case n°2 : Single time frame, multiple collections
+
+```{r singleTimeFramce_multColl, eval = F, echo=T, message=F, warning=F}
+## Input parameters
+
+# ROI and dates of interest
+roi<-sf::st_read(system.file("extdata/roi_example.gpkg", package = "getRemoteData"),quiet=TRUE)
+timeRange<-as.Date(c("2017-01-01","2017-01-30"))
+
+# Set MODIS collections and dimensions of interest
+modis_collections_df <- data.frame(collection = c("MOD11A1.006","MYD11A1.006","MOD11A2.006","MYD11A2.006","MOD13Q1.006","MYD13Q1.006","MOD16A2.006","MYD16A2.006"),stringsAsFactors = F) %>%
+   mutate(dimensions=case_when(collection %in% c("MOD11A1.006","MYD11A1.006","MOD11A2.006","MYD11A2.006") ~ list(c("LST_Day_1km","LST_Night_1km")),
+                                        collection %in% c("MOD13Q1.006","MYD13Q1.006") ~ list(c("_250m_16_days_NDVI","_250m_16_days_EVI")),
+                                        collection %in% c("MOD16A2.006","MYD16A2.006") ~ list(c("ET_500m"))
+                                        ))
+
+# Set Credentials to EarthData servers
+my.earthdata.username<-"ptaconet"
+my.earthdata.pw<-"HHKcue51"
+
+### Start script
+
+# Login to EarthData servers
+getRemoteData::login_earthdata(my.earthdata.username,my.earthdata.pw)
+
+# Get MODIS tile
+modis_tile<-getRemoteData::getMODIStileNames(roi)
+
+# Get OpenDAP optional arguments and set dimensions of interest
+modis_collections_df <- modis_collections_df %>% 
+  mutate(optionals_opendap=map(collection,~getRemoteData::.getOpendapOptArguments_modis_vnp(roi = roi,collection = .,modisTile = modis_tile)))
+
+# Retrieve the URLs of all the MODIS datasets to download using the `getRemoteData::getUrl_modis_vnp` function. Output is a list
+#names(dates_of_interest)<-as.numeric(dates_of_interest)
+
+modis_list_urls<-pmap(list(modis_collections_df$collection,modis_collections_df$dimensions,modis_collections_df$optionals_opendap),
+            ~getRemoteData::getUrl_modis_vnp(
+                           timeRange =timeRange,
+                           roi = roi,
+                           modisTile = modis_tile,
+                           collection = ..1,
+                           dimensions = ..2,
+                           optionals_opendap = ..3,
+                           single_ncfile = FALSE)) %>%
+        set_names(modis_collections_df$collection)
+
+# Set destination files
+modis_list_urls <- modify_depth(modis_list_urls,1,~mutate(.,destfile=file.path(getwd(),substr(.$name,1,11),.$name)))
+
+## Download the data using the `getRemoteData::downloadData` function.
+df_to_dl<- modis_list_urls %>%
+   do.call(rbind,.) %>%
+   distinct
+
+cat("Downloading MODIS data...\n")
+
+res_dl<-getRemoteData::downloadData(df_to_dl,parallelDL=TRUE,data_source="earthdata")
+
+## Open as a list of stars objects
+stars_modis<-map(modis_list_urls,~stars::read_stars(.$destfile, quiet = TRUE))
+
+```
+
+### Case n°3 : Multiple time frames, multiple collections
+
+```{r multTimeFramce_multColl, eval = F, echo=T, message=F, warning=F}
+## Input parameters
+
+# ROI and dates of interest
+roi<-sf::st_read(system.file("extdata/roi_example.gpkg", package = "getRemoteData"),quiet=TRUE)
+dates_of_interest<-as.Date(c("2015-01-10","2015-04-18","2015-05-04","2015-10-29","2016-02-13","2016-05-22","2016-08-06","2016-11-18","2017-01-14","2017-05-24","2017-07-16","2017-08-10","2017-11-03"))
+
+# Set time lag in days. Each input date will be lagged of this time lag
+time_lag<-40
+
+# Set MODIS collections and dimensions of interest
+modis_collections_df <- data.frame(collection = c("MOD11A1.006","MYD11A1.006","MOD11A2.006","MYD11A2.006","MOD13Q1.006","MYD13Q1.006","MOD16A2.006","MYD16A2.006"),stringsAsFactors = F) %>%
+   mutate(dimensions=case_when(collection %in% c("MOD11A1.006","MYD11A1.006","MOD11A2.006","MYD11A2.006") ~ list(c("LST_Day_1km","LST_Night_1km")),
+                                        collection %in% c("MOD13Q1.006","MYD13Q1.006") ~ list(c("_250m_16_days_NDVI","_250m_16_days_EVI")),
+                                        collection %in% c("MOD16A2.006","MYD16A2.006") ~ list(c("ET_500m"))
+                                        ))
+
+# Set Credentials to EarthData servers
+my.earthdata.username<-"ptaconet"
+my.earthdata.pw<-"HHKcue51"
+
+### Start script
+
+# Login to EarthData servers
+getRemoteData::login_earthdata(my.earthdata.username,my.earthdata.pw)
+
+# Get MODIS tile
+modis_tile<-getRemoteData::getMODIStileNames(roi)
+
+# Get OpenDAP optional arguments and set dimensions of interest
+modis_collections_df <- modis_collections_df %>% 
+  mutate(optionals_opendap=map(collection,~getRemoteData::.getOpendapOptArguments_modis_vnp(roi = roi,collection = .,modisTile = modis_tile)))
+
+# Retrieve the URLs of all the MODIS datasets to download using the `getRemoteData::getUrl_modis_vnp` function. Output is a list
+names(dates_of_interest)<-as.numeric(dates_of_interest)
+
+modis_list_urls<-dates_of_interest %>%
+  map(.,~pmap(list(.,modis_collections_df$collection,modis_collections_df$dimensions,modis_collections_df$optionals_opendap),
+            ~getRemoteData::getUrl_modis_vnp(
+                           timeRange = c(..1-time_lag,..1),
+                           roi = roi,
+                           modisTile = modis_tile,
+                           collection = ..2,
+                           dimensions = ..3,
+                           optionals_opendap = ..4,
+                           single_ncfile = FALSE)) %>%
+        set_names(modis_collections_df$collection))
+
+# Set destination files
+modis_list_urls <- modify_depth(modis_list_urls,2,~mutate(.,destfile=file.path(getwd(),substr(.$name,1,11),.$name)))
+
+## Download the data using the `getRemoteData::downloadData` function.
+df_to_dl<- modis_list_urls %>%
+   flatten %>%
+   do.call(rbind,.) %>%
+   distinct
+
+cat("Downloading MODIS data...\n")
+
+res_dl<-getRemoteData::downloadData(df_to_dl,parallelDL=TRUE,data_source="earthdata")
+
+## Import the datasets
+
+#require(stars)
+
+modis_stars_df = df_to_dl %>%
+  mutate(modis_as_stars=list(stars::read_stars(destfile, quiet = TRUE)))
+
+```
+

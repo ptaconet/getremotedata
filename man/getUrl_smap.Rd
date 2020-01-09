@@ -2,13 +2,13 @@
 % Please edit documentation in R/getUrl_smap.R
 \name{getUrl_smap}
 \alias{getUrl_smap}
-\title{Query and download SMAP collections}
+\title{Get URLs of SMAP datasets}
 \usage{
 getUrl_smap(timeRange, roi, collection, dimensions,
   optionals_opendap = NULL, username = NULL, password = NULL)
 }
 \arguments{
-\item{timeRange}{Date(s) of interest (single date/datetime or time frame) (see details)}
+\item{timeRange}{date(s) of interest (single date/datetime or time frame) (see details)}
 
 \item{roi}{sf POINT or POLYGON. Region of interest (EPSG 4326)}
 
@@ -34,25 +34,66 @@ a data.frame with one row for each dataset and 3 columns  :
 This function enables to retrieve URLs of SMAP datasets for a given ROI and time frame, and eventually download the data
 }
 \details{
-Argument \code{timeRange} can be provided either as a single date (e.g. \code{as.Date("2017-01-01"))} or time frame provided as two bounding dates ( e.g. \code{as.Date(c("2010-01-01","2010-01-30"))}) or as a POSIXlt single time or time range (e.g. "2010-01-01 18:00:00") for the half-hourly collection (GPM_3IMERGHH.06). If POSIXlt, times must be in UTC.
-Arguments \code{OpenDAPOpenDAPXVector}, \code{OpenDAPOpenDAPYVector} and \code{roiSpatialIndexBound} are optional. They are automatically calculated from the other input parameters if not provided. However, providing them optimizes the performances (i.e. fasten the processing time).
-It might be particularly useful to provide them when looping with the function over the same ROI.
+Date(s) of interest (argument \code{timeRange}) must be provided either a single date (e.g. \code{as.Date("2017-01-01"))} or time frame provided with two bounding dates ( e.g. \code{as.Date(c("2010-01-01","2010-01-30"))})
+
+Arguments \code{modisTile} and \code{optionals_opendap} are optional. These parameters are automatically calculated within the function if they are not provided. However, providing them optimizes the performances of the function (i.e. fasten the processing time).
+It might be particularly useful to provide them if looping over the same ROI or dates is planned.
+The parameters can be retrieved outside the function respectively with the functions \link[getRemoteData]{getMODIStileNames} and \link[getRemoteData]{.getOpendapOptArguments_modis_vnp}.
+}
+\note{
+\itemize{
+\item{NB1 :}{Before downloading some data, users should check which GPM collections have been implemented in the package, with the function \link[getRemoteData]{getAvailableDataSources}.}
+\item{NB2 :}{The	NASA OPeNDAP server where the GPM data are extracted from is located here : https://n5eil02u.ecs.nsidc.org/opendap/SMAP/}
+}
 }
 \examples{
 
-# Read ROI as sf object
-roi=sf::st_read(system.file("extdata/ROI_example.kml", package = "getRemoteData"),quiet=TRUE)
-timeRange<-c("2017-01-01","2017-01-30") \%>\% as.Date()
-
 \dontrun{
-getUrl_smap(timeRange=timeRange,
+require(sf)
+require(purrr)
+
+# Identify which collections are available and get details about each one
+coll_available <- getRemoteData::getAvailableDataSources()
+coll_available <- coll_available[which(coll_available$source=="SMAP"),]
+
+# Set ROI and time range of interest
+roi<-sf::st_read(system.file("extdata/roi_example.gpkg", package = "getRemoteData"),quiet=TRUE)
+timeRange<-as.Date(c("2017-01-01","2017-01-30"))
+
+# Connect to EarthData servers
+my.earthdata.username<-"username"
+my.earthdata.pw<-"password"
+
+getRemoteData::login_earthdata(my.earthdata.username,my.earthdata.pw)
+
+### Retrieve the URLs to download SMAP Enhanced L3 Radiometer Global Daily 9 km EASE-Grid Soil Moisture, Version 3	(bands are specified in the parameters of the function) :
+
+df_data_to_dl<-getRemoteData::getUrl_smap(
+timeRange=timeRange,
 roi=roi,
 collection="SPL3SMP_E.003",
-dimensions=c("Soil_Moisture_Retrieval_Data_AM_soil_moisture","Soil_Moisture_Retrieval_Data_AM_retrieval_qual_flag","Soil_Moisture_Retrieval_Data_PM_soil_moisture_pm","Soil_Moisture_Retrieval_Data_PM_retrieval_qual_flag_pm"),
-username="my.earthdata.username",
-password="my.earthdata.pw",
-download=FALSE
+dimensions=c("Soil_Moisture_Retrieval_Data_AM_soil_moisture","Soil_Moisture_Retrieval_Data_AM_retrieval_qual_flag","Soil_Moisture_Retrieval_Data_PM_soil_moisture_pm","Soil_Moisture_Retrieval_Data_PM_retrieval_qual_flag_pm")
 )
+
+# Set destination folder
+df_data_to_dl$destfile<-file.path(getwd(),df_data_to_dl$name)
+
+# Download the data
+res_dl<-getRemoteData::downloadData(df_data_to_dl,parallelDL=TRUE,data_source="earthdata")
+
+# Open the Soil_Moisture_Retrieval_Data_AM_soil_moisture bands as a list of rasters
+
+opendapOptArguments<-getRemoteData::.getOpendapOptArguments_smap(roi = roi, collection = "SPL3SMP_E.003")
+minLon<-opendapOptArguments$roiSpatialBound[[3]]
+minLat<-opendapOptArguments$roiSpatialBound[[1]]
+maxLon<-opendapOptArguments$roiSpatialBound[[4]]
+maxLat<-opendapOptArguments$roiSpatialBound[[2]]
+rasts_smap<-purrr::map(res_dl$destfile,~getRemoteData::importData_smap(.,"Soil_Moisture_Retrieval_Data_AM_soil_moisture",minLon,minLat,maxLon,maxLat)) \%>\%
+ purrr::set_names(res_dl$name)
+
+# plot the first date :
+raster::plot(rasts_smap[[1]])
+
 }
 
 }

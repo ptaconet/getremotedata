@@ -2,14 +2,14 @@
 % Please edit documentation in R/getUrl_modis_vnp.R
 \name{getUrl_modis_vnp}
 \alias{getUrl_modis_vnp}
-\title{Query MODIS or VNP collections}
+\title{Get URLs of MODIS or VNP datasets}
 \usage{
 getUrl_modis_vnp(timeRange, roi, collection, dimensions,
   modisTile = NULL, optionals_opendap = NULL, username = NULL,
   password = NULL, single_ncfile = TRUE)
 }
 \arguments{
-\item{timeRange}{Date(s) of interest (single date/datetime or time frame) (see details)}
+\item{timeRange}{date(s) of interest (single date/datetime or time frame) (see details)}
 
 \item{roi}{sf POINT or POLYGON. Region of interest (EPSG 4326)}
 
@@ -26,6 +26,8 @@ getUrl_modis_vnp(timeRange, roi, collection, dimensions,
 \item{password}{string. EarthData password}
 
 \item{single_ncfile}{boolean. Get the data as a single netcdf file encompassing the whole time frame (TRUE) or as multiple files (1 for each time step) (FALSE). Default to TRUE}
+
+\item{verbose}{boolean}
 }
 \value{
 a data.frame with one row for each dataset and 3 columns  :
@@ -43,27 +45,27 @@ Date(s) of interest (argument \code{timeRange}) must be provided either a single
 
 Arguments \code{modisTile} and \code{optionals_opendap} are optional. These parameters are automatically calculated within the function if they are not provided. However, providing them optimizes the performances of the function (i.e. fasten the processing time).
 It might be particularly useful to provide them if looping over the same ROI or dates is planned.
-The parameters can be retrieved outside the function respectively with the functions \link[getRemoteData]{getMODIStileNames} and \link[getRemoteData]{getOpendapOptArguments_modis_vnp}.
+The parameters can be retrieved outside the function respectively with the functions \link[getRemoteData]{getMODIStileNames} and \link[getRemoteData]{.getOpendapOptArguments_modis_vnp}.
 }
 \note{
 \itemize{
 \item{NB1 :}{Before downloading some data, users should check which MODIS/VNP collections have been implemented in the package, with the function \link[getRemoteData]{getAvailableDataSources}.}
 \item{NB2 :}{Currently, downloading data over a ROI that covers multiple MODIS/VNP tiles is not enabled.}
-\item{NB3 :}{The NASA/USGS OPeNDAP server where the MODIS and VNP data are extracted from is located here : https://opendap.cr.usgs.gov/opendap/hyrax}
+\item{NB3 :}{The NASA/USGS/NOAA OPeNDAP server where the MODIS and VNP data are extracted from is located here : https://opendap.cr.usgs.gov/opendap/hyrax}
 }
 }
 \examples{
 
+\dontrun{
 require(sf)
 require(purrr)
-require(tidyverse)
 
 # Identify which collections are available and get details about each one
-coll_available<-getRemoteData::getAvailableDataSources() \%>\%
-filter(source \%in\% c("MODIS","VNP"))
+coll_available <- getRemoteData::getAvailableDataSources()
+coll_available <- coll_available[which(coll_available$source \%in\% c("MODIS","VNP")),]
 
 # Set ROI and time range of interest
-roi<-sf::st_read(system.file("extdata/ROI_example.kml", package = "getRemoteData"),quiet=TRUE)
+roi<-sf::st_read(system.file("extdata/roi_example.gpkg", package = "getRemoteData"),quiet=TRUE)
 timeRange<-as.Date(c("2017-01-01","2017-01-30"))
 
 #' # Connect to EarthData servers
@@ -72,13 +74,12 @@ my.earthdata.pw<-"password"
 
 getRemoteData::login_earthdata(my.earthdata.username,my.earthdata.pw)
 
-### Retrieve the URLs to download MODIS LST Daily (MOD11A1.006) Day + Night bands (LST_Day_1km,LST_Night_1km) for the whole time frame by two means :
-1) separate NetCDF files (1 for each date) with the parameter single_ncfile set to FALSE
-2) one single NetCDF file encompassing the whole time frame with the parameter single_ncfile set to TRUE
 
+### Retrieve the URLs to download MODIS LST Daily (MOD11A1.006) Day + Night bands (LST_Day_1km,LST_Night_1km) for the whole time frame by two means :
+# 1) separate NetCDF files (1 for each date) with the parameter single_ncfile set to FALSE
+# 2) one single NetCDF file encompassing the whole time frame with the parameter single_ncfile set to TRUE
 
 ## 1) separate NetCDF files (1 for each date) with the parameter single_ncfile set to FALSE
-\dontrun{
 df_data_to_dl<-getRemoteData::getUrl_modis_vnp(
 timeRange=timeRange,
 roi=roi,
@@ -94,12 +95,15 @@ df_data_to_dl$destfile<-file.path(getwd(),df_data_to_dl$name)
 res_dl<-getRemoteData::downloadData(df_data_to_dl,parallelDL=TRUE,data_source="earthdata")
 
 # Open the LST_Day_1km bands as a list of rasters
-rasts_modis_lst_day<-purrr::map(res_dl$destfile,~getRemoteData::prepareData_modis_vnp(.,"LST_Day_1km")) \%>\%
+rasts_modis_lst_day<-purrr::map(res_dl$destfile,~getRemoteData::importData_modis_vnp(.,"LST_Day_1km")) \%>\%
 purrr::set_names(res_dl$name)
+# plot the first date :
+raster::plot(rasts_modis_lst_day[[1]])
 
 # or :
 
 # Open all the datasets (all dates and bands) as a unique stars object
+require(stars)
 stars_modis = stars::read_stars(res_dl$destfile, quiet = TRUE)
 
 ## 2) one single NetCDF file encompassing the whole time frame with the parameter single_ncfile set to TRUE
@@ -112,13 +116,14 @@ dimensions=c("LST_Day_1km","LST_Night_1km"),
 single_ncfile=TRUE
 )
 
+# Set destination folder
+df_data_to_dl$destfile<-file.path("MOD11A1",df_data_to_dl$name)
+
 # Download the data
 res_dl<-getRemoteData::downloadData(df_data_to_dl,parallelDL=TRUE,data_source="earthdata")
 
 # Open the data as a stars object
-require(stars)
 stars_modis = stars::read_stars(res_dl$destfile, quiet = TRUE)
-
 
 }
 }

@@ -2,10 +2,10 @@
 % Please edit documentation in R/ancillaryFunctions_general.R
 \name{ancillaryFunctions_general}
 \alias{ancillaryFunctions_general}
-\alias{convertMetersToDegrees}
+\alias{getMODIStileNames}
 \title{A set of ancillary functions}
 \usage{
-convertMetersToDegrees(length_meters, latitude_4326)
+getMODIStileNames(roi)
 }
 \arguments{
 \item{roi}{sf polygon object. a region of interest}

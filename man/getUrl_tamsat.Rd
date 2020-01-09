@@ -2,18 +2,14 @@
 % Please edit documentation in R/getUrl_tamsat.R
 \name{getUrl_tamsat}
 \alias{getUrl_tamsat}
-\title{Download TAMSAT time series data}
+\title{Get URLs of TAMSAT datasets}
 \usage{
-getUrl_tamsat(timeRange, output_time_step, output_product, output_output)
+getUrl_tamsat(timeRange, collection)
 }
 \arguments{
-\item{timeRange}{Date(s) of interest (single date/datetime or time frame) (see details)}
+\item{timeRange}{date(s) of interest (single date/datetime or time frame) (see details)}
 
-\item{output_time_step}{blabla}
-
-\item{output_product}{blibli}
-
-\item{output_output}{bloblo}
+\item{collection}{string. Collection of interest}
 }
 \value{
 a data.frame with one row for each dataset and 3 columns  :
@@ -24,22 +20,42 @@ a data.frame with one row for each dataset and 3 columns  :
  }
 }
 \description{
-This function enables to retrieve URLs of TAMSAT datasets for a given time frame, and eventually download the data
+This function enables to retrieve URLs of TASMAT products given a collection and a time frame.
 }
 \details{
+Argument \code{collection} is a list of length 3 :
+\itemize{
+\item{*output_time_step*: }{available values : "daily" ; "monthly"}
+\item{*output_product*: }{available values : "rainfall_estimate" ; "anomaly" (only if output_time_step=="monthly") ; "climatology" (only if output_time_step=="monthly") }
+\item{*output_output*: }{available values : "individual" ; "yearly"}
+ }
+
 Additional information : https://www.tamsat.org.uk/data/archive
 }
 \examples{
 
+\dontrun{
+
 timeRange<-as.Date(c("2017-01-01","2017-01-30"))
 
-\dontrun{
-getUrl_tamsat(timeRange=timeRange,
-output_time_step="daily",
-output_product="rainfall_estimate",
-output_output="individual",
-download=FALSE
+### Retrieve the URLs to download TAMSAT products for the whole time frame :
+df_data_to_dl<-getRemoteData::getUrl_tamsat(
+timeRange=timeRange,
+collection=list("daily","rainfall_estimate","individual")
 )
+
+# Set destination folder
+df_data_to_dl$destfile<-file.path(getwd(),df_data_to_dl$name)
+
+# Download the data
+res_dl<-getRemoteData::downloadData(df_data_to_dl,parallelDL=TRUE)
+
+# Open the data as a list of rasters
+rasts_tamsat<-purrr::map(res_dl$destfile,~raster::raster(.))
+
+# plot the first date :
+raster::plot(rasts_tamsat[[1]])
+
 }
 
 }

@@ -30,8 +30,9 @@ data since it uses data access protocols that enable to subset them
 ## Why such a package ? (à réécrire)
 
 Modeling an ecological phenomenon (e.g. species distribution) using
-environmental data (e.g. temperature, rainfall) is quite a common task
-in ecology. The data analysis workflow generally consists in :
+climatic/environmental data (e.g. temperature, rainfall) is quite a
+common task in ecology. The data analysis workflow generally consists in
+:
 
   - importing, tidying and summarizing various environmental data at
     geographical locations and dates of interest ;
@@ -90,9 +91,6 @@ products downloadable with `getRemoteData` :
 getRemoteData::getAvailableDataSources(detailed=FALSE)
 # Turn the argument `detailed` to `TRUE` (default) to get a more detailed table (details for each collection).
 ```
-
-    #> Warning: replacing previous import 'lubridate::origin' by 'raster::origin'
-    #> when loading 'getRemoteData'
 
 <table class="table" style="margin-left: auto; margin-right: auto;">
 
@@ -170,15 +168,15 @@ NASA/USGS/NOAA
 
 <td style="text-align:left;">
 
-MOD11A1.v006, MYD11A1.v006, MOD11A2.v006, MYD11A2.v006, MOD13Q1.v006,
-MYD13Q1.v006, MOD16A2.v006, MYD16A2.v006,VNP21A1D.v001, VNP21A1N.v001,
-VNP21A2.v001
+MOD11A1.006, MYD11A1.006, MOD11A2.006, MYD11A2.006, MOD13Q1.006,
+MYD13Q1.006, MOD16A2.006, MYD16A2.006,VNP21A1D.001, VNP21A1N.001,
+VNP21A2.001
 
 </td>
 
 <td style="text-align:left;">
 
-getData\_modis\_vnp()
+getUrl\_modis\_vnp()
 
 </td>
 
@@ -219,13 +217,13 @@ NASA/JAXA
 
 <td style="text-align:left;">
 
-GPM\_3IMERGDF, GPM\_3IMERGHH
+GPM\_3IMERGDF.06, GPM\_3IMERGHH.06, GPM\_3IMERGM.06, GPM\_3IMERGDL.06
 
 </td>
 
 <td style="text-align:left;">
 
-getData\_gpm()
+getUrl\_gpm()
 
 </td>
 
@@ -265,13 +263,13 @@ NASA
 
 <td style="text-align:left;">
 
-SPL3SMP\_E
+SPL3SMP\_E.003
 
 </td>
 
 <td style="text-align:left;">
 
-getData\_smap()
+getUrl\_smap()
 
 </td>
 
@@ -317,7 +315,7 @@ VIIRS DNB
 
 <td style="text-align:left;">
 
-getData\_viirsDnb()
+getUrl\_viirsDnb()
 
 </td>
 
@@ -365,7 +363,7 @@ estimate, monthly individual anomaly
 
 <td style="text-align:left;">
 
-getData\_tamsat()
+getUrl\_tamsat()
 
 </td>
 
@@ -412,7 +410,7 @@ Copernicus
 
 <td style="text-align:left;">
 
-getData\_era5()
+getUrl\_era5()
 
 </td>
 
@@ -458,7 +456,7 @@ SRTMGL1\_v003
 
 <td style="text-align:left;">
 
-getData\_srtm()
+getUrl\_srtm()
 
 </td>
 
@@ -487,23 +485,16 @@ collections.
 
 ## Functions and syntax
 
-The functions of `getRemoteData` can be split into two families :
+The functions of `getRemoteData` enable to retrieve the URLs of products
+to download given a set of arguments of interest (time range, region of
+interest, collection, etc. - see below). There is one *`getUrl`*
+function for each product (e.g. `getUrl_modis_vnp()`, `getUrl_gpm()`,
+etc.)
 
-  - **The *`getData`* family** : functions to retrieve the URLs of
-    products to download given a set of arguments of interest (time
-    range, region of interest, collection, etc. - see below), and
-    eventually download them. There is one *`getData`* function for each
-    product (e.g. `getData_modis_vnp()`, `getData_gpm()`, etc.)
-  - **The *`prepareData`* family** : functions to import in R (usually
-    as an object of class `raster`) a dataset that has been downnloaded
-    *via* a function of the `getData` family. Similarly, there is one
-    *`prepareData`* function for each product (e.g.
-    `prepareData_modis_vnp()`, `prepareData_gpm()`, etc.)
+The function `downloadData()` takes as input the output of a *`getUrl`*
+function and downloads the products.
 
-The ancillary function `downloadData()` takes as input the output of a
-*`getData`* function and downloads the products.
-
-The functions of the *`getData`* family share the following arguments :
+The functions of the *`getUrl`* family share the following arguments :
 
   - `timeRange` : date or time frame of interest (eventually including
     hours for sub-daily resolution data) ;
@@ -513,10 +504,6 @@ The functions of the *`getData`* family share the following arguments :
   - `dimensions` {for multi-dimension products only} : dimensions of the
     product of interest to download (eg.
     `c("LST_Day_1km","LST_Night_1km")`)
-  - `username` and `password` {for products that require to log-in only}
-    : login credentials
-  - `destfolder` : data destination folder
-  - `download` : wether to download the datasets or not
 
 Other optional arguments might be provided (see documentation of the
 functions). Absence of the `timeRange` (resp. `roi`) argument in a
@@ -525,70 +512,104 @@ function means that the product of interest does not have any temporal
 URL(s) to download the dataset(s) of interest and their destination
 file.
 
-Data downloaded through the *`getData`* functions are usually in NetCDF
-format. The functions of the *`prepareData`* family enable to import
+Data downloaded through the *`getUrl`* functions are usually in NetCDF
+format. The functions of the *`importData`* family enable to import
 these data as ready-to-use `raster` objects, eventually pre-processing
 them if relevant (e.g. projection, flipping).
 
+**The *`importData`* family** : functions to import in R (usually as an
+object of class `raster`) a dataset that has been downnloaded *via* a
+function of the `getUrl` family. Similarly, there is one *`importData`*
+function for each product (e.g. `importData_modis_vnp()`,
+`importData_gpm()`, etc.)
+
 ## Example
 
-We want to download over 3500 km<sup>2</sup> wide region of interest :
+We want to download over a 3500 km<sup>2</sup> wide region of interest :
 
-  - a 40 days time series of [MODIS Terrra Land Surface Temperature
+  - a 40 days time series of [MODIS Terra Land Surface Temperature
     (LST)](https://dx.doi.org/10.5067/MODIS/MOD11A1.006) (with a daily
     temporal resolution);
   - the same 40 days times series of [Global Precipitation Measurement
     (GPM)](https://doi.org/10.5067/GPM/IMERGDF/DAY/06) (with a daily
     temporal resolution) :
 
-<!-- end list -->
+First prepare the script : set ROI, time frame and connect to EarthData
 
 ``` r
-library(getRemoteData)
-library(sf)
-library(purrr)
-# Import the region of interest as an sf object. Here : Côte D'Ivoire, Korhogo area
-roi_path<-system.file("extdata/ROI_example.kml", package = "getData")
-roi<-sf::st_read(roi_path,quiet=T)
-# Set-up your time frame of interest (first date, last date)
-time_frame<-c("2017-05-01","2017-06-10")
-# Set-up your credentials to EarthData
-username_EarthData<-"my.earthdata.username"
-password_EarthData<-"my.earthdata.username"
-# Download the MODIS LST TERRA daily products in the current working directory
-# Setting the argument 'download' to FALSE will return the URLs of the products, without downloading them 
-dl_modis<-getRemoteData::getData_modis(timeRange = time_frame,
-                                     roi = roi,
-                                     collection="MOD11A1.006",
-                                     dimensions=c("LST_Day_1km","LST_Night_1km"),
-                                     destFolder=getwd(),
-                                     username=username_EarthData,
-                                     password=password_EarthData,
-                                     download = T,
-                                     parallelDL=T #setting to F will download the data linearly
-                                     )
-head(dl_modis)
-# Download the GPM daily products in the current working directory
-dl_gpm<-getRemoteData::getData_gpm(timeRange = time_frame,
-                                     roi = roi,
-                                     collection="GPM_3IMERGDF.06",
-                                     dimensions=c("precipitationCal"),
-                                     destFolder=getwd(),
-                                     username=username_EarthData,
-                                     password=password_EarthData,
-                                     download = T,
-                                     parallelDL=T
-                                     )
-head(dl_gpm)
+### Prepare script
+# Packages
+require(getRemoteData)
+require(tidyverse)
 
-# Get the data downloaded as a list of rasters
-rasts_modis<-dl_modis$destfile %>%
-  purrr::map(~getRemoteData::prepareData_modis(.,"LST_Day_1km")) %>%
-  set_names(dl_modis$name)
+# Identify which collections are available and get details about each one
+coll_available <- getRemoteData::getAvailableDataSources()
 
-rasts_gpm<-dl_gpm$destfile %>%
-  purrr::map(~getRemoteData::prepareData_gpm(.,"precipitationCal")) %>%
-  set_names(dl_gpm$name)
+# Set ROI and time range of interest
+roi<-sf::st_read(system.file("extdata/roi_example.gpkg", package = "getRemoteData"),quiet=TRUE)
+timeRange<-as.Date(c("2017-01-01","2017-01-30"))
+
+# Login to EarthData servers
+my.earthdata.username<-"my.earthdata.username"
+my.earthdata.pw<-"my.earthdata.pw"
+getRemoteData::login_earthdata(my.earthdata.username,my.earthdata.pw)
+```
+
+Retrieve MODIS data : get the URLs, download the data and finally open
+the rasters
+
+``` r
+### Get MODIS Terra LST
+# Get the URLs
+df_data_to_dl_modis<-getRemoteData::getUrl_modis_vnp(
+ timeRange=timeRange,
+ roi=roi,
+ collection="MOD11A1.006",
+ dimensions=c("LST_Day_1km","LST_Night_1km"),
+ single_ncfile = FALSE
+ )
+
+# Set destination folder
+df_data_to_dl_modis$destfile<-file.path("MOD11A1",df_data_to_dl_modis$name)
+
+# Download the data
+res_dl_modis<-getRemoteData::downloadData(df_data_to_dl_modis,parallelDL=TRUE,data_source="earthdata")
+
+# Open the time series as either : 
+# a lists of rasters
+rasts_modis_lst_day<-purrr::map(res_dl_modis$destfile,~getRemoteData::importData_modis_vnp(.,"LST_Day_1km")) %>%
+  purrr::set_names(res_dl_modis$name)
+
+rasts_modis_lst_night<-purrr::map(res_dl_modis$destfile,~getRemoteData::importData_modis_vnp(.,"LST_Night_1km")) %>%
+ purrr::set_names(res_dl_modis$name)
+
+# a stars object
+stars_modis = stars::read_stars(res_dl_modis$destfile, quiet = TRUE)
+```
+
+Retrieve GPM data : same process
+
+``` r
+### Get GPM daily
+# Get the URLs
+df_data_to_dl_gpm<-getRemoteData::getUrl_gpm(
+ timeRange=timeRange,
+ roi=roi,
+ collection="GPM_3IMERGDF.06",
+ dimensions=c("precipitationCal","precipitationCal_cnt")
+ )
+
+# Set destination folder
+df_data_to_dl_gpm$destfile<-file.path("GPM_3IMERGDF",df_data_to_dl_gpm$name)
+
+# Download the data
+res_dl_gpm<-getRemoteData::downloadData(df_data_to_dl_gpm,parallelDL=TRUE,data_source="earthdata")
+
+# Open the time series as lists of rasters
+rasts_gpm<-purrr::map(res_dl_gpm$destfile,~getRemoteData::importData_gpm(.,"precipitationCal")) %>%
+ purrr::set_names(res_dl_gpm$name)
+
+# Here we cannot open the time series as a stars object, since GPM data needs to be flipped (the operation is done within the getRemoteData::importData_gpm() function), and that there is no function in the stars package to flip the data
 ```
 
 Have a look at the vignette [Automatic extraction of spatial-temporal
