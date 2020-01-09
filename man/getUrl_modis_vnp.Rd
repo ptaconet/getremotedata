@@ -5,8 +5,8 @@
 \title{Get URLs of MODIS or VNP datasets}
 \usage{
 getUrl_modis_vnp(timeRange, roi, collection, dimensions,
-  modisTile = NULL, optionals_opendap = NULL, username = NULL,
-  password = NULL, single_ncfile = TRUE)
+  optionals_opendap = NULL, username = NULL, password = NULL,
+  single_ncfile = TRUE)
 }
 \arguments{
 \item{timeRange}{date(s) of interest (single date/datetime or time frame) (see details)}
@@ -17,15 +17,13 @@ getUrl_modis_vnp(timeRange, roi, collection, dimensions,
 
 \item{dimensions}{string vector. Names of the dimensions to retrieve for the collection of interest}
 
-\item{modisTile}{string. optional. The MODIS tile identifier}
-
 \item{optionals_opendap}{list of optional arguments (see details)}
 
 \item{username}{string. EarthData username}
 
 \item{password}{string. EarthData password}
 
-\item{single_ncfile}{boolean. Get the data as a single netcdf file encompassing the whole time frame (TRUE) or as multiple files (1 for each time step) (FALSE). Default to TRUE}
+\item{single_ncfile}{boolean. Get the URL either as a single netcdf file that encompasses the whole time frame (TRUE) or as multiple files (1 for each date) (FALSE). Default to TRUE}
 
 \item{verbose}{boolean}
 }

@@ -54,4 +54,6 @@ devtools::document()
 pkgdown::build_site()
 ## Manual step : go to the settings of the package on the github page, then under "github page" put "master branch /docs folder"
 
-
+#sf::read_sf("https://modis.ornl.gov/files/modis_sin.kmz")
+#modis_tile<-sf::read_sf("/home/ptaconet/Téléchargements/extdata/modis_sin.kmz")
+#sf::write_sf(modis_tile,"/inst/extdata/modis_sin.gpkg")

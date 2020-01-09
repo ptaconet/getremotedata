@@ -57,9 +57,6 @@ my.earthdata.pw<-"HHKcue51"
 # Login to EarthData servers
 getRemoteData::login_earthdata(my.earthdata.username,my.earthdata.pw)
 
-# Get MODIS tile
-modis_tile<-getRemoteData::getMODIStileNames(roi)
-
 # Get OpenDAP optional arguments and set dimensions of interest
 modis_collections_df <- modis_collections_df %>% 
   mutate(optionals_opendap=map(collection,~getRemoteData::.getOpendapOptArguments_modis_vnp(roi = roi,collection = .,modisTile = modis_tile)))
@@ -71,7 +68,6 @@ modis_list_urls<-pmap(list(modis_collections_df$collection,modis_collections_df$
             ~getRemoteData::getUrl_modis_vnp(
                            timeRange =timeRange,
                            roi = roi,
-                           modisTile = modis_tile,
                            collection = ..1,
                            dimensions = ..2,
                            optionals_opendap = ..3,
@@ -123,9 +119,6 @@ my.earthdata.pw<-"HHKcue51"
 # Login to EarthData servers
 getRemoteData::login_earthdata(my.earthdata.username,my.earthdata.pw)
 
-# Get MODIS tile
-modis_tile<-getRemoteData::getMODIStileNames(roi)
-
 # Get OpenDAP optional arguments and set dimensions of interest
 modis_collections_df <- modis_collections_df %>% 
   mutate(optionals_opendap=map(collection,~getRemoteData::.getOpendapOptArguments_modis_vnp(roi = roi,collection = .,modisTile = modis_tile)))
@@ -138,7 +131,6 @@ modis_list_urls<-dates_of_interest %>%
             ~getRemoteData::getUrl_modis_vnp(
                            timeRange = c(..1-time_lag,..1),
                            roi = roi,
-                           modisTile = modis_tile,
                            collection = ..2,
                            dimensions = ..3,
                            optionals_opendap = ..4,

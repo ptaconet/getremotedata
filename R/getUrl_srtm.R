@@ -59,7 +59,7 @@ getUrl_srtm<-function(roi){
   if(!is(roi,"sf")){stop("roi is not of class sf")}
 
   url_srtm_server<-"http://e4ftl01.cr.usgs.gov/MEASURES/SRTMGL1.003/2000.02.11/"
-  srtm_tiles<-getRemoteData::getSRTMtileNames(roi)
+  srtm_tiles<-getRemoteData::.getSRTMtileNames(roi)
   urls<-paste0(url_srtm_server,srtm_tiles,".SRTMGL1.hgt.zip")
 
   names<-paste0(srtm_tiles,".SRTMGL1.hgt.zip")

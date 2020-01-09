@@ -2,7 +2,7 @@
 #' @aliases ancillaryFunctions_general
 #' @title A set of ancillary functions
 #' @description A set of ancillary functions
-#' @export getMODIStileNames getSRTMtileNames .testCollVal login_earthdata
+#' @export .getMODIStileNames .getSRTMtileNames .testCollVal login_earthdata
 #'
 #' @param roi sf polygon object. a region of interest
 #'
@@ -10,12 +10,13 @@
 #' @author Paul Taconet, \email{paul.taconet@@ird.fr}
 #'
 
-getMODIStileNames<-function(roi){
+.getMODIStileNames<-function(roi){
 
   if(!is(roi,"sf")){stop("roi is not of class sf")}
   roi<-sf::st_transform(roi,4326)
   options(warn=-1)
-  modis_tile = sf::read_sf("https://modis.ornl.gov/files/modis_sin.kmz") %>%
+  #modis_tile = sf::read_sf("https://modis.ornl.gov/files/modis_sin.kmz") %>%
+  modis_tile = sf::read_sf(system.file("extdata/modis_sin.gpkg", package = "getRemoteData"),quiet=TRUE) %>%
     sf::st_intersection(roi) %>%
     as.data.frame() %>%
     dplyr::select(Name) %>%
@@ -40,7 +41,7 @@ getMODIStileNames<-function(roi){
 }
 
 
-getSRTMtileNames<-function(roi){
+.getSRTMtileNames<-function(roi){
 
   if(!is(roi,"sf")){stop("roi is not of class sf")}
   roi<-sf::st_transform(roi,4326)

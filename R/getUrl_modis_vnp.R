@@ -8,7 +8,6 @@
 #' @param roi sf POINT or POLYGON. Region of interest (EPSG 4326)
 #' @param collection string. Collection of interest
 #' @param dimensions string vector. Names of the dimensions to retrieve for the collection of interest
-#' @param modisTile string. optional. The MODIS tile identifier
 #' @param optionals_opendap list of optional arguments (see details)
 #' @param username string. EarthData username
 #' @param password string. EarthData password
@@ -118,7 +117,6 @@ getUrl_modis_vnp<-function(timeRange, # mandatory. either a time range (e.g. c(d
                         roi,
                         collection, # mandatory
                         dimensions, # mandatory
-                        modisTile=NULL,
                         optionals_opendap=NULL,
                         username=NULL, # EarthData username
                         password=NULL, # EarthData password
@@ -155,9 +153,7 @@ getUrl_modis_vnp<-function(timeRange, # mandatory. either a time range (e.g. c(d
     gridDimensionName<-"eos_cf_projection"
   }
 
-  if(is.null(modisTile)){
-    modisTile<-getRemoteData::getMODIStileNames(roi)
-  }
+    modisTile<-getRemoteData::.getMODIStileNames(roi)
 
   if(is.null(optionals_opendap)){
     optionals_opendap<-getRemoteData::.getOpendapOptArguments_modis_vnp(roi,collection,modisTile=modisTile)

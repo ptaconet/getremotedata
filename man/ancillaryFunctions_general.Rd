@@ -2,10 +2,10 @@
 % Please edit documentation in R/ancillaryFunctions_general.R
 \name{ancillaryFunctions_general}
 \alias{ancillaryFunctions_general}
-\alias{getMODIStileNames}
+\alias{.getMODIStileNames}
 \title{A set of ancillary functions}
 \usage{
-getMODIStileNames(roi)
+.getMODIStileNames(roi)
 }
 \arguments{
 \item{roi}{sf polygon object. a region of interest}
