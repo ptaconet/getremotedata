@@ -7,6 +7,8 @@
 
 <!-- badges: end -->
 
+**\[ Caution : Package still in development … \]**
+
 The R package `getRemoteData` offers a common framework to download and
 import in R remote data (i.e. data stored on the cloud) from
 heterogeneous sources. Overall, this package attempts to **facilitate**
