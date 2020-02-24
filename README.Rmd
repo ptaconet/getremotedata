@@ -17,11 +17,16 @@ knitr::opts_chunk$set(
 # getRemoteData
 
 <!-- badges: start -->
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/getRemoteData)](https://cran.r-project.org/package=getRemoteData)
+[![Github_Status_Badge](https://img.shields.io/badge/Github-0.0.9007-blue.svg)](https://github.com/ptaconet/getRemoteData)
 <!-- badges: end -->
+
 
 **[ Caution : Package still in development ... ]**
 
-The R package `getRemoteData` offers a common framework to download and import in R remote data (i.e. data stored on the cloud) from heterogeneous sources. Overall, this package attempts to **facilitate** and **speed-up** the painfull and time-consuming **data import / download** process for some well-known and widely used environmental / climatic products (e.g. [MODIS](https://modis.gsfc.nasa.gov/), [VNP](https://lpdaac.usgs.gov/search/?query=VNP&page=2), [GPM](https://www.nasa.gov/mission_pages/GPM/main/index.html), etc.) as well as other sources (e.g. [VIIRS DNB](https://ngdc.noaa.gov/eog/viirs/download_dnb_composites.html), etc.). You will take the best of `getRemoteData` if you work at **local to regional** spatial scales, i.e. typically from few decimals to a decade squared degrees. For larger areas, other packages might be more relevant (see section [Other relevant packages](#other-relevant-packages) ).
+<!--
+
+The R package `getremotedata` offers a common framework to download and import in R remote data (i.e. data stored on the cloud) from heterogeneous sources. Overall, this package attempts to **facilitate** and **speed-up** the painfull and time-consuming **data import / download** process for some well-known and widely used environmental / climatic products (e.g. [MODIS](https://modis.gsfc.nasa.gov/), [VNP](https://lpdaac.usgs.gov/search/?query=VNP&page=2), [GPM](https://www.nasa.gov/mission_pages/GPM/main/index.html), etc.) as well as other sources (e.g. [VIIRS DNB](https://ngdc.noaa.gov/eog/viirs/download_dnb_composites.html), etc.). You will take the best of `getRemoteData` if you work at **local to regional** spatial scales, i.e. typically from few decimals to a decade squared degrees. For larger areas, other packages might be more relevant (see section [Other relevant packages](#other-relevant-packages) ).
 
 `getRemoteData` makes it efficient to import remote multidimensional data since it uses data access protocols that enable to subset them (spatially/temporally/dimensionnally) directly at the downloading phase.
 
@@ -53,16 +58,16 @@ devtools::install_github("ptaconet/getRemoteData")
 
 ## Get the data sources downloadable with `getRemoteData`
 
-The `getAvailableDataSources()` function provides information on the products downloadable with `getRemoteData` :
+The `get_collections_available()` function provides information on the products downloadable with `getRemoteData` :
 
-```{r getAvailableDataSources_call, eval = FALSE, echo=T, warning=F, message=F}
-getRemoteData::getAvailableDataSources(detailed=FALSE)
+```{r get_collections_available, eval = FALSE, echo=T, warning=F, message=F}
+getRemoteData::get_collections_available(detailed=FALSE)
 # Turn the argument `detailed` to `TRUE` (default) to get a more detailed table (details for each collection).
 ```
 
-```{r, eval = TRUE, echo=F}
+```{r, eval = F, echo=F}
 library(kableExtra)
-getRemoteData::getAvailableDataSources(detailed=FALSE) %>%
+getRemoteData::get_collections_available(detailed=FALSE) %>%
   kable() %>%
   kable_styling()
 ```
@@ -186,10 +191,4 @@ The package is still at a an early stage of development. Here are some of the cu
 As much as possible, when implemented by the data providers, `getRemoteData` uses open and standard data access protocols to download the data. These standard protocols enable to filter the data directly at the downloading phase. Filters can be spatial, temporal or dimensional. Example of widely-used standard data access protocols for geospatial timeseries are [OGC WFS](https://en.wikipedia.org/wiki/Web_Feature_Service) or [OPeNDAP](https://en.wikipedia.org/wiki/OPeNDAP). 
 If long time series are queried, `getRemoteData` enables to speed-up the downloading time by parallelizing it.
 
-## Other relevant packages
-
-- [`getSpatialData`](http://jxsw.de/getSpatialData/)
-- [`MODIS`] and [`MODISTools`] and [`MODISTsp`]
-- GPM ?
-- SMAP ?
-
+-->

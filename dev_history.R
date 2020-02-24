@@ -7,7 +7,7 @@ require(pkgdown)
 ## and video here : http://www.user2019.fr/static/pres/t257651.zip
 
 ## create the package
-usethis::create_package("/home/ptaconet/getRemoteData")
+usethis::create_package("/home/ptaconet/getremotedata")
 ## Manual step : Create a dev_history.R file that archives all the package history steps. Then copy it to the package folder.
 ## Then proceed :
 usethis::use_build_ignore("dev_history.R")
@@ -45,6 +45,10 @@ devtools::check()
 
 devtools::install()
 
+### add a config file with username and password to usgs
+file.create("config.yml")
+usethis::use_build_ignore("config.yml")
+usethis::use_git_ignore("config.yml")
 
 
   ## To build a website with home and vignettes
@@ -54,6 +58,13 @@ devtools::document()
 pkgdown::build_site()
 ## Manual step : go to the settings of the package on the github page, then under "github page" put "master branch /docs folder"
 
-#sf::read_sf("https://modis.ornl.gov/files/modis_sin.kmz")
-#modis_tile<-sf::read_sf("/home/ptaconet/Téléchargements/extdata/modis_sin.kmz")
-#sf::write_sf(modis_tile,"/inst/extdata/modis_sin.gpkg")
+
+grdMetadata_internal <- read.csv("/home/ptaconet/getRemoteData/.data_collections.csv",stringsAsFactors =F ) %>% dplyr::arrange(collection)
+grdVariables_internal <- read.csv("/home/ptaconet/getRemoteData/.variables.csv",stringsAsFactors =F ) %>% dplyr::arrange(collection)
+
+usethis::use_data(grdMetadata_internal,grdVariables_internal,internal = TRUE,overwrite = TRUE)
+
+
+
+
+

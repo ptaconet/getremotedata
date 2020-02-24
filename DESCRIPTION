@@ -1,5 +1,5 @@
-Package: getRemoteData
-Title: R functions to download & import efficiently various
+Package: getremotedata
+Title: R functions to download & import various
     spatio-temporal data
 Version: 0.0.0.9000
 Authors@R: 
@@ -15,8 +15,8 @@ Description: This package contains functions to download
     downloading and pre-processing of data on relatively small regions of
     interest.
 License: GPL-3
-URL: https://github.com/ptaconet/getData
-BugReports: https://github.com/ptaconet/getData/issues
+URL: https://github.com/ptaconet/getremotedata
+BugReports: https://github.com/ptaconet/getremotedata/issues
 Imports: 
     dplyr,
     geojsonsf,

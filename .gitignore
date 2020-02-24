@@ -3,3 +3,6 @@
 .RData
 .todo
 inst/doc
+config.yml
+old_functions/
+R/extraFunctions_importData.R

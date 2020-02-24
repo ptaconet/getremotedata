@@ -1,0 +1,10 @@
+collection,name,long_name
+TAMSAT,daily_rainfall_estimate,
+TAMSAT,monthly_rainfall_estimate,
+TAMSAT,monthly_anomaly,
+TAMSAT,monthly_climatology,
+VIIRS_DNB_MONTH,Monthly_AvgRadiance_StrayLightImpacted,
+VIIRS_DNB_MONTH,Monthly_AvgRadiance,
+VIIRS_DNB_MONTH,Monthly_CloudFreeCoverage_StrayLightImpacted,
+VIIRS_DNB_MONTH,Monthly_CloudFreeCoverage,
+ERA5,,
