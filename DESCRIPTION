@@ -8,24 +8,23 @@ Authors@R:
            role = c("aut", "cre"),
            email = "paul.taconet@ird.fr")
 Description: This package contains functions to download
-    and pre-process public domain data, eventually containing spatial and
+    public domain data, eventually containing spatial and
     temporal components.  Particularly, when web-services are implemented
     by the data provider, it enables to download the data for a specific
     region of interest and/or time frame, hence speeding up the overall
-    downloading and pre-processing of data on relatively small regions of
+    downloading of data on small regions of
     interest.
 License: GPL-3
 URL: https://github.com/ptaconet/getremotedata
 BugReports: https://github.com/ptaconet/getremotedata/issues
 Imports: 
     dplyr,
+    purrr,
     geojsonsf,
-    httr,
     lubridate,
     reticulate,
     sf,
-    stringr,
-    utils
+    stringr
 Suggests: 
     knitr,
     rmarkdown

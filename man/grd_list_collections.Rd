@@ -13,14 +13,13 @@ grd_list_collections()
 a data.frame with the data sources / collections dealt by getData, along with details on each data collection
 }
 \description{
-This function returns a table of the data sources / collections that can be downloaded and pre-processed using the get_remote_data package
+This function returns a table of the data sources / collections that can be downloaded and pre-processed using the getremotedata package
 }
 \details{
 The output data.frame columns are:
 \itemize{
 \item{"source": }{The source acronym}
 \item{"collection": }{The collection}
-\item{"...": }{...TODO : finish description}
 }
 }
 \examples{

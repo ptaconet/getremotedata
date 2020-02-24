@@ -2,7 +2,7 @@
 #' @title A set of ancillary functions
 #' @noRd
 #' @importFrom geojsonsf geojson_sf
-#' @import sf
+#' @importFrom sf st_transform st_intersection
 
 .getSRTMtileNames<-function(roi){
 

@@ -4,8 +4,8 @@
 \alias{grd_get_url}
 \title{Build the URL(s) of the data to download}
 \usage{
-grd_get_url(collection, variables = NULL, roi, time_range,
-  credentials = NULL, verbose = TRUE)
+grd_get_url(collection, variables = NULL, roi = NULL,
+  time_range = NULL, credentials = NULL, verbose = TRUE)
 }
 \arguments{
 \item{collection}{string. mandatory. Collection of interest (see details).}

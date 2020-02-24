@@ -2,10 +2,10 @@
 #' @aliases .grd_get_url_era5
 #' @title Download Copernicus ERA-5 time series data
 #' @description This function enables to retrieve URLs of ERA-5 products given a ROI, a time frame and a set of variables of interest.
-#' @export
 #'
 #' @author Paul Taconet, IRD \email{paul.taconet@ird.fr}
 #'
+#' @import reticulate sf purrr dplyr magrittr
 #'
 #' @noRd
 #'
@@ -104,8 +104,7 @@
 #'
 #' @author Paul Taconet, IRD \email{paul.taconet@ird.fr}
 #'
-#' @family get_url
-#'
+#' @import sf dplyr magrittr
 #' @noRd
 #'
 
@@ -149,9 +148,6 @@
 #'
 #' @author Paul Taconet, IRD \email{paul.taconet@ird.fr}
 #'
-#' @family get_url
-#'
-#' @import sf
 #'
 #' @noRd
 

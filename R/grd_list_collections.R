@@ -6,8 +6,7 @@
 #'
 #' @usage grd_list_collections()
 #'
-#' @param detailed Boolean. Return detailed information on each available data collection available ? TRUE by default. FALSE returns a summarized version of the available sources of data.
-#' @return a data.frame with the data sources / collections dealt by getData, along with details on each data collection
+#' @return a data.frame with the data sources / collections dealt by getdata, along with details on each data collection
 #'
 #' @details The output data.frame columns are:
 #' \itemize{

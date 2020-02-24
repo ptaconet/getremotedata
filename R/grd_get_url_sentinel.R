@@ -63,7 +63,7 @@
   #time=paste0(time_range[1],"T00:00:00.000Z/",time_range[2],"T23:59:59.999Z")
   #time=paste0(time_range[1],"/",time_range[2])
 
- bbox<-sf::st_bbox(roi)
+ bbox<-sf::st_bbox(sf::st_transform(roi,4326))
  utm_zone_number<-(floor((bbox$xmin + 180)/6) %% 60) + 1
  if(bbox$ymin>0){ # if latitudes are North
    epsg<-as.numeric(paste0("326",utm_zone_number))
@@ -71,7 +71,7 @@
    epsg<-as.numeric(paste0("325",utm_zone_number))
  }
 
- # We can download 5000 * 5000 pixels image from Sinergize WMS servers. We know that at zoom 19, 1 pixel=0.30m, so 1500 px = 450m. So within each 10km grid we make 400m grids (to be sure that all the area is encompassed)
+ # We can download max 5000 * 5000 pixels image from Sinergize WMS servers.
  roi<-sf::st_transform(roi,epsg) %>% sf::st_zm()
  grid_5000px <- sf::st_make_grid(roi,what="polygons",cellsize = 50000) %>%
    sf::st_crop(roi) %>%

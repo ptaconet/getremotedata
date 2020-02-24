@@ -34,26 +34,27 @@
 #' @example
 #'
 #' require(sf)
+#'
 #' roi = st_as_sf(data.frame(
-#' geom="POLYGON ((-5.82 9.54, -5.42 9.55, -5.41 8.84, -5.81 8.84, -5.82 9.54))"),
-#' wkt="geom",crs = 4326)
+#' geom = "POLYGON ((-5.82 9.54, -5.42 9.55, -5.41 8.84, -5.81 8.84, -5.82 9.54))"),
+#' wkt = "geom",crs = 4326)
 #'
 #' time_range = as.Date(c("2017-01-01","2017-01-30"))
 #'
 #' # SRTM
-#' strm_urls <- grd_get_url(collection="SRTMGL1.003",roi=roi)
+#' strm_urls <- grd_get_url(collection = "SRTMGL1.003", roi = roi)
 #'
 #' # TAMSAT
-#' tamsat_urls <- grd_get_url(collection="TAMSAT",variables = c("daily_rainfall_estimate","monthly_rainfall_estimate","monthly_anomaly"), time_range=time_range)
+#' tamsat_urls <- grd_get_url(collection = "TAMSAT",variables = c("daily_rainfall_estimate","monthly_rainfall_estimate","monthly_anomaly"), time_range = time_range)
 #'
 #' # VIIRS_DNB_MONTH
-#' viirsdnb_urls <- grd_get_url(collection="VIIRS_DNB_MONTH",variables = c("Monthly_AvgRadiance","Monthly_CloudFreeCoverage"), roi=roi, time_range=time_range)
+#' viirsdnb_urls <- grd_get_url(collection = "VIIRS_DNB_MONTH",variables = c("Monthly_AvgRadiance","Monthly_CloudFreeCoverage"), roi = roi, time_range = time_range)
 #'
 #' # MIRIADE
-#' imcce_urls <- grd_get_url(collection="MIRIADE",roi=roi,time_range=time_range)
+#' imcce_urls <- grd_get_url(collection = "MIRIADE", roi = roi, time_range = time_range)
 #'
 #' # ERA5
-#' era5_urls <- grd_get_url(collection="ERA5",variables = c("10m_u_component_of_wind","10m_v_component_of_wind"), roi=roi, time_range=time_range)
+#' era5_urls <- grd_get_url(collection = "ERA5", variables = c("10m_u_component_of_wind","10m_v_component_of_wind"), roi = roi, time_range = time_range)
 #'
 
 
