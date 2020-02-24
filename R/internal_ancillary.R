@@ -8,7 +8,6 @@
 
   srtm_tiles <- NULL
   SRTMtileNames <- NULL
-  if(!is(roi,"sf")){stop("roi is not of class sf")}
   roi<-sf::st_transform(roi,4326)
 
   srtm_tiles <- geojsonsf::geojson_sf("http://dwtkns.com/srtm30m/srtm30m_bounding_boxes.json")  %>%

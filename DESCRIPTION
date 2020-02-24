@@ -22,14 +22,9 @@ Imports:
     geojsonsf,
     httr,
     lubridate,
-    ncdf4,
-    parallel,
-    raster,
     reticulate,
     sf,
     stringr,
-    tibble,
-    tidyverse,
     utils
 Suggests: 
     knitr,

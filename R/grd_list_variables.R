@@ -13,7 +13,7 @@
 #'
 #' # Get the variables available for the collection MOD11A1.006
 #' (df_varinfo <- odr_list_variables("VIIRS_DNB_MONTH"))
-#'}
+#'
 #'
 
 
@@ -21,7 +21,12 @@ grd_list_variables <- function(collection){
 
   df_variables <- NULL
 
-  df_variables <- grdVariables_internal[which(grdMetadata_internal$collection==collection),]
+  .testIfCollExists(collection)
+  metadata_coll <- grdMetadata_internal[which(grdMetadata_internal$collection==collection),]
+  if(metadata_coll$param_variables==FALSE){warning("The collection that you have specified does not have variables")}
+
+  df_variables <- grdVariables_internal[which(grdVariables_internal$collection==collection),]
+
   df_variables$collection <- NULL
 
   return(df_variables)

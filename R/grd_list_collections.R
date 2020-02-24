@@ -1,7 +1,7 @@
 #' @name grd_list_collections
 #' @aliases grd_list_collections
 #' @title Get data sources / collections implemented in the package
-#' @description This function returns a table of the data sources / collections that can be downloaded and pre-processed using the get_remote_data package
+#' @description This function returns a table of the data sources / collections that can be downloaded and pre-processed using the getremotedata package
 #' @export
 #'
 #' @usage grd_list_collections()
@@ -13,9 +13,9 @@
 #' \itemize{
 #' \item{"source": }{The source acronym}
 #' \item{"collection": }{The collection}
-#' \item{"...": }{...TODO : finish description}
 #' }
 #'
+#' @export
 #' @examples
 #'
 #' sources<-grd_list_collections()

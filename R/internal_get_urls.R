@@ -4,36 +4,16 @@
 #' @description This function enables to retrieve URLs of ERA-5 products given a ROI, a time frame and a set of variables of interest.
 #' @export
 #'
-#' @inheritParams get_url_modis_vnp
-#' @param username string. Copernicus username
-#' @param password string. Copernicus password
-#'
-#' @inherit get_url_modis_vnp return
-#'
 #' @author Paul Taconet, IRD \email{paul.taconet@ird.fr}
 #'
-#' @family get_url
 #'
 #' @noRd
-#' @examples
-#'
-#' \dontrun{
-#' .grd_get_url_era5(time_range=time_range,
-#' roi=roi,
-#' variables=c("10m_u_component_of_wind","10m_v_component_of_wind"),
-#' username="my.cophub.username",
-#' password="my.cophub.pw",
-#' download=FALSE
-#' )
-#'}
 #'
 
 .grd_get_url_era5<-function(variables,
-                           roi, # either provide roi (sf point or polygon) or provide roiSpatialIndexBound. if roiSpatialIndexBound is not provided, it will be calculated from roi
-                           time_range # mandatory. either a time range (e.g. c(date_start,date_end) ) or a single date e.g. ( date_start )
+                           roi,
+                           time_range
 ){
-
-  if(!is(time_range,"Date")){stop("Argument time_range is not of class Date")}
 
   # Check : https://dominicroye.github.io/en/2018/access-to-climate-reanalysis-data-from-r/
 
@@ -51,7 +31,7 @@
       day= day, #stringr::str_pad(1:31,2,"left","0"),
       time= hour, #stringr::str_c(0:23,"00",sep=":")%>%str_pad(5,"left","0"),
       format= "netcdf",
-      area = paste0(roi_bbox$ymax+1,"/",roi_bbox$xmin-1,"/",roi_bbox$ymin-1,"/",roi_bbox$xmax+1) # North, West, South, East
+      area = paste0(roi_bbox$ymax,"/",roi_bbox$xmin,"/",roi_bbox$ymin,"/",roi_bbox$xmax) # North, West, South, East
     ))
 
     return(query)
@@ -61,7 +41,6 @@
   roi_bbox<-sf::st_bbox(sf::st_transform(roi,4326))
 
   time_range=as.POSIXlt(time_range,tz="GMT")
-
 
   datesToRetrieve<-seq(from=time_range[2],to=time_range[1],by="-1 hour") %>%
     data.frame(stringsAsFactors = F) %>%
@@ -73,31 +52,29 @@
     dplyr::mutate(hour=format(date,"%H"))
   #mutate(hour_era5=as_datetime(c(t*60*60),origin="1900-01-01")) %>%
 
-
   res<-datesToRetrieve %>%
     dplyr::mutate(url=purrr::pmap(list(year,month,day,hour),~getQuery(variables,..1,..2,..3,..4,roi_bbox))) %>%
-    dplyr::mutate(name=paste0(year,month,day,"_",hour)) %>%
-    dplyr::mutate(destfile=paste0(name,".nc")) %>%
-    dplyr::select(name,url,destfile)
+    dplyr::mutate(name=paste0(year,month,day,"_",hour,".nc")) %>%
+    dplyr::select(name,url,date) %>%
+    dplyr::rename(time_start=date)
 
 
-  if (download){
-    cat("Downloading the data...\n")
-    ## Parameters for download of ERA 5 data
-    #import python CDS-API
-    cdsapi <- reticulate::import('cdsapi')
-    #for this step there must exist the file .cdsapirc in the root directory of the computer (e.g. "/home/ptaconet")
-    server = cdsapi$Client() #start the connection
-    for (i in 1:nrow(res)){
-      server$retrieve("reanalysis-era5-single-levels",
-                      res$url[[i]],
-                      res$destfile[[i]])
-
-
-    }
-
-  }
   return(res)
+
+  #if (download){
+  #  cat("Downloading the data...\n")
+    ## Parameters for download of ERA 5 data
+    ##import python CDS-API
+  # cdsapi <- reticulate::import('cdsapi')
+  ##for this step there must exist the file .cdsapirc in the root directory of the computer (e.g. "/home/ptaconet")
+  #  server = cdsapi$Client() #start the connection
+  #  for (i in 1:nrow(res)){
+  #    server$retrieve("reanalysis-era5-single-levels",
+  #                    res$url[[i]],
+  #                    res$destfile[[i]])
+  #  }
+
+  #}
 
   #for (i in 1:length(res)){
   #  for (j in 1:length(res[[i]])){
@@ -112,27 +89,15 @@
   #}
 
 
-  #query the server to get the ncdf for date of catch and date of catch + 1
-  #server$retrieve("reanalysis-era5-single-levels",
-  #               query_this_date_hlc,
-  #              "/home/ptaconet/Documents/react/data_CIV/ERA_WIND/test.nc")
-
-
 }
 
 
 
 
-#' @name get_url_imcce
-#' @aliases get_url_imcce
+#' @name .grd_get_url_imcce
+#' @aliases .grd_get_url_imcce
 #' @title Download IMCCE time series data
 #' @description This function enables to retrieve URLs of IMCCE datasets for a given ROI and time frame, and eventually download the data
-#' @export
-#'
-#' @inheritParams get_url_modis_vnp
-#'
-#' @inherit get_url_modis_vnp return
-#'
 #' @details
 #'
 #' Argument \code{time_range} can be provided either as a single date (e.g. \code{as.Date("2017-01-01"))} or time frame provided as two bounding dates ( e.g. \code{as.Date(c("2010-01-01","2010-01-30"))})
@@ -141,25 +106,10 @@
 #'
 #' @family get_url
 #'
-#' @examples
 #' @noRd
 #'
-#' \dontrun{
-#'
-#' get_url_imcce(time_range=time_range,
-#' roi=roi,
-#' collection="GPM_3IMERGDF.06",
-#' dimensions=c("precipitationCal"),
-#' username="my.earthdata.username",
-#' password="my.earthdata.pw",
-#' download=FALSE
-#' )
-#'}
-#'
 
-get_url_imcce<-function(time_range,
-                        roi
-){
+.grd_get_url_imcce<-function(roi,time_range){
 
   if(!is(time_range,"Date")){stop("Argument time_range is not of class Date")}
   if(!is(roi,"sf")){stop("roi is not of class sf")}
@@ -188,15 +138,10 @@ get_url_imcce<-function(time_range,
 
 
 
-#' @name get_url_srtm
-#' @aliases get_url_srtm
+#' @name .grd_get_url_srtm
+#' @aliases .grd_get_url_srtm
 #' @title Get URLs of SRTM datasets
 #' @description This function enables to retrieve URLs of SRTM DEM datasets for a given ROI, and eventually download the data
-#'
-#' @inheritParams get_url_modis_vnp
-#'
-#' @inherit get_url_modis_vnp return
-#'
 #' @note
 #' \itemize{
 #' \item{NB1 :}{The	NASA server where the SRTM data are extracted from is located here : http://e4ftl01.cr.usgs.gov/MEASURES/SRTMGL1.003/2000.02.11/}
@@ -208,35 +153,9 @@ get_url_imcce<-function(time_range,
 #'
 #' @import sf
 #'
-#' @examples
 #' @noRd
-#' \dontrun{
-#'
-#' ### Retrieve the URLs to download SRTM DEM :
-#' df_data_to_dl<-getRemoteData::get_url_srtm(roi = roi)
-#'
-#' # Set destination folder
-#' df_data_to_dl$destfile<-file.path(getwd(),df_data_to_dl$name)
-#'
-#'# Download the data
-#'res_dl<-getRemoteData::downloadData(df_data_to_dl,parallelDL=TRUE,data_source="earthdata")
-#'
-#'# Open the DEM(s) as a list of rasters
-#'rasts_srtm<-purrr::map(res_dl$destfile,~unzip(.)) %>%
-#'purrr::map(.,~raster::raster(.))
-#'
-#'# plot the first date :
-#' raster::plot(rasts_srtm[[1]])
-#'
-#'}
 
-
-
-.get_url_srtm<-function(roi){
-
-  if(!is(roi,"sf")){stop("roi is not of class sf")}
-
-  ## TODO use opendap server : https://opendap.cr.usgs.gov/opendap/hyrax/SRTMGL3.003
+.grd_get_url_srtm<-function(roi){
 
   url_srtm_server<-"http://e4ftl01.cr.usgs.gov/MEASURES/SRTMGL1.003/2000.02.11/"
   srtm_tiles<-.getSRTMtileNames(roi)
@@ -256,10 +175,6 @@ get_url_imcce<-function(time_range,
 #' @title Get URLs of TAMSAT datasets
 #' @description This function enables to retrieve URLs of TASMAT products given a variables and a time frame.
 #'
-#' @inheritParams get_url_modis_vnp
-#'
-#' @inherit get_url_modis_vnp return
-#'
 #' @details
 #'
 #'  variables =  "daily_rainfall_estimate" ; "monthly_rainfall_estimate" ; "monthly_anomaly" ; "monthly_climatology"
@@ -276,7 +191,7 @@ get_url_imcce<-function(time_range,
 #'
 #' @author Paul Taconet, IRD \email{paul.taconet@ird.fr}
 #'
-#' @family get_url
+#' @noRd
 #'
 #' @examples
 #'
@@ -305,17 +220,9 @@ get_url_imcce<-function(time_range,
 #'}
 #'
 
-.get_url_tamsat<-function(variables,
-                          time_range # mandatory. either a time range (e.g. c(date_start,date_end) ) or a single date e.g. ( date_start )
+.grd_get_url_tamsat<-function(variables,
+                              time_range # mandatory. either a time range (e.g. c(date_start,date_end) ) or a single date e.g. ( date_start )
 ){
-
-  if(!is(time_range,"Date")){stop("Argument time_range is not of class Date")}
-
-  output_time_step<-variables[[1]]
-  output_product<-variables[[2]]
-  output_output<-variables[[3]]
-  if(!(output_product %in% c("rainfall_estimate","anomaly"))){stop("Wrong value in argument output_product")}
-  if(!(output_output %in% c("individual","yearly"))){stop("Wrong value in argument output_output")}
 
   url_tamsat_data<-"https://www.tamsat.org.uk/public_data/TAMSAT3"
 
@@ -343,28 +250,32 @@ get_url_imcce<-function(time_range,
   #mutate(product_name_monthly_climatology_individual=paste0("rfe",year,"-",year,"_",month,"_clim.v3.nc")) %>%
   #mutate(url_product_monthly_climatology_individual=paste0(url_tamsat_data,"/clim","/",month,"/",product_name_monthly_climatology_individual))
 
-
-  if (output_time_step=="daily" & output_product=="rainfall_estimate" & output_output=="individual"){
-    urls <- urls %>% dplyr::select(product_name_daily_rain_individual,url_product_daily_rain_individual,date)
-  } else if (output_time_step=="daily" & output_product=="rainfall_estimate" & output_output=="yearly"){
-    urls <- urls %>% dplyr::select(product_name_daily_rain_yearly,url_product_daily_rain_yearly,date)
-  } else if (output_time_step=="monthly" & output_product=="rainfall_estimate" & output_output=="individual"){
-    urls <- urls %>% dplyr::select(product_name_monthly_rain_individual,url_product_monthly_rain_individual,date)
-  } else if (output_time_step=="monthly" & output_product=="rainfall_estimate" & output_output=="yearly"){
-    urls <- urls %>% dplyr::select(product_name_monthly_rain_yearly,url_product_monthly_rain_yearly,date)
-  } else if (output_time_step=="monthly" & output_product=="anomaly" & output_output=="individual"){
-    urls <- urls %>% dplyr::select(product_name_monthly_anomaly_individual,url_product_monthly_anomaly_individual,date)
+  urls_final<-NULL
+  if("daily_rainfall_estimate" %in% variables){
+    urls1 <- urls %>% dplyr::select(product_name_daily_rain_individual,url_product_daily_rain_individual,date)
+    colnames(urls1) <- c("prod","url","date")
+    urls_final <- rbind(urls_final,urls1)
+  #} else if (output_time_step=="daily" & output_product=="rainfall_estimate" & output_output=="yearly"){
+    #urls <- urls %>% dplyr::select(product_name_daily_rain_yearly,url_product_daily_rain_yearly,date)
+  }
+  if("monthly_rainfall_estimate" %in% variables){
+    urls2 <- urls %>% dplyr::select(product_name_monthly_rain_individual,url_product_monthly_rain_individual,date) %>% dplyr::distinct(product_name_monthly_rain_individual,url_product_monthly_rain_individual,.keep_all=TRUE)
+    colnames(urls2) <- c("prod","url","date")
+    urls_final <- rbind(urls_final,urls2)
+    #} else if (output_time_step=="monthly" & output_product=="rainfall_estimate" & output_output=="yearly"){
+  #  urls <- urls %>% dplyr::select(product_name_monthly_rain_yearly,url_product_monthly_rain_yearly,date)
+  }
+  if("monthly_anomaly" %in% variables){
+    urls3 <- urls %>% dplyr::select(product_name_monthly_anomaly_individual,url_product_monthly_anomaly_individual,date) %>% dplyr::distinct(product_name_monthly_anomaly_individual,url_product_monthly_anomaly_individual,.keep_all=TRUE)
+    colnames(urls3) <- c("prod","url","date")
+    urls_final <- rbind(urls_final,urls3)
   } #else if (output_time_step=="monthly" & output_product=="climatology" & output_output=="individual"){
   #urls <- urls %>% select(product_name_monthly_climatology_individual,url_product_monthly_climatology_individual)
   #}
 
-  #urls$destfiles<-file.path(dest_folder,urls$product_name_daily_rain_individual)
+  colnames(urls_final)<-c("name","url","time_start")
 
-  #res<-data.frame(name=urls[,1],url=urls[,2],destfile=urls[,3],stringsAsFactors = F)
-
-  res<-data.frame(time_start=urls[,3],name=urls$product_name_daily_rain_individual,url=urls[,2],stringsAsFactors = F)
-
-  return(res)
+  return(urls_final)
 
 }
 
@@ -374,11 +285,6 @@ get_url_imcce<-function(time_range,
 #' @aliases .get_url_viirsDnb
 #' @title Get URLs of VIIRS DNB datasets
 #' @description This function enables to retrieve URLs of VIIRS DNB products given a ROI, a time frame and a set of variables of interest.
-#'
-#' @inheritParams get_url_modis_vnp
-#'
-#' @inherit get_url_modis_vnp return
-#'
 #' @details
 #'
 #' Argument \code{time_range} can be provided either as a single date (e.g. \code{as.Date("2017-01-01"))} or time frame provided as two bounding dates ( e.g. \code{as.Date(c("2017-01-01","2017-06-01"))})
@@ -425,7 +331,7 @@ get_url_imcce<-function(time_range,
 #'
 #'}
 
-.get_url_viirsDnb<-function(
+.grd_get_url_viirsDnb<-function(
   variables, # mandatory
   roi, # either provide roi (sf point or polygon) or provide roiSpatialIndexBound. if roiSpatialIndexBound is not provided, it will be calculated from roi
   time_range # mandatory. either a time range (e.g. c(date_start,date_end) ) or a single date e.g. ( date_start )
@@ -434,13 +340,6 @@ get_url_imcce<-function(time_range,
   if(!is(time_range,"Date")){stop("Argument time_range is not of class Date")}
 
   url_noaa_nighttime_webservice<-"https://gis.ngdc.noaa.gov/arcgis/rest/services/NPP_VIIRS_DNB/"
-
-  available_dim<-c("Monthly_AvgRadiance_StrayLightImpacted","Monthly_AvgRadiance","Monthly_CloudFreeCoverage_StrayLightImpacted","Monthly_CloudFreeCoverage")
-  wrong_dim<-setdiff(variables,available_dim)
-
-  if(length(wrong_dim)>0){
-    stop(paste0("\nDimension ",wrong_dim," do not exist. Check out which variables are available at the following URL : ",url_noaa_nighttime_webservice))
-  }
 
   roi_bbox<-sf::st_bbox(st_transform(roi,4326))
 

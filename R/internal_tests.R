@@ -1,0 +1,57 @@
+#' @name .testIfCollExists
+#' @title Test if collection specified exists
+#' @noRd
+#'
+
+.testIfCollExists<-function(collection){
+
+  if(!inherits(collection,"character") || length(collection)!=1 ){stop("Argument collection must be a character string of length 1")}
+
+  collection<-grdMetadata_internal$collection[which(grdMetadata_internal$collection==collection)]
+
+  if(length(collection)==0){
+    stop("The collection that you specified does not exist. Check odr_list_collections() to see which collections are implemented\n")
+  }
+
+}
+
+
+#' @name .testIfVarExists
+#' @title Test if variable exists given other variables
+#' @noRd
+#'
+
+.testIfVarExists<-function(specified_variables,existing_variables){
+
+  diff_vars <- NULL
+  diff_vars <- setdiff(specified_variables,existing_variables)
+  if(length(diff_vars)>0){stop("Specified variables do not exist or are not extractable for the specified collection. Use the function odr_list_variables to check which variables are available and extractable for the collection\n")}
+
+}
+
+#' @name .testRoi
+#' @title Test roi
+#' @noRd
+
+.testRoi<-function(roi){
+  if(!inherits(roi,c("sf","sfc")) || unique(sf::st_geometry_type(roi))!="POLYGON" || is.na(roi) || (inherits(roi,"sf") && nrow(roi)>1 ) || (inherits(roi,"sfc") && length(roi)>1 ) ){stop("Argument roi must be an object of class sf or sfc with one single POLYGON-type feature geometry")}
+}
+
+#' @name .testTimeRange
+#' @title Test time range
+#' @noRd
+
+.testTimeRange<-function(time_range){
+  if(!inherits(time_range,"Date") && !inherits(time_range,"POSIXlt") || length(time_range)>2 || is.na(time_range)){stop("Argument time_range is not of class Date or POSIXlt or is not of length 1 or 2 \n")}
+  if(length(time_range)==2 && time_range[1] > time_range[2]){stop("Time end is superior to time start in time_range argument \n")}
+}
+
+
+#' @name .testInternetConnection
+#' @title Test internet connection
+#' @importFrom curl has_internet
+#' @noRd
+
+.testInternetConnection<-function(){
+  if(!curl::has_internet()){stop("Internet connection is required. Are you connected to the Internet ?\n")}
+}
