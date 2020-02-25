@@ -11,8 +11,8 @@
 #'
 #' @examples
 #'
-#' # Get the variables available for the collection MOD11A1.006
-#' (df_varinfo <- odr_list_variables("VIIRS_DNB_MONTH"))
+#' # Get the variables available for the collection VIIRS_DNB_MONTH
+#' (df_varinfo <- grd_list_variables("VIIRS_DNB_MONTH"))
 #'
 #'
 

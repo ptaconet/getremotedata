@@ -8,7 +8,6 @@
 #' @param roi object of class \code{sf} or \code{sfc}. mandatory. Region of interest. Must be POLYGON-type geometry composed of one single feature.
 #' @param time_range date(s) / POSIXlt of interest . mandatory. Single date/datetime or time frame : vector with start and end dates/times (see details).
 #' @param credentials vector string of length 2 with username and password. optional.
-#' @param verbose boolean. optional. Verbose (default TRUE)
 #'
 #' @return a data.frame with one row for each dataset to download and 4 columns  :
 #'  \describe{
@@ -31,8 +30,9 @@
 #' @importFrom stringr str_replace
 #' @import dplyr
 #'
-#' @example
+#' @examples
 #'
+#' \dontrun{
 #' require(sf)
 #'
 #' roi = st_as_sf(data.frame(
@@ -42,20 +42,20 @@
 #' time_range = as.Date(c("2017-01-01","2017-01-30"))
 #'
 #' # SRTM
-#' strm_urls <- grd_get_url(collection = "SRTMGL1.003", roi = roi)
+#' (strm_urls <- grd_get_url(collection = "SRTMGL1.003", roi = roi))
 #'
 #' # TAMSAT
-#' tamsat_urls <- grd_get_url(collection = "TAMSAT",variables = c("daily_rainfall_estimate","monthly_rainfall_estimate","monthly_anomaly"), time_range = time_range)
+#' (tamsat_urls <- grd_get_url(collection = "TAMSAT",variables = c("daily_rainfall_estimate","monthly_rainfall_estimate","monthly_anomaly"), time_range = time_range))
 #'
 #' # VIIRS_DNB_MONTH
-#' viirsdnb_urls <- grd_get_url(collection = "VIIRS_DNB_MONTH",variables = c("Monthly_AvgRadiance","Monthly_CloudFreeCoverage"), roi = roi, time_range = time_range)
+#' (viirsdnb_urls <- grd_get_url(collection = "VIIRS_DNB_MONTH",variables = c("Monthly_AvgRadiance","Monthly_CloudFreeCoverage"), roi = roi, time_range = time_range))
 #'
 #' # MIRIADE
-#' imcce_urls <- grd_get_url(collection = "MIRIADE", roi = roi, time_range = time_range)
+#' (imcce_urls <- grd_get_url(collection = "MIRIADE", roi = roi, time_range = time_range))
 #'
 #' # ERA5
-#' era5_urls <- grd_get_url(collection = "ERA5", variables = c("10m_u_component_of_wind","10m_v_component_of_wind"), roi = roi, time_range = time_range)
-#'
+#' (era5_urls <- grd_get_url(collection = "ERA5", variables = c("10m_u_component_of_wind","10m_v_component_of_wind"), roi = roi, time_range = time_range))
+#'}
 
 
 
@@ -63,14 +63,11 @@ grd_get_url<-function(collection,
                       variables=NULL,
                       roi=NULL,
                       time_range=NULL,
-                      credentials=NULL,
-                      verbose=TRUE){
+                      credentials=NULL){
 
   # tests
   .testIfCollExists(collection)
   .testInternetConnection()
-
-  if(!inherits(verbose,"logical")){stop("verbose argument must be boolean\n")}
 
   metadata_coll <- grdMetadata_internal[which(grdMetadata_internal$collection==collection),]
   if(is.null(variables) && metadata_coll$param_variables==TRUE){stop("The collection that you have specified needs a 'variables' parameter")}
@@ -113,8 +110,6 @@ grd_get_url<-function(collection,
     dplyr::mutate(name=stringr::str_replace(name,".*/","")) %>%
     dplyr::mutate(destfile=file.path(collection,.$name)) %>%
     dplyr::select(time_start,name,url,destfile)
-
-  if(verbose){cat("OK\n")}
 
   return(table_urls)
 

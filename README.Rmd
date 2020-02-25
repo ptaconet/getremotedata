@@ -12,18 +12,186 @@ knitr::opts_chunk$set(
   fig.path = "man/figures/README-",
   out.width = "100%"
 )
+require(kableExtra)
+require(dplyr)
+require(purrr)
+require(getremotedata)
 ```
   
-# getRemoteData
+# getremotedata
 
 <!-- badges: start -->
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/getRemoteData)](https://cran.r-project.org/package=getRemoteData)
 [![Github_Status_Badge](https://img.shields.io/badge/Github-0.0.9007-blue.svg)](https://github.com/ptaconet/getRemoteData)
 <!-- badges: end -->
 
+**getremotedata** is an R package that provides functions to **harmonize** the **download** of various open data collections available on the web.
 
-**[ Caution : Package still in development ... ]**
+## Collections available in getremotedata {#coll-available}
 
+Currently **getremotedata** supports download of `r nrow(grd_list_collections())` data collections.
+Details of each product available for download are provided in the table above or through the function `grd_list_collections()`. Want more details on a specific collection ? Click on the "DOI" column !
+
+<details><summary><b>Data collections available for download with getremotedata (click to expand)</b></summary>
+<p>
+
+```{r, eval = TRUE, echo=F,message=F}
+getremotedata::grd_list_collections() %>%
+  dplyr::select(collection,long_name,source,nature,doi,url_programmatic_access,param_variables,param_roi,param_time_range) %>%
+  dplyr::rename(Collection=collection,Nature=nature,Name=long_name,DOI=doi,url_data_server=url_programmatic_access,Source=source) %>%
+  kable() %>%
+  kable_styling()
+```
+
+</p>
+</details>
+
+## Get Started 
+
+Downloading the data with **getremotedata** is a simple two-steps workflow : 
+
+* With the function **`grd_get_url()`**, get the URL(s) of the data for :
+  
+  + a collection : see [previous section](#collections-available-in-getremotedata),
+  + (eventually) variables,
+  + (eventually) a region of interest,
+  + (eventually) a time range.
+  
+* With any data download function (e.g. `httr::GET()` or `opendapr::odr_download_data()`), download the data.
+
+Additional functions include : list collection available for download ( `gdr_list_collections()` ), list variables available for each collection that has variables ( `gdr_list_variables()` )
+
+## Example 
+
+A full data download, import and plot in 4 steps : get the URL, download, import, plot
+
+**1. Get the URLs of various data collections for a given ROI and time frame** 
+
+```{r example_geturl, eval = TRUE ,message=F, warning=F}
+require(sf)
+require(getremotedata)
+require(dplyr)
+
+roi = st_as_sf(data.frame(geom = "POLYGON ((-5.82 9.54, -5.42 9.55, -5.41 8.84, -5.81 8.84, -5.82 9.54))"), wkt = "geom", crs = 4326)
+time_range = as.Date(c("2017-01-01","2017-01-30"))
+
+# SRTM
+strm_urls <- grd_get_url(collection = "SRTMGL1.003", roi = roi)
+print(str(strm_urls))
+
+# TAMSAT
+tamsat_urls <- grd_get_url(collection = "TAMSAT",variables = c("daily_rainfall_estimate","monthly_rainfall_estimate","monthly_anomaly"), time_range = time_range)
+print(str(tamsat_urls))
+
+# VIIRS_DNB_MONTH
+viirsdnb_urls <- grd_get_url(collection = "VIIRS_DNB_MONTH",variables = c("Monthly_AvgRadiance","Monthly_CloudFreeCoverage"), roi = roi, time_range = time_range)
+print(str(viirsdnb_urls))
+
+# MIRIADE
+imcce_urls <- grd_get_url(collection = "MIRIADE", roi = roi, time_range = time_range)
+print(str(imcce_urls))
+
+# ERA5
+era5_urls <- grd_get_url(collection = "ERA5", variables = c("10m_u_component_of_wind","10m_v_component_of_wind"), roi = roi, time_range = as.Date(c("2017-01-01","2017-01-02"))) # ERA5 is an hourly database, so we keep only 1 day (and not a whole month...)
+```
+
+**2. Download the data**
+
+```{r example_download, eval = F ,message=F, warning=F}
+require(httr)
+require(purrr)
+
+# Create directories if they do not exist
+unique(dirname(data_to_dl$destfile)) %>% lapply(dir.create,recursive = TRUE)
+
+# SRTM
+# Login to Earthdata servers is needed to download STRM data. To create an account go to : https://urs.earthdata.nasa.gov/.
+# Here we have stored our credentials in local environment variables
+username <- Sys.getenv("earthdata_un")
+password <- Sys.getenv("earthdata_pw")
+srtm_dl <- map2(strm_urls$url,strm_urls$destfile,~GET(url = .x, write_disk(.y), progress() , authenticate(username,password))
+
+# TAMSAT
+tamsat_dl <- map2(tamsat_urls$url,tamsat_urls$destfile,~GET(url = .x, write_disk(.y), progress()))
+
+# VIIRS_DNB_MONTH
+viirsdnb_dl <- map2(viirsdnb_urls$url,viirsdnb_urls$destfile,~GET(url = .x, write_disk(.y), progress()))
+
+# MIRIADE
+imcce_dl <- map2(imcce_urls$url,imcce_urls$destfile,~GET(url = .x, write_disk(.y), progress()))
+
+# ERA5
+# For ERA5 we must use a specific function to download the data
+era5_dl <- grd_download_data_era5(era5_urls)
+```
+
+**3. Import the data in R**
+
+```{r example_import, eval = TRUE ,message=F, warning=F}
+require(raster)
+
+# SRTM 
+rast_srtm <- strm_urls$destfile %>%
+  map(~unzip(., exdir = dirname(.))) %>%
+  map(~raster(.)) %>%
+  do.call(merge,.) %>%
+  crop(roi)
+
+# TAMSAT
+rast_tamsat <- tamsat_urls$destfile[1:30] %>%
+  map(~raster(.)) %>%
+  map(~crop(.,roi)) %>%
+  brick()
+names(rast_tamsat) <- tamsat_urls$time_start[1:30]
+
+# VIIRS_DNB_MONTH
+rasts_viirs <- viirsdnb_urls$destfile[which(grepl("Monthly_AvgRadiance",viirsdnb_urls$name))] %>%
+  map(~raster(.)) %>%
+  brick(.)
+names(rasts_viirs) <- viirsdnb_urls$time_start[which(grepl("Monthly_AvgRadiance",viirsdnb_urls$name))]
+
+# MIRIADE
+miriade_dfs <- imcce_urls$destfile %>%
+  map(~read.csv(.,skip=10))
+
+# ERA5
+rasts_era5 <- era5_urls$destfile %>%
+  map(~raster(., varname = "u10")) %>%
+  brick(.)
+names(rasts_era5) <- era5_urls$time_start
+
+
+rast_srtm
+rast_tamsat
+rasts_viirs
+print(str(miriade_dfs[1:3]))
+rasts_era5
+```
+
+**4. Display / Plot**
+
+```{r plot, eval = TRUE ,message=F, warning=F}
+# SRTM 
+plot(rast_srtm)
+
+# TAMSAT
+plot(rast_tamsat)
+
+# VIIRS_DNB_MONTH
+plot(rasts_viirs)
+
+# MIRIADE
+print(str(miriade_dfs[1:3]))
+
+# ERA5
+plot(rasts_era5)
+```
+
+
+## Acknowledgment
+
+This research has made use of [IMCCE's Miriade VO tool](http://vo.imcce.fr/webservices/miriade/)
+  
 <!--
 
 The R package `getremotedata` offers a common framework to download and import in R remote data (i.e. data stored on the cloud) from heterogeneous sources. Overall, this package attempts to **facilitate** and **speed-up** the painfull and time-consuming **data import / download** process for some well-known and widely used environmental / climatic products (e.g. [MODIS](https://modis.gsfc.nasa.gov/), [VNP](https://lpdaac.usgs.gov/search/?query=VNP&page=2), [GPM](https://www.nasa.gov/mission_pages/GPM/main/index.html), etc.) as well as other sources (e.g. [VIIRS DNB](https://ngdc.noaa.gov/eog/viirs/download_dnb_composites.html), etc.). You will take the best of `getRemoteData` if you work at **local to regional** spatial scales, i.e. typically from few decimals to a decade squared degrees. For larger areas, other packages might be more relevant (see section [Other relevant packages](#other-relevant-packages) ).
@@ -92,99 +260,6 @@ Other optional arguments might be provided (see documentation of the functions).
 Data downloaded through the *`getUrl`* functions are usually in NetCDF format. The functions of the *`importData`* family enable to import these data as ready-to-use `raster` objects, eventually pre-processing them if relevant (e.g. projection, flipping).
 
 **The *`importData`* family** : functions to import in R (usually as an object of class `raster`) a dataset that has been downnloaded *via* a function of the `getUrl` family. Similarly, there is one *`importData`* function for each product (e.g. `importData_modis_vnp()`, `importData_gpm()`, etc.)
-
-## Example
-
-We want to download over a 3500 km^2^ wide region of interest :
-
-- a 40 days time series of [MODIS Terra Land Surface Temperature (LST)](https://dx.doi.org/10.5067/MODIS/MOD11A1.006) (with a daily temporal resolution);
-- the same 40 days times series of [Global Precipitation Measurement (GPM)](https://doi.org/10.5067/GPM/IMERGDF/DAY/06) (with a daily temporal resolution) :
-
-First prepare the script : set ROI, time frame and connect to EarthData
-
-```{r example_prepare, eval = FALSE}
-### Prepare script
-# Packages
-require(getRemoteData)
-require(tidyverse)
-
-# Identify which collections are available and get details about each one
-coll_available <- getRemoteData::getAvailableDataSources()
-
-# Set ROI and time range of interest
-roi<-sf::st_read(system.file("extdata/roi_example.gpkg", package = "getRemoteData"),quiet=TRUE)
-timeRange<-as.Date(c("2017-01-01","2017-01-30"))
-
-# Login to EarthData servers
-my.earthdata.username<-"my.earthdata.username"
-my.earthdata.pw<-"my.earthdata.pw"
-getRemoteData::login_earthdata(my.earthdata.username,my.earthdata.pw)
-```
-
-Retrieve MODIS data : get the URLs, download the data and finally open the rasters 
-
-```{r example_modis, eval = FALSE}
-### Get MODIS Terra LST
-# Get the URLs
-df_data_to_dl_modis<-getRemoteData::getUrl_modis_vnp(
- timeRange=timeRange,
- roi=roi,
- collection="MOD11A1.006",
- dimensions=c("LST_Day_1km","LST_Night_1km"),
- single_ncfile = FALSE
- )
-
-# Set destination folder
-df_data_to_dl_modis$destfile<-file.path("MOD11A1",df_data_to_dl_modis$name)
-
-# Download the data
-res_dl_modis<-getRemoteData::downloadData(df_data_to_dl_modis,parallelDL=TRUE,data_source="earthdata")
-
-# Open the time series as either : 
-# a lists of rasters
-rasts_modis_lst_day<-purrr::map(res_dl_modis$destfile,~getRemoteData::importData_modis_vnp(.,"LST_Day_1km")) %>%
-  purrr::set_names(res_dl_modis$name)
-
-rasts_modis_lst_night<-purrr::map(res_dl_modis$destfile,~getRemoteData::importData_modis_vnp(.,"LST_Night_1km")) %>%
- purrr::set_names(res_dl_modis$name)
-
-# a stars object
-stars_modis = stars::read_stars(res_dl_modis$destfile, quiet = TRUE)
-
-```
-
-Retrieve GPM data : same process
-
-```{r example_gpm, eval = FALSE}
-### Get GPM daily
-# Get the URLs
-df_data_to_dl_gpm<-getRemoteData::getUrl_gpm(
- timeRange=timeRange,
- roi=roi,
- collection="GPM_3IMERGDF.06",
- dimensions=c("precipitationCal","precipitationCal_cnt")
- )
-
-# Set destination folder
-df_data_to_dl_gpm$destfile<-file.path("GPM_3IMERGDF",df_data_to_dl_gpm$name)
-
-# Download the data
-res_dl_gpm<-getRemoteData::downloadData(df_data_to_dl_gpm,parallelDL=TRUE,data_source="earthdata")
-
-# Open the time series as lists of rasters
-rasts_gpm<-purrr::map(res_dl_gpm$destfile,~getRemoteData::importData_gpm(.,"precipitationCal")) %>%
- purrr::set_names(res_dl_gpm$name)
-
-# Here we cannot open the time series as a stars object, since GPM data needs to be flipped (the operation is done within the getRemoteData::importData_gpm() function), and that there is no function in the stars package to flip the data
-```
-
-Have a look at the vignette [Automatic extraction of spatial-temporal environmental data within buffers around sampling points](https://ptaconet.github.io/malamodpkg/articles/import_tidy_transform_envdata.html) to get a more developed example of what you can do with `getRemoteData` !
-
-## Current limitations
-
-The package is still at a an early stage of development. Here are some of the current limitations, and ideas for future developments : 
-
-- MODIS data cannot be downloaded if your area of interest covers multiple MODIS tiles (for an overview of MODIS tiles go [here](https://modis.ornl.gov/files/modis_sin.kmz));
 
 ## Behind the scene... how it works
 

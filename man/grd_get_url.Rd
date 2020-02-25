@@ -5,7 +5,7 @@
 \title{Build the URL(s) of the data to download}
 \usage{
 grd_get_url(collection, variables = NULL, roi = NULL,
-  time_range = NULL, credentials = NULL, verbose = TRUE)
+  time_range = NULL, credentials = NULL)
 }
 \arguments{
 \item{collection}{string. mandatory. Collection of interest (see details).}
@@ -17,8 +17,6 @@ grd_get_url(collection, variables = NULL, roi = NULL,
 \item{time_range}{date(s) / POSIXlt of interest . mandatory. Single date/datetime or time frame : vector with start and end dates/times (see details).}
 
 \item{credentials}{vector string of length 2 with username and password. optional.}
-
-\item{verbose}{boolean. optional. Verbose (default TRUE)}
 }
 \value{
 a data.frame with one row for each dataset to download and 4 columns  :
@@ -38,4 +36,31 @@ Argument \code{collection} : Collections available can be retrieved with the fun
 Argument \code{variables} : For each collection, variables available can be retrieved with the function \link{grd_list_variables}
 
 Argument \code{time_range} : Can be provided either as i) a single date (e.g. \code{as.Date("2017-01-01"))} or ii) a time frame provided as two bounding dates (starting and ending time) ( e.g. \code{as.Date(c("2010-01-01","2010-01-30"))}) or iii) a POSIXlt single time (e.g. \code{as.POSIXlt("2010-01-01 18:00:00")}) or iv) a POSIXlt time range (e.g. \code{as.POSIXlt(c("2010-01-01 18:00:00","2010-01-02 09:00:00"))}) for the half-hourly collection (GPM_3IMERGHH.06). If POSIXlt, times must be in UTC.
+}
+\examples{
+
+\dontrun{
+require(sf)
+
+roi = st_as_sf(data.frame(
+geom = "POLYGON ((-5.82 9.54, -5.42 9.55, -5.41 8.84, -5.81 8.84, -5.82 9.54))"),
+wkt = "geom",crs = 4326)
+
+time_range = as.Date(c("2017-01-01","2017-01-30"))
+
+# SRTM
+(strm_urls <- grd_get_url(collection = "SRTMGL1.003", roi = roi))
+
+# TAMSAT
+(tamsat_urls <- grd_get_url(collection = "TAMSAT",variables = c("daily_rainfall_estimate","monthly_rainfall_estimate","monthly_anomaly"), time_range = time_range))
+
+# VIIRS_DNB_MONTH
+(viirsdnb_urls <- grd_get_url(collection = "VIIRS_DNB_MONTH",variables = c("Monthly_AvgRadiance","Monthly_CloudFreeCoverage"), roi = roi, time_range = time_range))
+
+# MIRIADE
+(imcce_urls <- grd_get_url(collection = "MIRIADE", roi = roi, time_range = time_range))
+
+# ERA5
+(era5_urls <- grd_get_url(collection = "ERA5", variables = c("10m_u_component_of_wind","10m_v_component_of_wind"), roi = roi, time_range = time_range))
+}
 }

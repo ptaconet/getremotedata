@@ -6,11 +6,8 @@
 \usage{
 grd_list_collections()
 }
-\arguments{
-\item{detailed}{Boolean. Return detailed information on each available data collection available ? TRUE by default. FALSE returns a summarized version of the available sources of data.}
-}
 \value{
-a data.frame with the data sources / collections dealt by getData, along with details on each data collection
+a data.frame with the data sources / collections dealt by getdata, along with details on each data collection
 }
 \description{
 This function returns a table of the data sources / collections that can be downloaded and pre-processed using the getremotedata package

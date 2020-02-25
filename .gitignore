@@ -6,3 +6,8 @@ inst/doc
 config.yml
 old_functions/
 R/extraFunctions_importData.R
+TAMSAT/
+MIRIADE/
+ERA5/
+SRTMGL1.003/
+VIIRS_DNB_MONTH/

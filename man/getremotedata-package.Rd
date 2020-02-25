@@ -8,11 +8,11 @@
     spatio-temporal data}
 \description{
 This package contains functions to download
-    and pre-process public domain data, eventually containing spatial and
+    public domain data, eventually containing spatial and
     temporal components.  Particularly, when web-services are implemented
     by the data provider, it enables to download the data for a specific
     region of interest and/or time frame, hence speeding up the overall
-    downloading and pre-processing of data on relatively small regions of
+    downloading of data on small regions of
     interest.
 }
 \seealso{

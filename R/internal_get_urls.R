@@ -61,21 +61,6 @@
 
   return(res)
 
-  #if (download){
-  #  cat("Downloading the data...\n")
-    ## Parameters for download of ERA 5 data
-    ##import python CDS-API
-  # cdsapi <- reticulate::import('cdsapi')
-  ##for this step there must exist the file .cdsapirc in the root directory of the computer (e.g. "/home/ptaconet")
-  #  server = cdsapi$Client() #start the connection
-  #  for (i in 1:nrow(res)){
-  #    server$retrieve("reanalysis-era5-single-levels",
-  #                    res$url[[i]],
-  #                    res$destfile[[i]])
-  #  }
-
-  #}
-
   #for (i in 1:length(res)){
   #  for (j in 1:length(res[[i]])){
   #    for (k in 1:length(res[[i]][[j]]$destfile)){
