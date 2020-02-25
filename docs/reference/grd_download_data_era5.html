@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function reference • getremotedata</title>
+<title>Download ERA5 data — grd_download_data_era5 • getremotedata</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,7 +30,10 @@
 
 
 
-<meta property="og:title" content="Function reference" />
+<meta property="og:title" content="Download ERA5 data — grd_download_data_era5" />
+
+<meta property="og:description" content="Download ERA5 data after querying with the function grd_get_url" />
+<meta name="twitter:card" content="summary" />
 
 
 
@@ -47,7 +50,7 @@
   </head>
 
   <body>
-    <div class="container template-reference-index">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -106,60 +109,62 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Reference</h1>
+    <h1>Download ERA5 data</h1>
+    <small class="dont-index">Source: <a href='https://github.com/ptaconet/getremotedata/blob/master/R/grd_download_data_era5.R'><code>R/grd_download_data_era5.R</code></a></small>
+    <div class="hidden name"><code>grd_download_data_era5.Rd</code></div>
     </div>
 
-    <table class="ref-index">
+    <div class="ref-description">
+    
+    <p>Download ERA5 data after querying with the function <a href='grd_get_url.html'>grd_get_url</a></p>
+    
+    </div>
 
-    <colgroup>
-      
-      <col class="alias" />
-      <col class="title" />
-    </colgroup>
-
-    <tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      <tr>
-        
-        <td>
-          <p><code><a href="grd_download_data_era5.html">grd_download_data_era5()</a></code> </p>
-        </td>
-        <td><p>Download ERA5 data</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="grd_get_url.html">grd_get_url()</a></code> </p>
-        </td>
-        <td><p>Build the URL(s) of the data to download</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="grd_list_collections.html">grd_list_collections()</a></code> </p>
-        </td>
-        <td><p>Get data sources / collections implemented in the package</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="grd_list_variables.html">grd_list_variables()</a></code> </p>
-        </td>
-        <td><p>Get informations related to the variables available for a given collection</p></td>
-      </tr>
-    </tbody>
+    <pre class="usage"><span class='fu'>grd_download_data_era5</span>(<span class='no'>output_grd_get_url_era5</span>)</pre>
+    
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>output_grd_get_url_era5</th>
+      <td><p>output of <a href='grd_get_url.html'>grd_get_url</a> with collection="ERA5"</p></td>
+    </tr>
     </table>
-  </div>
+    
+    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
 
+    <p>There must exist the file .cdsapirc in the root directory of the computer (e.g. "/home/ptaconet"). See <a href='https://dominicroye.github.io/en/2018/access-to-climate-reanalysis-data-from-r/'>https://dominicroye.github.io/en/2018/access-to-climate-reanalysis-data-from-r/</a> for additional details</p>
+    
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><span class='co'># NOT RUN {</span>
+<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>require</a></span>(<span class='no'>sf</span>)
+
+<span class='no'>roi</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/sf/topics/st_as_sf'>st_as_sf</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/data.frame'>data.frame</a></span>(
+<span class='kw'>geom</span> <span class='kw'>=</span> <span class='st'>"POLYGON ((-5.82 9.54, -5.42 9.55, -5.41 8.84, -5.81 8.84, -5.82 9.54))"</span>),
+<span class='kw'>wkt</span> <span class='kw'>=</span> <span class='st'>"geom"</span>,<span class='kw'>crs</span> <span class='kw'>=</span> <span class='fl'>4326</span>)
+
+<span class='no'>time_range</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/as.Date'>as.Date</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"2017-01-01"</span>,<span class='st'>"2017-01-30"</span>))
+
+<span class='co'># query to get ERA5 url</span>
+<span class='no'>era5_urls</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='grd_get_url.html'>grd_get_url</a></span>(<span class='kw'>collection</span> <span class='kw'>=</span> <span class='st'>"ERA5"</span>, <span class='kw'>variables</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"10m_u_component_of_wind"</span>,<span class='st'>"10m_v_component_of_wind"</span>), <span class='kw'>roi</span> <span class='kw'>=</span> <span class='no'>roi</span>, <span class='kw'>time_range</span> <span class='kw'>=</span> <span class='no'>time_range</span>)
+
+<span class='co'># now download data</span>
+<span class='fu'>grd_download_data_era5</span>(<span class='no'>era5_urls</span>)
+<span class='co'># }</span></pre>
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#section-all-functions">All functions</a></li>
+      <li><a href="#arguments">Arguments</a></li>
+      
+      <li><a href="#note">Note</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
     </ul>
+
   </div>
 </div>
 

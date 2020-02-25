@@ -25,12 +25,20 @@ require(getremotedata)
 [![Github_Status_Badge](https://img.shields.io/badge/Github-0.0.9007-blue.svg)](https://github.com/ptaconet/getRemoteData)
 <!-- badges: end -->
 
-**getremotedata** is an R package that provides functions to **harmonize** the **download** of various open data collections available on the web.
+**getremotedata** is an R package that provides functions to **harmonize** the **download** of various open data collections available on the web. 
+
+## Installation
+
+The package can be installed with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("ptaconet/getremotedata", build_vignettes = T, build_manual = T)
+```
 
 ## Collections available in getremotedata {#coll-available}
 
-Currently **getremotedata** supports download of `r nrow(grd_list_collections())` data collections.
-Details of each product available for download are provided in the table above or through the function `grd_list_collections()`. Want more details on a specific collection ? Click on the "DOI" column !
+Currently **getremotedata** supports download of `r nrow(grd_list_collections())` data collections. Most data collections provided through getremotedata have a spatial and a temporal component and a global coverage. Details of each product available for download are provided in the table above or through the function `grd_list_collections()`. Want more details on a specific collection ? Click on the "DOI" column !
 
 <details><summary><b>Data collections available for download with getremotedata (click to expand)</b></summary>
 <p>
@@ -59,139 +67,20 @@ Downloading the data with **getremotedata** is a simple two-steps workflow :
   
 * With any data download function (e.g. `httr::GET()` or `opendapr::odr_download_data()`), download the data.
 
-Additional functions include : list collection available for download ( `gdr_list_collections()` ), list variables available for each collection that has variables ( `gdr_list_variables()` )
+Additional functions include : list collection available for download ( `gdr_list_collections()` ), list variables available for the collections that have variables ( `gdr_list_variables()` )
 
 ## Example 
 
-A full data download, import and plot in 4 steps : get the URL, download, import, plot
-
-**1. Get the URLs of various data collections for a given ROI and time frame** 
-
-```{r example_geturl, eval = TRUE ,message=F, warning=F}
-require(sf)
-require(getremotedata)
-require(dplyr)
-
-roi = st_as_sf(data.frame(geom = "POLYGON ((-5.82 9.54, -5.42 9.55, -5.41 8.84, -5.81 8.84, -5.82 9.54))"), wkt = "geom", crs = 4326)
-time_range = as.Date(c("2017-01-01","2017-01-30"))
-
-# SRTM
-strm_urls <- grd_get_url(collection = "SRTMGL1.003", roi = roi)
-print(str(strm_urls))
-
-# TAMSAT
-tamsat_urls <- grd_get_url(collection = "TAMSAT",variables = c("daily_rainfall_estimate"), time_range = time_range)
-print(str(tamsat_urls))
-
-# VIIRS_DNB_MONTH
-viirsdnb_urls <- grd_get_url(collection = "VIIRS_DNB_MONTH",variables = c("Monthly_AvgRadiance"), roi = roi, time_range = time_range)
-print(str(viirsdnb_urls))
-
-# MIRIADE
-imcce_urls <- grd_get_url(collection = "MIRIADE", roi = roi, time_range = time_range)
-print(str(imcce_urls))
-
-# ERA5
-era5_urls <- grd_get_url(collection = "ERA5", variables = c("10m_u_component_of_wind","10m_v_component_of_wind"), roi = roi, time_range = as.Date(c("2017-01-01","2017-01-02"))) # ERA5 is an hourly database, so we keep only 1 day (and not a whole month...)
-```
-
-**2. Download the data**
-
-```{r example_download, eval = F ,message=F, warning=F}
-require(httr)
-require(purrr)
-
-# Create directories if they do not exist
-unique(dirname(data_to_dl$destfile)) %>% lapply(dir.create,recursive = TRUE)
-
-# SRTM
-# Login to Earthdata servers is needed to download STRM data. To create an account go to : https://urs.earthdata.nasa.gov/.
-# Here we have stored our credentials in local environment variables
-username <- Sys.getenv("earthdata_un")
-password <- Sys.getenv("earthdata_pw")
-srtm_dl <- map2(strm_urls$url,strm_urls$destfile,~GET(url = .x, write_disk(.y), progress() , authenticate(username,password))
-
-# TAMSAT
-tamsat_dl <- map2(tamsat_urls$url,tamsat_urls$destfile,~GET(url = .x, write_disk(.y), progress()))
-
-# VIIRS_DNB_MONTH
-viirsdnb_dl <- map2(viirsdnb_urls$url,viirsdnb_urls$destfile,~GET(url = .x, write_disk(.y), progress()))
-
-# MIRIADE
-imcce_dl <- map2(imcce_urls$url,imcce_urls$destfile,~GET(url = .x, write_disk(.y), progress()))
-
-# ERA5
-# For ERA5 we must use a specific function to download the data
-era5_dl <- grd_download_data_era5(era5_urls)
-```
-
-**3. Import the data in R**
-
-```{r example_import, eval = TRUE ,message=F, warning=F}
-require(raster)
-
-# SRTM 
-rast_srtm <- strm_urls$destfile %>%
-  map(~unzip(., exdir = dirname(.))) %>%
-  map(~raster(.)) %>%
-  do.call(merge,.) %>%
-  crop(roi)
-
-# TAMSAT
-rast_tamsat <- tamsat_urls$destfile %>%
-  map(~raster(.)) %>%
-  map(~crop(.,roi)) %>%
-  brick()
-names(rast_tamsat) <- tamsat_urls$time_start
-
-# VIIRS_DNB_MONTH
-rasts_viirs <- viirsdnb_urls$destfile %>%
-  map(~raster(.)) %>%
-  brick(.)
-names(rasts_viirs) <- viirsdnb_urls$time_start
-
-# MIRIADE
-miriade_dfs <- imcce_urls$destfile %>%
-  map(~read.csv(.,skip=10))
-
-# ERA5
-rasts_era5 <- era5_urls$destfile %>%
-  map(~raster(., varname = "u10")) %>%
-  brick(.)
-names(rasts_era5) <- era5_urls$time_start
-
-
-rast_srtm
-rast_tamsat
-rasts_viirs
-print(str(miriade_dfs[1:3]))
-rasts_era5
-```
-
-**4. Display / Plot**
-
-```{r plot, eval = TRUE ,message=F, warning=F}
-# SRTM 
-plot(rast_srtm)
-
-# TAMSAT
-plot(rast_tamsat)
-
-# VIIRS_DNB_MONTH
-plot(rasts_viirs)
-
-# MIRIADE
-print(str(miriade_dfs[1:3]))
-
-# ERA5
-plot(rasts_era5)
-```
-
+**Have a look at the [`vignette("get-started")`](https://ptaconet.github.io/getremotedata/articles/get-started.html) for a data download, import and plot workflow !**
 
 ## Acknowledgment
 
+We thank the data providers for making their data freely available, and implementing open data access protocols that enable to download chunks of data.
+
 This research has made use of [IMCCE's Miriade VO tool](http://vo.imcce.fr/webservices/miriade/)
   
+The initial development and first release of this package were financed by the [MIVEGEC](https://www.mivegec.ird.fr/en/) unit of the [French Research Institute for Sustainable Development](https://en.ird.fr/), as part of the [REACT project](https://burkina-faso.ird.fr/la-recherche/projets-de-recherche2/gestion-de-la-resistance-aux-insecticides-au-burkina-faso-et-en-cote-d-ivoire-recherche-sur-les-strategies-de-lutte-anti-vectorielle-react). 
+
 <!--
 
 The R package `getremotedata` offers a common framework to download and import in R remote data (i.e. data stored on the cloud) from heterogeneous sources. Overall, this package attempts to **facilitate** and **speed-up** the painfull and time-consuming **data import / download** process for some well-known and widely used environmental / climatic products (e.g. [MODIS](https://modis.gsfc.nasa.gov/), [VNP](https://lpdaac.usgs.gov/search/?query=VNP&page=2), [GPM](https://www.nasa.gov/mission_pages/GPM/main/index.html), etc.) as well as other sources (e.g. [VIIRS DNB](https://ngdc.noaa.gov/eog/viirs/download_dnb_composites.html), etc.). You will take the best of `getRemoteData` if you work at **local to regional** spatial scales, i.e. typically from few decimals to a decade squared degrees. For larger areas, other packages might be more relevant (see section [Other relevant packages](#other-relevant-packages) ).

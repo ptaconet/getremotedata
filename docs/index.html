@@ -5,17 +5,19 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Download and pre-process multiple kind of data • getRemoteData</title>
+<title>R functions to download &amp; import various
+    spatio-temporal data • getremotedata</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
-<script src="pkgdown.js"></script><meta property="og:title" content="Download and pre-process multiple kind of data">
+<script src="pkgdown.js"></script><meta property="og:title" content="R functions to download &amp; import various
+    spatio-temporal data">
 <meta property="og:description" content="This package contains functions to download
-    and pre-process public domain data, eventually containing spatial and
+    public domain data, eventually containing spatial and
     temporal components.  Particularly, when web-services are implemented
     by the data provider, it enables to download the data for a specific
     region of interest and/or time frame, hence speeding up the overall
-    downloading and pre-processing of data on relatively small regions of
+    downloading of data on small regions of
     interest.">
 <meta name="twitter:card" content="summary">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -35,7 +37,7 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="index.html">getRemoteData</a>
+        <a class="navbar-link" href="index.html">getremotedata</a>
         <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9000</span>
       </span>
     </div>
@@ -51,10 +53,22 @@
 <li>
   <a href="reference/index.html">Reference</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+<li>
+      <a href="articles/get-started.html">1. Get started </a>
+    </li>
+  </ul>
+</li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/ptaconet/getData">
+  <a href="https://github.com/ptaconet/getremotedata">
     <span class="fa fa-github fa-lg"></span>
      
   </a>
@@ -77,1355 +91,301 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 <div id="getremotedata" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
-<a href="#getremotedata" class="anchor"></a>getRemoteData</h1></div>
+<a href="#getremotedata" class="anchor"></a>getremotedata</h1></div>
 <!-- badges: start -->
-<!-- badges: end -->
-<p><code>getRemoteData</code> is an R package that offers a common grammar to query and import remote data (i.e. data stored on the cloud) from heterogeneous sources. Overall, this package attempts to <strong>facilitate</strong> and <strong>speed-up</strong> the painfull and time-consuming <strong>data import / download</strong> process for some well-known and widely used environmental / climatic data (e.g. <a href="https://modis.gsfc.nasa.gov/">MODIS</a>, <a href="https://www.nasa.gov/mission_pages/GPM/main/index.html">GPM</a>, etc.) as well as other sources (e.g. <a href="https://ngdc.noaa.gov/eog/viirs/download_dnb_composites.html">VIIRS DNB</a>, etc.). You will take the best of <code>getRemoteData</code> if you work at <strong>local to regional</strong> spatial scales, i.e. typically from few decimals to a decade squared degrees. For larger areas, other packages might be more relevant (see section <a href="#other-relevant-packages">Other relevant packages</a> ).</p>
-<p><strong>Why such a package ?</strong></p>
-<p>Modeling an ecological phenomenon (e.g. species distribution) using environmental data (e.g. temperature, rainfall) is quite a common task in ecology. The data analysis workflow generally consists in :</p>
-<ul>
-<li>importing, tidying and summarizing various environmental data at geographical locations and dates of interest ;</li>
-<li>creating explicative / predictive models of the phenomenon using the environmental data.</li>
-</ul>
-<p>Data of interest for a specific study are usually heterogeneous (various sources, formats, etc.). Downloading long time series of several environmental data “manually” (e.g. through user-friendly web portals) is time consuming, not reproducible and prone to errors. In addition, when downloaded manually, spatial datasets might cover quite large areas, or include many dimensions (e.g. the multiple bands for a MODIS product). If your aera of interest is smaller or if you do not need all the dimensions, why donwloading the whole dataset ? Whenever possible (i.e. made possible by the data provider - check section <a href="#behind-the-scene-...-how-it-works">Behind the scene… how it works</a>), <code>getRemoteData</code> enables to download the data strictly for your region and dimensions of interest.</p>
-<p><strong>When should you use <code>getRemoteData</code> ?</strong></p>
-<p><code>getRemoteData</code> can hopefully help if you recognize yourself in one or more of the following points :</p>
-<ul>
-<li>work at a local to regional spatial scale ;</li>
-<li>need to import data from various sources (e.g. MODIS, GPM, etc.) ;</li>
-<li>are interested in importing long climatic / environmental time-series ;</li>
-<li>have a slow internet connection ;</li>
-<li>care about the digital environmental impact of your work.</li>
-</ul>
-<p><code>getRemoteData</code> is developed in the frame of PhD project, and the sources of data implemented in the package are hence those that I use in my work. Sources of data are mostly environmental / climatic data, but not exclusively. Have a look at the function <code>getAvailableDataSources</code> to check which sources are already implemented !</p>
+
+<p><strong>getremotedata</strong> is an R package that provides functions to <strong>harmonize</strong> the <strong>download</strong> of various open data collections available on the web.</p>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
-<p>You can install the development version of <code>getRemoteData</code> from <a href="https://github.com/">GitHub</a> with:</p>
+<p>The package can be installed with:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="co"># install.packages("devtools")</span></a>
-<a class="sourceLine" id="cb1-2" data-line-number="2">devtools<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/devtools/topics/reexports">install_github</a></span>(<span class="st">"ptaconet/getRemoteData"</span>)</a></code></pre></div>
+<a class="sourceLine" id="cb1-2" data-line-number="2">devtools<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/devtools/topics/reexports">install_github</a></span>(<span class="st">"ptaconet/getremotedata"</span>, <span class="dt">build_vignettes =</span> T, <span class="dt">build_manual =</span> T)</a></code></pre></div>
 </div>
-<div id="get-the-data-sources-implemented-in-getremotedata" class="section level2">
+<div id="coll-available" class="section level2">
 <h2 class="hasAnchor">
-<a href="#get-the-data-sources-implemented-in-getremotedata" class="anchor"></a>Get the data sources implemented in <code>getRemoteData</code>
-</h2>
-<p>You can get the data sources/collections downloadable with <code>getRemoteData</code> and details about each of them with :</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">getRemoteData<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/getRemoteData/topics/getAvailableDataSources">getAvailableDataSources</a></span>()</a></code></pre></div>
-<pre><code>#&gt; Warning: replacing previous import 'dplyr::intersect' by
-#&gt; 'lubridate::intersect' when loading 'getRemoteData'
-#&gt; Warning: replacing previous import 'dplyr::union' by 'lubridate::union'
-#&gt; when loading 'getRemoteData'
-#&gt; Warning: replacing previous import 'dplyr::setdiff' by 'lubridate::setdiff'
-#&gt; when loading 'getRemoteData'
-#&gt; Warning: replacing previous import 'dplyr::select' by 'raster::select' when
-#&gt; loading 'getRemoteData'
-#&gt; Warning: replacing previous import 'lubridate::origin' by 'raster::origin'
-#&gt; when loading 'getRemoteData'</code></pre>
+<a href="#coll-available" class="anchor"></a>Collections available in getremotedata</h2>
+<p>Currently <strong>getremotedata</strong> supports download of 5 data collections. Most data collections provided through getremotedata have a spatial and a temporal component and a global coverage. Details of each product available for download are provided in the table above or through the function <code><a href="reference/grd_list_collections.html">grd_list_collections()</a></code>. Want more details on a specific collection ? Click on the “DOI” column !</p>
+<details><summary><b>Data collections available for download with getremotedata (click to expand)</b></summary><p>
+</p>
 <table class="table table table">
 <thead><tr>
 <th style="text-align:left;">
-source
+Collection
 </th>
 <th style="text-align:left;">
-covariate
+Name
 </th>
 <th style="text-align:left;">
-collection
+Source
 </th>
 <th style="text-align:left;">
-getRemoteData_import_func
-</th>
-<th style="text-align:left;">
-getRemoteData_prepare_func
-</th>
-<th style="text-align:left;">
-url_metadata
-</th>
-<th style="text-align:left;">
-is_timeSeries
-</th>
-<th style="text-align:left;">
-provider
-</th>
-<th style="text-align:left;">
-long_name
-</th>
-<th style="text-align:right;">
-version
+Nature
 </th>
 <th style="text-align:left;">
 DOI
 </th>
-<th style="text-align:right;">
-spatial_resolution_m
-</th>
-<th style="text-align:right;">
-temporal_resolution
+<th style="text-align:left;">
+url_data_server
 </th>
 <th style="text-align:left;">
-temporal_resolution_unit
+param_variables
 </th>
 <th style="text-align:left;">
-spatial_coverage
+param_roi
 </th>
 <th style="text-align:left;">
-url_programmatic_access
-</th>
-<th style="text-align:left;">
-url_manual_access
-</th>
-<th style="text-align:left;">
-status
+param_time_range
 </th>
 </tr></thead>
 <tbody>
 <tr>
 <td style="text-align:left;">
-MODIS
+ERA5
 </td>
 <td style="text-align:left;">
-Temperature
+ERA5 hourly data on single levels from 1979 to present
 </td>
 <td style="text-align:left;">
-MOD11A1.v006
+ERA5
 </td>
 <td style="text-align:left;">
-getData_modis()
+Wind
 </td>
 <td style="text-align:left;">
-prepareData_modis()
+<a href="https://doi.org/10.24381/cds.adbb2d47" class="uri">https://doi.org/10.24381/cds.adbb2d47</a>
 </td>
 <td style="text-align:left;">
-<a href="https://lpdaac.usgs.gov/products/mod11a1v006/" class="uri">https://lpdaac.usgs.gov/products/mod11a1v006/</a>
+<a href="https://dominicroye.github.io/en/2018/access-to-climate-reanalysis-data-from-r/" class="uri">https://dominicroye.github.io/en/2018/access-to-climate-reanalysis-data-from-r/</a>
 </td>
 <td style="text-align:left;">
 TRUE
 </td>
 <td style="text-align:left;">
-NASA
+TRUE
 </td>
 <td style="text-align:left;">
-MODIS/Terra Land Surface Temperature/Emissivity Daily L3 Global 1km SIN Grid V006
-</td>
-<td style="text-align:right;">
-6
-</td>
-<td style="text-align:left;">
-<a href="https://dx.doi.org/10.5067/MODIS/MOD11A1.006" class="uri">https://dx.doi.org/10.5067/MODIS/MOD11A1.006</a>
-</td>
-<td style="text-align:right;">
-1000
-</td>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:left;">
-day
-</td>
-<td style="text-align:left;">
-Global
-</td>
-<td style="text-align:left;">
-<a href="https://opendap.cr.usgs.gov/opendap/hyrax/MOD11A1.006/contents.html" class="uri">https://opendap.cr.usgs.gov/opendap/hyrax/MOD11A1.006/contents.html</a>
-</td>
-<td style="text-align:left;">
-<a href="https://search.earthdata.nasa.gov/search?q=MOD11A1&amp;ok=MOD11A1" class="uri">https://search.earthdata.nasa.gov/search?q=MOD11A1&amp;ok=MOD11A1</a>
-</td>
-<td style="text-align:left;">
-Implemented
+TRUE
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-MODIS
+MIRIADE
 </td>
 <td style="text-align:left;">
-Temperature
+The Virtual Observatory Solar System Object Ephemeris Generator
 </td>
 <td style="text-align:left;">
-MYD11A1.v006
+IMCCE
 </td>
 <td style="text-align:left;">
-getData_modis()
+Apparent magnitude of the Moon
 </td>
 <td style="text-align:left;">
-prepareData_modis()
 </td>
 <td style="text-align:left;">
-<a href="https://lpdaac.usgs.gov/products/myd11a1v006/" class="uri">https://lpdaac.usgs.gov/products/myd11a1v006/</a>
+<a href="http://vo.imcce.fr/webservices/miriade/?ephemcc" class="uri">http://vo.imcce.fr/webservices/miriade/?ephemcc</a>
+</td>
+<td style="text-align:left;">
+FALSE
 </td>
 <td style="text-align:left;">
 TRUE
 </td>
 <td style="text-align:left;">
-NASA
-</td>
-<td style="text-align:left;">
-MODIS/Aqua Land Surface Temperature/Emissivity Daily L3 Global 1km SIN Grid V006
-</td>
-<td style="text-align:right;">
-6
-</td>
-<td style="text-align:left;">
-<a href="https://dx.doi.org/10.5067/MODIS/MYD11A1.006" class="uri">https://dx.doi.org/10.5067/MODIS/MYD11A1.006</a>
-</td>
-<td style="text-align:right;">
-1000
-</td>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:left;">
-day
-</td>
-<td style="text-align:left;">
-Global
-</td>
-<td style="text-align:left;">
-<a href="https://opendap.cr.usgs.gov/opendap/hyrax/MYD11A1.006/contents.html" class="uri">https://opendap.cr.usgs.gov/opendap/hyrax/MYD11A1.006/contents.html</a>
-</td>
-<td style="text-align:left;">
-<a href="https://search.earthdata.nasa.gov/search?q=MYD11A1&amp;ok=MYD11A1" class="uri">https://search.earthdata.nasa.gov/search?q=MYD11A1&amp;ok=MYD11A1</a>
-</td>
-<td style="text-align:left;">
-Implemented
+TRUE
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-MODIS
+SRTMGL1.003
 </td>
 <td style="text-align:left;">
-Temperature
+Digital Elevation Model from the NASA Shuttle Radar Topography Mission Global 1 arc second
 </td>
 <td style="text-align:left;">
-MOD11A2.v006
+SRTM
 </td>
 <td style="text-align:left;">
-getData_modis()
+Elevation
 </td>
 <td style="text-align:left;">
-prepareData_modis()
+<a href="https://dx.doi.org/10.5067/MEASURES/SRTM/SRTMGL1.003" class="uri">https://dx.doi.org/10.5067/MEASURES/SRTM/SRTMGL1.003</a>
 </td>
 <td style="text-align:left;">
-<a href="https://lpdaac.usgs.gov/products/mod11a2v006/" class="uri">https://lpdaac.usgs.gov/products/mod11a2v006/</a>
+<a href="https://opendap.cr.usgs.gov/opendap/hyrax/SRTMGL1.003/contents.html" class="uri">https://opendap.cr.usgs.gov/opendap/hyrax/SRTMGL1.003/contents.html</a>
+</td>
+<td style="text-align:left;">
+FALSE
 </td>
 <td style="text-align:left;">
 TRUE
 </td>
 <td style="text-align:left;">
-NASA
-</td>
-<td style="text-align:left;">
-MODIS/Terra Land Surface Temperature/Emissivity 8-Day L3 Global 1 km SIN Grid V006
-</td>
-<td style="text-align:right;">
-6
-</td>
-<td style="text-align:left;">
-<a href="https://dx.doi.org/10.5067/MODIS/MOD11A2.006" class="uri">https://dx.doi.org/10.5067/MODIS/MOD11A2.006</a>
-</td>
-<td style="text-align:right;">
-1000
-</td>
-<td style="text-align:right;">
-8
-</td>
-<td style="text-align:left;">
-day
-</td>
-<td style="text-align:left;">
-Global
-</td>
-<td style="text-align:left;">
-<a href="https://opendap.cr.usgs.gov/opendap/hyrax/MOD11A2.006/contents.html" class="uri">https://opendap.cr.usgs.gov/opendap/hyrax/MOD11A2.006/contents.html</a>
-</td>
-<td style="text-align:left;">
-<a href="https://search.earthdata.nasa.gov/search?q=MOD11A2&amp;ok=MOD11A2" class="uri">https://search.earthdata.nasa.gov/search?q=MOD11A2&amp;ok=MOD11A2</a>
-</td>
-<td style="text-align:left;">
-Implemented
+FALSE
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
-MODIS
-</td>
-<td style="text-align:left;">
-Temperature
-</td>
-<td style="text-align:left;">
-MYD11A2.v006
-</td>
-<td style="text-align:left;">
-getData_modis()
-</td>
-<td style="text-align:left;">
-prepareData_modis()
-</td>
-<td style="text-align:left;">
-<a href="https://lpdaac.usgs.gov/products/myd11a2v006/" class="uri">https://lpdaac.usgs.gov/products/myd11a2v006/</a>
-</td>
-<td style="text-align:left;">
-TRUE
-</td>
-<td style="text-align:left;">
-NASA
-</td>
-<td style="text-align:left;">
-MODIS/Aqua Land Surface Temperature/Emissivity 8-Day L3 Global 1 km SIN Grid V006
-</td>
-<td style="text-align:right;">
-6
-</td>
-<td style="text-align:left;">
-<a href="https://dx.doi.org/10.5067/MODIS/MYD11A2.006" class="uri">https://dx.doi.org/10.5067/MODIS/MYD11A2.006</a>
-</td>
-<td style="text-align:right;">
-1000
-</td>
-<td style="text-align:right;">
-8
-</td>
-<td style="text-align:left;">
-day
-</td>
-<td style="text-align:left;">
-Global
-</td>
-<td style="text-align:left;">
-<a href="https://opendap.cr.usgs.gov/opendap/hyrax/MYD11A2.006/contents.html" class="uri">https://opendap.cr.usgs.gov/opendap/hyrax/MYD11A2.006/contents.html</a>
-</td>
-<td style="text-align:left;">
-<a href="https://search.earthdata.nasa.gov/search?q=MYD11A2&amp;ok=MYD11A2" class="uri">https://search.earthdata.nasa.gov/search?q=MYD11A2&amp;ok=MYD11A2</a>
-</td>
-<td style="text-align:left;">
-Implemented
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-MODIS
-</td>
-<td style="text-align:left;">
-Vegetation indices
-</td>
-<td style="text-align:left;">
-MOD13Q1.v006
-</td>
-<td style="text-align:left;">
-getData_modis()
-</td>
-<td style="text-align:left;">
-prepareData_modis()
-</td>
-<td style="text-align:left;">
-<a href="https://lpdaac.usgs.gov/products/mod13q1v006/" class="uri">https://lpdaac.usgs.gov/products/mod13q1v006/</a>
-</td>
-<td style="text-align:left;">
-TRUE
-</td>
-<td style="text-align:left;">
-NASA
-</td>
-<td style="text-align:left;">
-MODIS/Terra Vegetation Indices 16-Day L3 Global 250m SIN Grid V006
-</td>
-<td style="text-align:right;">
-6
-</td>
-<td style="text-align:left;">
-<a href="https://dx.doi.org/10.5067/MODIS/MOD13Q1.006" class="uri">https://dx.doi.org/10.5067/MODIS/MOD13Q1.006</a>
-</td>
-<td style="text-align:right;">
-250
-</td>
-<td style="text-align:right;">
-16
-</td>
-<td style="text-align:left;">
-day
-</td>
-<td style="text-align:left;">
-Global
-</td>
-<td style="text-align:left;">
-<a href="https://opendap.cr.usgs.gov/opendap/hyrax/MOD13Q1.006/contents.html" class="uri">https://opendap.cr.usgs.gov/opendap/hyrax/MOD13Q1.006/contents.html</a>
-</td>
-<td style="text-align:left;">
-<a href="https://search.earthdata.nasa.gov/search?q=MOD13Q1&amp;ok=MOD13Q1" class="uri">https://search.earthdata.nasa.gov/search?q=MOD13Q1&amp;ok=MOD13Q1</a>
-</td>
-<td style="text-align:left;">
-Implemented
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-MODIS
-</td>
-<td style="text-align:left;">
-Vegetation indices
-</td>
-<td style="text-align:left;">
-MYD13Q1.v006
-</td>
-<td style="text-align:left;">
-getData_modis()
-</td>
-<td style="text-align:left;">
-prepareData_modis()
-</td>
-<td style="text-align:left;">
-<a href="https://lpdaac.usgs.gov/products/myd13q1v006/" class="uri">https://lpdaac.usgs.gov/products/myd13q1v006/</a>
-</td>
-<td style="text-align:left;">
-TRUE
-</td>
-<td style="text-align:left;">
-NASA
-</td>
-<td style="text-align:left;">
-MODIS/Aqua Vegetation Indices 16-Day L3 Global 250m SIN Grid V006
-</td>
-<td style="text-align:right;">
-6
-</td>
-<td style="text-align:left;">
-<a href="https://dx.doi.org/10.5067/MODIS/MYD13Q1.006" class="uri">https://dx.doi.org/10.5067/MODIS/MYD13Q1.006</a>
-</td>
-<td style="text-align:right;">
-250
-</td>
-<td style="text-align:right;">
-16
-</td>
-<td style="text-align:left;">
-day
-</td>
-<td style="text-align:left;">
-Global
-</td>
-<td style="text-align:left;">
-<a href="https://opendap.cr.usgs.gov/opendap/hyrax/MYD13Q1.006/contents.html" class="uri">https://opendap.cr.usgs.gov/opendap/hyrax/MYD13Q1.006/contents.html</a>
-</td>
-<td style="text-align:left;">
-<a href="https://search.earthdata.nasa.gov/search?q=MYD13Q1&amp;ok=MYD13Q1" class="uri">https://search.earthdata.nasa.gov/search?q=MYD13Q1&amp;ok=MYD13Q1</a>
-</td>
-<td style="text-align:left;">
-Implemented
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-MODIS
-</td>
-<td style="text-align:left;">
-Evapotranspiration
-</td>
-<td style="text-align:left;">
-MOD16A2.v006
-</td>
-<td style="text-align:left;">
-getData_modis()
-</td>
-<td style="text-align:left;">
-prepareData_modis()
-</td>
-<td style="text-align:left;">
-<a href="https://lpdaac.usgs.gov/products/mod16a2v006/" class="uri">https://lpdaac.usgs.gov/products/mod16a2v006/</a>
-</td>
-<td style="text-align:left;">
-TRUE
-</td>
-<td style="text-align:left;">
-NASA
-</td>
-<td style="text-align:left;">
-MODIS/Terra Net Evapotranspiration 8-Day L4 Global 500m SIN Grid V006
-</td>
-<td style="text-align:right;">
-6
-</td>
-<td style="text-align:left;">
-<a href="https://dx.doi.org/10.5067/MODIS/MOD16A2.006" class="uri">https://dx.doi.org/10.5067/MODIS/MOD16A2.006</a>
-</td>
-<td style="text-align:right;">
-500
-</td>
-<td style="text-align:right;">
-8
-</td>
-<td style="text-align:left;">
-day
-</td>
-<td style="text-align:left;">
-Global
-</td>
-<td style="text-align:left;">
-<a href="https://opendap.cr.usgs.gov/opendap/hyrax/MOD16A2.006/contents.html" class="uri">https://opendap.cr.usgs.gov/opendap/hyrax/MOD16A2.006/contents.html</a>
-</td>
-<td style="text-align:left;">
-<a href="https://search.earthdata.nasa.gov/search?q=MOD16A2&amp;ok=MOD16A2" class="uri">https://search.earthdata.nasa.gov/search?q=MOD16A2&amp;ok=MOD16A2</a>
-</td>
-<td style="text-align:left;">
-Implemented
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-MODIS
-</td>
-<td style="text-align:left;">
-Evapotranspiration
-</td>
-<td style="text-align:left;">
-MYD16A2.v006
-</td>
-<td style="text-align:left;">
-getData_modis()
-</td>
-<td style="text-align:left;">
-prepareData_modis()
-</td>
-<td style="text-align:left;">
-<a href="https://lpdaac.usgs.gov/products/myd16a2v006/" class="uri">https://lpdaac.usgs.gov/products/myd16a2v006/</a>
-</td>
-<td style="text-align:left;">
-TRUE
-</td>
-<td style="text-align:left;">
-NASA
-</td>
-<td style="text-align:left;">
-MODIS/Aqua Net Evapotranspiration 8-Day L4 Global 500m SIN Grid V006
-</td>
-<td style="text-align:right;">
-6
-</td>
-<td style="text-align:left;">
-<a href="https://dx.doi.org/10.5067/MODIS/MYD16A2.006" class="uri">https://dx.doi.org/10.5067/MODIS/MYD16A2.006</a>
-</td>
-<td style="text-align:right;">
-500
-</td>
-<td style="text-align:right;">
-8
-</td>
-<td style="text-align:left;">
-day
-</td>
-<td style="text-align:left;">
-Global
-</td>
-<td style="text-align:left;">
-<a href="https://opendap.cr.usgs.gov/opendap/hyrax/MYD16A2.006/contents.html" class="uri">https://opendap.cr.usgs.gov/opendap/hyrax/MYD16A2.006/contents.html</a>
-</td>
-<td style="text-align:left;">
-<a href="https://search.earthdata.nasa.gov/search?q=MYD16A2&amp;ok=MYD16A2" class="uri">https://search.earthdata.nasa.gov/search?q=MYD16A2&amp;ok=MYD16A2</a>
-</td>
-<td style="text-align:left;">
-Implemented
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-GPM
-</td>
-<td style="text-align:left;">
-Rainfall
-</td>
-<td style="text-align:left;">
-GPM_3IMERGDF
-</td>
-<td style="text-align:left;">
-getData_gpm()
-</td>
-<td style="text-align:left;">
-prepareData_gpm()
-</td>
-<td style="text-align:left;">
-<a href="https://disc.gsfc.nasa.gov/datasets/GPM_3IMERGDF_06/summary" class="uri">https://disc.gsfc.nasa.gov/datasets/GPM_3IMERGDF_06/summary</a>
-</td>
-<td style="text-align:left;">
-TRUE
-</td>
-<td style="text-align:left;">
-NASA
-</td>
-<td style="text-align:left;">
-GPM IMERG Final Precipitation L3 1 day 0.1 degree x 0.1 degree V06
-</td>
-<td style="text-align:right;">
-6
-</td>
-<td style="text-align:left;">
-<a href="https://doi.org/10.5067/GPM/IMERGDF/DAY/06" class="uri">https://doi.org/10.5067/GPM/IMERGDF/DAY/06</a>
-</td>
-<td style="text-align:right;">
-10000
-</td>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:left;">
-day
-</td>
-<td style="text-align:left;">
-Global
-</td>
-<td style="text-align:left;">
-<a href="https://gpm1.gesdisc.eosdis.nasa.gov/opendap/GPM_L3/GPM_3IMERGDF.06/" class="uri">https://gpm1.gesdisc.eosdis.nasa.gov/opendap/GPM_L3/GPM_3IMERGDF.06/</a>
-</td>
-<td style="text-align:left;">
-<a href="https://search.earthdata.nasa.gov/search?q=GPM_3IMERGDF_06" class="uri">https://search.earthdata.nasa.gov/search?q=GPM_3IMERGDF_06</a>
-</td>
-<td style="text-align:left;">
-Implemented
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-GPM
-</td>
-<td style="text-align:left;">
-Rainfall - Night of catch
-</td>
-<td style="text-align:left;">
-GPM_3IMERGHH
-</td>
-<td style="text-align:left;">
-getData_gpm()
-</td>
-<td style="text-align:left;">
-prepareData_gpm()
-</td>
-<td style="text-align:left;">
-<a href="https://disc.gsfc.nasa.gov/datasets/GPM_3IMERGHH_06/summary" class="uri">https://disc.gsfc.nasa.gov/datasets/GPM_3IMERGHH_06/summary</a>
-</td>
-<td style="text-align:left;">
-TRUE
-</td>
-<td style="text-align:left;">
-NASA
-</td>
-<td style="text-align:left;">
-GPM IMERG Final Precipitation L3 Half Hourly 0.1 degree x 0.1 degree V06
-</td>
-<td style="text-align:right;">
-6
-</td>
-<td style="text-align:left;">
-<a href="https://doi.org/10.5067/GPM/IMERG/3B-HH/06" class="uri">https://doi.org/10.5067/GPM/IMERG/3B-HH/06</a>
-</td>
-<td style="text-align:right;">
-10000
-</td>
-<td style="text-align:right;">
-30
-</td>
-<td style="text-align:left;">
-minute
-</td>
-<td style="text-align:left;">
-Global
-</td>
-<td style="text-align:left;">
-<a href="https://gpm1.gesdisc.eosdis.nasa.gov/opendap/GPM_L3/GPM_3IMERGHH.06/" class="uri">https://gpm1.gesdisc.eosdis.nasa.gov/opendap/GPM_L3/GPM_3IMERGHH.06/</a>
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-Implemented
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-TAMSAT
-</td>
-<td style="text-align:left;">
-Rainfall
-</td>
-<td style="text-align:left;">
-TAMSAT
-</td>
-<td style="text-align:left;">
-getData_tamsat()
-</td>
-<td style="text-align:left;">
-prepareData_tamsat()
-</td>
-<td style="text-align:left;">
-<a href="https://www.tamsat.org.uk/about" class="uri">https://www.tamsat.org.uk/about</a>
-</td>
-<td style="text-align:left;">
-TRUE
-</td>
 <td style="text-align:left;">
 TAMSAT
 </td>
 <td style="text-align:left;">
 Tropical Applications of Meteorology using SATellite data and ground-based observations
 </td>
-<td style="text-align:right;">
-3
+<td style="text-align:left;">
+TAMSAT
+</td>
+<td style="text-align:left;">
+Rainfall
 </td>
 <td style="text-align:left;">
 <a href="http://doi.org/10.1038/sdata.2017.63" class="uri">http://doi.org/10.1038/sdata.2017.63</a>
-</td>
-<td style="text-align:right;">
-4000
-</td>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:left;">
-day
-</td>
-<td style="text-align:left;">
-Africa
 </td>
 <td style="text-align:left;">
 <a href="https://www.tamsat.org.uk/data/archive" class="uri">https://www.tamsat.org.uk/data/archive</a>
 </td>
 <td style="text-align:left;">
-<a href="https://www.tamsat.org.uk/data/rfe/index.cgi" class="uri">https://www.tamsat.org.uk/data/rfe/index.cgi</a>
+TRUE
 </td>
 <td style="text-align:left;">
-Implemented
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-ERA5
-</td>
-<td style="text-align:left;">
-Wind - Night of catch
-</td>
-<td style="text-align:left;">
-ERA5
-</td>
-<td style="text-align:left;">
-getData_era5()
-</td>
-<td style="text-align:left;">
-prepareData_era5()
-</td>
-<td style="text-align:left;">
-<a href="https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels?tab=overview" class="uri">https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels?tab=overview</a>
+FALSE
 </td>
 <td style="text-align:left;">
 TRUE
 </td>
-<td style="text-align:left;">
-Copenicus
-</td>
-<td style="text-align:left;">
-ERA5
-</td>
-<td style="text-align:right;">
-5
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:right;">
-27000
-</td>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:left;">
-hour
-</td>
-<td style="text-align:left;">
-Global
-</td>
-<td style="text-align:left;">
-<a href="https://dominicroye.github.io/en/2018/access-to-climate-reanalysis-data-from-r/" class="uri">https://dominicroye.github.io/en/2018/access-to-climate-reanalysis-data-from-r/</a>
-</td>
-<td style="text-align:left;">
-<a href="https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels?tab=form" class="uri">https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels?tab=form</a>
-</td>
-<td style="text-align:left;">
-Implemented
-</td>
 </tr>
 <tr>
 <td style="text-align:left;">
-MIRIADE
-</td>
-<td style="text-align:left;">
-Apparent magnitude of the Moon - Night of catch
-</td>
-<td style="text-align:left;">
-MIRIADE
-</td>
-<td style="text-align:left;">
-getData_miriade()
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-<a href="http://vo.imcce.fr/webservices/miriade/" class="uri">http://vo.imcce.fr/webservices/miriade/</a>
-</td>
-<td style="text-align:left;">
-TRUE
-</td>
-<td style="text-align:left;">
-IMCCE
-</td>
-<td style="text-align:left;">
-The Virtual Observatory Solar System Object Ephemeris Generator
-</td>
-<td style="text-align:right;">
-2
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-Global
-</td>
-<td style="text-align:left;">
-<a href="http://vo.imcce.fr/webservices/miriade/?ephemcc" class="uri">http://vo.imcce.fr/webservices/miriade/?ephemcc</a>
-</td>
-<td style="text-align:left;">
-<a href="http://vo.imcce.fr/webservices/miriade/?forms" class="uri">http://vo.imcce.fr/webservices/miriade/?forms</a>
-</td>
-<td style="text-align:left;">
-Implemented
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-VIIRS DNB
-</td>
-<td style="text-align:left;">
-Nighttime lights - Night of catch
-</td>
-<td style="text-align:left;">
-VIIRS DNB
-</td>
-<td style="text-align:left;">
-getData_viirsdnb()
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-<a href="https://eogdata.mines.edu/download_dnb_composites.html" class="uri">https://eogdata.mines.edu/download_dnb_composites.html</a>
-</td>
-<td style="text-align:left;">
-TRUE
-</td>
-<td style="text-align:left;">
-NOAA
+VIIRS_DNB_MONTH
 </td>
 <td style="text-align:left;">
 Visible Infrared Imaging Radiometer Suite (VIIRS) Day/Night Band (DNB)
 </td>
-<td style="text-align:right;">
-NA
+<td style="text-align:left;">
+VIIRS
 </td>
 <td style="text-align:left;">
-</td>
-<td style="text-align:right;">
-450
-</td>
-<td style="text-align:right;">
-1
+Nighttime lights
 </td>
 <td style="text-align:left;">
-month
-</td>
-<td style="text-align:left;">
-Global
+<a href="https://doi.org/10.5067/VIIRS/VNP46A1.001" class="uri">https://doi.org/10.5067/VIIRS/VNP46A1.001</a>
 </td>
 <td style="text-align:left;">
 <a href="https://gis.ngdc.noaa.gov/arcgis/rest/services/NPP_VIIRS_DNB/Monthly_AvgRadiance/ImageServer/" class="uri">https://gis.ngdc.noaa.gov/arcgis/rest/services/NPP_VIIRS_DNB/Monthly_AvgRadiance/ImageServer/</a>
 </td>
 <td style="text-align:left;">
-<a href="https://ngdc.noaa.gov/eog/viirs/download_dnb_composites.html" class="uri">https://ngdc.noaa.gov/eog/viirs/download_dnb_composites.html</a>
+TRUE
 </td>
 <td style="text-align:left;">
-Implemented
+TRUE
 </td>
-</tr>
-<tr>
 <td style="text-align:left;">
-SRTMGL1_v004
-</td>
-<td style="text-align:left;">
-Elevation and elevation derivatives
-</td>
-<td style="text-align:left;">
-SRTMGL1_v003
-</td>
-<td style="text-align:left;">
-getData_srtm()
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-<a href="https://lpdaac.usgs.gov/products/srtmgl1v003/" class="uri">https://lpdaac.usgs.gov/products/srtmgl1v003/</a>
-</td>
-<td style="text-align:left;">
-FALSE
-</td>
-<td style="text-align:left;">
-NASA
-</td>
-<td style="text-align:left;">
-Digital Elevation Model from the NASA Shuttle Radar Topography Mission Global 1 arc second
-</td>
-<td style="text-align:right;">
-3
-</td>
-<td style="text-align:left;">
-<a href="https://dx.doi.org/10.5067/MEASURES/SRTM/SRTMGL1.003" class="uri">https://dx.doi.org/10.5067/MEASURES/SRTM/SRTMGL1.003</a>
-</td>
-<td style="text-align:right;">
-30
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-Global
-</td>
-<td style="text-align:left;">
-<a href="https://e4ftl01.cr.usgs.gov/MEASURES/SRTMGL1.003/2000.02.11/" class="uri">https://e4ftl01.cr.usgs.gov/MEASURES/SRTMGL1.003/2000.02.11/</a>
-</td>
-<td style="text-align:left;">
-<a href="https://search.earthdata.nasa.gov/search/collection-details?p=C1000000240-LPDAAC_ECS&amp;q=SRTM&amp;ok=SRTM" class="uri">https://search.earthdata.nasa.gov/search/collection-details?p=C1000000240-LPDAAC_ECS&amp;q=SRTM&amp;ok=SRTM</a>
-</td>
-<td style="text-align:left;">
-Implemented
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-CGLS-LC101
-</td>
-<td style="text-align:left;">
-Land cover
-</td>
-<td style="text-align:left;">
-CGLS-LC100
-</td>
-<td style="text-align:left;">
-getData_cgls()
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-<a href="https://land.copernicus.eu/global/products/lc" class="uri">https://land.copernicus.eu/global/products/lc</a>
-</td>
-<td style="text-align:left;">
-FALSE
-</td>
-<td style="text-align:left;">
-Copernicus Global Land Operations
-</td>
-<td style="text-align:left;">
-Moderate dynamic land cover 100m 2015
-</td>
-<td style="text-align:right;">
-2
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:right;">
-100
-</td>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:left;">
-year
-</td>
-<td style="text-align:left;">
-Global
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-<a href="https://lcviewer.vito.be/download" class="uri">https://lcviewer.vito.be/download</a>
-</td>
-<td style="text-align:left;">
-Not implemented
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-CCI_LC_S2_AFRICA
-</td>
-<td style="text-align:left;">
-Land cover
-</td>
-<td style="text-align:left;">
-CCI-LS
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-<a href="http://2016africalandcover20m.esrin.esa.int/" class="uri">http://2016africalandcover20m.esrin.esa.int/</a>
-</td>
-<td style="text-align:left;">
-FALSE
-</td>
-<td style="text-align:left;">
-Climate Change Initiative Land Cover (ESA)
-</td>
-<td style="text-align:left;">
-S2 prototype Land Cover 20m map of Africa 2016
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:right;">
-20
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-Africa
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-<a href="http://2016africalandcover20m.esrin.esa.int/download.php" class="uri">http://2016africalandcover20m.esrin.esa.int/download.php</a>
-</td>
-<td style="text-align:left;">
-Not implemented
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-HRSL
-</td>
-<td style="text-align:left;">
-Built-up, Population
-</td>
-<td style="text-align:left;">
-HRSL
-</td>
-<td style="text-align:left;">
-getData_hrsl()
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-<a href="https://ciesin.columbia.edu/repository/hrsl/#over" class="uri">https://ciesin.columbia.edu/repository/hrsl/#over</a>
-</td>
-<td style="text-align:left;">
-FALSE
-</td>
-<td style="text-align:left;">
-Facebook Connectivity Lab and Center for International Earth Science Information Network
-</td>
-<td style="text-align:left;">
-High Resolution Settlement Layer
-</td>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:right;">
-30
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-Available for some countries : see list here : <a href="https://ciesin.columbia.edu/repository/hrsl/#data" class="uri">https://ciesin.columbia.edu/repository/hrsl/#data</a>
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-<a href="https://ciesin.columbia.edu/repository/hrsl/#data" class="uri">https://ciesin.columbia.edu/repository/hrsl/#data</a>
-</td>
-<td style="text-align:left;">
-Not implemented
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-WorldPop_100m_Population
-</td>
-<td style="text-align:left;">
-Population
-</td>
-<td style="text-align:left;">
-WorldPop_100m_Population
-</td>
-<td style="text-align:left;">
-getData_worldpop()
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-<a href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0107042" class="uri">https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0107042</a>
-</td>
-<td style="text-align:left;">
-FALSE
-</td>
-<td style="text-align:left;">
-WorldPop
-</td>
-<td style="text-align:left;">
-Alpha version 2014 estimates of numbers of people per grid square, with national totals adjusted to match UN population division estimates
-</td>
-<td style="text-align:right;">
-3
-</td>
-<td style="text-align:left;">
-10.5258/SOTON/WP00033 10.5258/SOTON/WP00065
-</td>
-<td style="text-align:right;">
-100
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-Africa, Asia, South America, Oceania
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-<a href="https://www.worldpop.org/geodata/listing?id=16" class="uri">https://www.worldpop.org/geodata/listing?id=16</a>
-</td>
-<td style="text-align:left;">
-Not implemented
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-OpenSteetMap
-</td>
-<td style="text-align:left;">
-Roads
-</td>
-<td style="text-align:left;">
-OpenSteetMap
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-<a href="https://www.openstreetmap.org/about" class="uri">https://www.openstreetmap.org/about</a>
-</td>
-<td style="text-align:left;">
-FALSE
-</td>
-<td style="text-align:left;">
-OpenSteetMap
-</td>
-<td style="text-align:left;">
-OpenSteetMap
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-Global
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-<a href="https://www.openstreetmap.org/" class="uri">https://www.openstreetmap.org/</a>
-</td>
-<td style="text-align:left;">
-Not implemented
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Global_Surface_Water
-</td>
-<td style="text-align:left;">
-Open waters / Wetlands
-</td>
-<td style="text-align:left;">
-Global_Surface_Water
-</td>
-<td style="text-align:left;">
-getData_gsw()
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-<a href="https://storage.cloud.google.com/global-surface-water/downloads_ancillary/DataUsersGuidev2018.pdf" class="uri">https://storage.cloud.google.com/global-surface-water/downloads_ancillary/DataUsersGuidev2018.pdf</a>
-</td>
-<td style="text-align:left;">
-FALSE
-</td>
-<td style="text-align:left;">
-JRC
-</td>
-<td style="text-align:left;">
-Global Surface Water
-</td>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:left;">
-10.1038/nature20584
-</td>
-<td style="text-align:right;">
-30
-</td>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:left;">
-year
-</td>
-<td style="text-align:left;">
-Global
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-<a href="https://global-surface-water.appspot.com/download" class="uri">https://global-surface-water.appspot.com/download</a>
-</td>
-<td style="text-align:left;">
-Not implemented
+TRUE
 </td>
 </tr>
 </tbody>
-</table>
+</table></details>
+</div>
+<div id="get-started" class="section level2">
+<h2 class="hasAnchor">
+<a href="#get-started" class="anchor"></a>Get Started</h2>
+<p>Downloading the data with <strong>getremotedata</strong> is a simple two-steps workflow :</p>
+<ul>
+<li>
+<p>With the function <strong><code><a href="reference/grd_get_url.html">grd_get_url()</a></code></strong>, get the URL(s) of the data for :</p>
+<ul>
+<li>a collection : see <a href="#collections-available-in-getremotedata">previous section</a>,</li>
+<li>(eventually) variables,</li>
+<li>(eventually) a region of interest,</li>
+<li>(eventually) a time range.</li>
+</ul>
+</li>
+<li><p>With any data download function (e.g. <code><a href="https://www.rdocumentation.org/packages/httr/topics/GET">httr::GET()</a></code> or <code><a href="https://www.rdocumentation.org/packages/opendapr/topics/odr_download_data">opendapr::odr_download_data()</a></code>), download the data.</p></li>
+</ul>
+<p>Additional functions include : list collection available for download ( <code>gdr_list_collections()</code> ), list variables available for the collections that have variables ( <code>gdr_list_variables()</code> )</p>
 </div>
 <div id="example" class="section level2">
 <h2 class="hasAnchor">
 <a href="#example" class="anchor"></a>Example</h2>
-<p>Say you want to download over a 3500km<sup>2</sup> region of interest:</p>
-<ul>
-<li>a 40 days time series of <a href="https://dx.doi.org/10.5067/MODIS/MOD11A1.006">MODIS Terrra Land Surface Temperature (LST)</a> (daily time resolution);</li>
-<li>the same 40 days times series of <a href="https://doi.org/10.5067/GPM/IMERGDF/DAY/06">Global Precipitation Measurement (GPM)</a> (daily time resolution) :</li>
-</ul>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(getRemoteData)</a>
-<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(sf)</a>
-<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(purrr)</a>
-<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="co"># Read the region of interest as a sf object. Here : the Korhogo area in Côte D'Ivoire</span></a>
-<a class="sourceLine" id="cb4-5" data-line-number="5">roi&lt;-sf<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/sf/topics/st_read">st_read</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="st">"extdata/ROI_example.kml"</span>, <span class="dt">package =</span> <span class="st">"getData"</span>),<span class="dt">quiet=</span>T)</a>
-<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="co"># Set-up your time frame of interest. </span></a>
-<a class="sourceLine" id="cb4-7" data-line-number="7">time_frame&lt;-<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"2017-05-01"</span>,<span class="st">"2017-06-10"</span>)</a>
-<a class="sourceLine" id="cb4-8" data-line-number="8"><span class="co"># Set-up your credentials to EarthData</span></a>
-<a class="sourceLine" id="cb4-9" data-line-number="9">username_EarthData&lt;-<span class="st">"my.earthdata.username"</span></a>
-<a class="sourceLine" id="cb4-10" data-line-number="10">password_EarthData&lt;-<span class="st">"my.earthdata.username"</span></a>
-<a class="sourceLine" id="cb4-11" data-line-number="11"><span class="co"># Download the MODIS LST TERRA daily products in the current working directory</span></a>
-<a class="sourceLine" id="cb4-12" data-line-number="12"><span class="co"># Setting the argument 'download' to FALSE will return the URLs of the products, without downloading them </span></a>
-<a class="sourceLine" id="cb4-13" data-line-number="13">dl_modis&lt;-getRemoteData<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/getRemoteData/topics/getData_modis">getData_modis</a></span>(<span class="dt">timeRange =</span> time_frame,</a>
-<a class="sourceLine" id="cb4-14" data-line-number="14">                                     <span class="dt">roi =</span> roi,</a>
-<a class="sourceLine" id="cb4-15" data-line-number="15">                                     <span class="dt">collection=</span><span class="st">"MOD11A1.006"</span>,</a>
-<a class="sourceLine" id="cb4-16" data-line-number="16">                                     <span class="dt">dimensions=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"LST_Day_1km"</span>,<span class="st">"LST_Night_1km"</span>),</a>
-<a class="sourceLine" id="cb4-17" data-line-number="17">                                     <span class="dt">download =</span> T,</a>
-<a class="sourceLine" id="cb4-18" data-line-number="18">                                     <span class="dt">destFolder=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/getwd">getwd</a></span>(),</a>
-<a class="sourceLine" id="cb4-19" data-line-number="19">                                     <span class="dt">username=</span>username_EarthData,</a>
-<a class="sourceLine" id="cb4-20" data-line-number="20">                                     <span class="dt">password=</span>password_EarthData,</a>
-<a class="sourceLine" id="cb4-21" data-line-number="21">                                     <span class="dt">parallelDL=</span>T <span class="co">#setting to F will download the data linearly</span></a>
-<a class="sourceLine" id="cb4-22" data-line-number="22">                                     )</a>
-<a class="sourceLine" id="cb4-23" data-line-number="23"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(dl_modis)</a>
-<a class="sourceLine" id="cb4-24" data-line-number="24"><span class="co"># Download the GPM daily products in the current working directory</span></a>
-<a class="sourceLine" id="cb4-25" data-line-number="25">dl_gpm&lt;-getRemoteData<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/getRemoteData/topics/getData_gpm">getData_gpm</a></span>(<span class="dt">timeRange =</span> time_frame,</a>
-<a class="sourceLine" id="cb4-26" data-line-number="26">                                     <span class="dt">roi =</span> roi,</a>
-<a class="sourceLine" id="cb4-27" data-line-number="27">                                     <span class="dt">collection=</span><span class="st">"GPM_3IMERGDF.06"</span>,</a>
-<a class="sourceLine" id="cb4-28" data-line-number="28">                                     <span class="dt">dimensions=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"precipitationCal"</span>),</a>
-<a class="sourceLine" id="cb4-29" data-line-number="29">                                     <span class="dt">download =</span> T,</a>
-<a class="sourceLine" id="cb4-30" data-line-number="30">                                     <span class="dt">destFolder=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/getwd">getwd</a></span>(),</a>
-<a class="sourceLine" id="cb4-31" data-line-number="31">                                     <span class="dt">username=</span>username_EarthData,</a>
-<a class="sourceLine" id="cb4-32" data-line-number="32">                                     <span class="dt">password=</span>password_EarthData,</a>
-<a class="sourceLine" id="cb4-33" data-line-number="33">                                     <span class="dt">parallelDL=</span>T</a>
-<a class="sourceLine" id="cb4-34" data-line-number="34">                                     )</a>
-<a class="sourceLine" id="cb4-35" data-line-number="35"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(dl_gpm)</a>
-<a class="sourceLine" id="cb4-36" data-line-number="36"></a>
-<a class="sourceLine" id="cb4-37" data-line-number="37"><span class="co"># Get the data downloaded as a list of rasters</span></a>
-<a class="sourceLine" id="cb4-38" data-line-number="38">rasts_modis&lt;-dl_modis<span class="op">$</span>destfile <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-39" data-line-number="39"><span class="st">  </span>purrr<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/purrr/topics/map">map</a></span>(<span class="op">~</span>getRemoteData<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/getRemoteData/topics/prepareData_modis">prepareData_modis</a></span>(.,<span class="st">"LST_Day_1km"</span>)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-40" data-line-number="40"><span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/purrr/topics/set_names">set_names</a></span>(dl_modis<span class="op">$</span>name)</a>
-<a class="sourceLine" id="cb4-41" data-line-number="41"></a>
-<a class="sourceLine" id="cb4-42" data-line-number="42">rasts_gpm&lt;-dl_gpm<span class="op">$</span>destfile <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-43" data-line-number="43"><span class="st">  </span>purrr<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/purrr/topics/map">map</a></span>(<span class="op">~</span>getRemoteData<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/getRemoteData/topics/prepareData_gpm">prepareData_gpm</a></span>(.,<span class="st">"precipitationCal"</span>)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-44" data-line-number="44"><span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/purrr/topics/set_names">set_names</a></span>(dl_gpm<span class="op">$</span>name)</a></code></pre></div>
-<p>The functions of <code>getRemoteData</code> all work the same way :</p>
-<ul>
-<li>
-<code>timeRange</code> is your date / time frame of interest (eventually including hours for the data with less that daily resolution) ;</li>
-<li>
-<code>roi</code> is your area of interest (as an <code>sf</code> object, either point or polygon) ;</li>
-<li>
-<code>destfolder</code> is the data destination folder ;</li>
-<li>by default, the function does not download the dataset. It returns a data.frame with the URL(s) to download the dataset(s) of interest given the input arguments. To download the data, set the <em>download</em> argument to TRUE ;</li>
-<li>other arguments are specific to each data product (e.g. <code>collection</code>, <code>dimensions</code>,<code>username</code>,<code>password</code>)</li>
-</ul>
-<p>Absence of the <code>timeRange</code> (resp. <code>roi</code>) arguments in a function means that the data of interest do not have any time (resp. spatial) dimension.</p>
-<p>Have a look at the vignette <a href="https://ptaconet.github.io/malamodpkg/articles/import_tidy_transform_envdata.html">Automatic extraction of spatial-temporal environmental data within buffers around sampling points</a> to get an example of what you can do with <code>getRemoteData</code> !</p>
+<p><strong>Have a look at the <a href="(https://ptaconet.github.io/getremotedata/articles/get-started.html)"><code><a href="articles/get-started.html">vignette("get-started")</a></code></a> for a data download, import and plot workflow !</strong></p>
 </div>
-<div id="current-limitations" class="section level2">
+<div id="acknowledgment" class="section level2">
 <h2 class="hasAnchor">
-<a href="#current-limitations" class="anchor"></a>Current limitations</h2>
-<p>The package is at a very early stage of development. Here are some of the current limitations and ideas of future developments :</p>
-<ul>
-<li>MODIS data cannot be downloaded if your area of interest covers multiple MODIS tiles (for an overview of MODIS tiles go <a href="https://modis.ornl.gov/files/modis_sin.kmz">here</a>);</li>
-</ul>
-</div>
-<div id="behind-the-scene-how-it-works" class="section level2">
-<h2 class="hasAnchor">
-<a href="#behind-the-scene-how-it-works" class="anchor"></a>Behind the scene… how it works</h2>
-<p>As much as possible, when implemented by the data providers, <code>getRemoteData</code> uses web services or APIsto download the data. Web services are in few words standard web protocols that enable to filter the data directly at the downloading phase. Filters can be spatial, temporal, dimensional, etc. Example of widely-used web services / data transfer protocols for geospatial timeseries are <a href="https://en.wikipedia.org/wiki/Web_Feature_Service">OGC WFS</a> or <a href="https://en.wikipedia.org/wiki/OPeNDAP">OPeNDAP</a>. If long time series are queried, <code>getRemoteData</code> speeds-up the downloading time by parallelizing it.</p>
-</div>
-<div id="other-relevant-packages" class="section level2">
-<h2 class="hasAnchor">
-<a href="#other-relevant-packages" class="anchor"></a>Other relevant packages</h2>
-<ul>
-<li><a href="http://jxsw.de/getSpatialData/"><code>getSpatialData</code></a></li>
-<li>[<code>MODIS</code>] and [<code>MODISTools</code>] and [<code>MODISTsp</code>]</li>
-<li>GPM ?</li>
-</ul>
+<a href="#acknowledgment" class="anchor"></a>Acknowledgment</h2>
+<p>We thank the data providers for making their data freely available, and implementing open data access protocols that enable to download chunks of data.</p>
+<p>This research has made use of <a href="http://vo.imcce.fr/webservices/miriade/">IMCCE’s Miriade VO tool</a></p>
+<p>The initial development and first release of this package were financed by the <a href="https://www.mivegec.ird.fr/en/">MIVEGEC</a> unit of the <a href="https://en.ird.fr/">French Research Institute for Sustainable Development</a>, as part of the <a href="https://burkina-faso.ird.fr/la-recherche/projets-de-recherche2/gestion-de-la-resistance-aux-insecticides-au-burkina-faso-et-en-cote-d-ivoire-recherche-sur-les-strategies-de-lutte-anti-vectorielle-react">REACT project</a>.</p>
+<!--
+
+The R package `getremotedata` offers a common framework to download and import in R remote data (i.e. data stored on the cloud) from heterogeneous sources. Overall, this package attempts to **facilitate** and **speed-up** the painfull and time-consuming **data import / download** process for some well-known and widely used environmental / climatic products (e.g. [MODIS](https://modis.gsfc.nasa.gov/), [VNP](https://lpdaac.usgs.gov/search/?query=VNP&page=2), [GPM](https://www.nasa.gov/mission_pages/GPM/main/index.html), etc.) as well as other sources (e.g. [VIIRS DNB](https://ngdc.noaa.gov/eog/viirs/download_dnb_composites.html), etc.). You will take the best of `getRemoteData` if you work at **local to regional** spatial scales, i.e. typically from few decimals to a decade squared degrees. For larger areas, other packages might be more relevant (see section [Other relevant packages](#other-relevant-packages) ).
+
+`getRemoteData` makes it efficient to import remote multidimensional data since it uses data access protocols that enable to subset them (spatially/temporally/dimensionnally) directly at the downloading phase.
+
+## Why such a package ?  (à réécrire)
+
+Modeling an ecological phenomenon (e.g. species distribution) using climatic/environmental data (e.g. temperature, rainfall) is quite a common task in ecology. The data analysis workflow generally consists in : 
+
+- importing, tidying and summarizing various environmental data at geographical locations and dates of interest ;
+- creating explicative / predictive models of the phenomenon using the environmental data.
+
+Data of interest for a specific study are usually heterogeneous (various providers and formats). Downloading long time series of several environmental data "manually" (e.g. through user-friendly web portals) is time consuming, not reproducible and prone to errors. In addition, when downloaded manually, spatial datasets might cover quite large areas, or include many dimensions (e.g. the multiple bands for a MODIS product). If your aera of interest is smaller or if you do not need all the dimensions, why downloading the whole dataset ? Whenever possible (i.e. made possible by the data provider - check section [Behind the scene... how it  works](#behind-the-scene-...-how-it-works)), `getRemoteData` enables to download the data strictly for your region and dimensions of interest.
+
+Finally, `getRemoteData` relies as much as possible on open and standard data access protocols (eg. [OPeNDAP](https://en.wikipedia.org/wiki/OPeNDAP)), which makes the package less vulnerable to external changes than packages or applications relying on APIs.
+
+## When should you use `getRemoteData` ?
+
+`getRemoteData` can hopefully help if you work at a local to regional spatial scale and need to download long time-series of various climatic / environmental spatialized products. By filtering the data directly at the downloading phase, `getRemoteData` enables to import strictly the data that is needed, resulting in a reduction of i) the physical size of the data that is retrieved and ii) the overall downloading time. 
+
+Apart from these performance considerations, ethical considerations have driven the development of this package : i) reduction of the environmental impact of our digital work and ii) promotion of open protocols and standards for data access. 
+
+## Installation
+
+You can install the development version of `getRemoteData` from [GitHub](https://github.com/) with: 
+
+``` r
+# install.packages("devtools")
+devtools::install_github("ptaconet/getRemoteData")
+```
+
+## Get the data sources downloadable with `getRemoteData`
+
+The `get_collections_available()` function provides information on the products downloadable with `getRemoteData` :
+
+
+```r
+getRemoteData::get_collections_available(detailed=FALSE)
+# Turn the argument `detailed` to `TRUE` (default) to get a more detailed table (details for each collection).
+```
+
+
+
+Note that the *Collections* column provides only the product's collections for which data download and import via `getRemoteData` have been tested and validated : the source products might contain more collections.
+
+## Functions and syntax
+
+The functions of `getRemoteData` enable to retrieve the URLs of products to download given a set of arguments of interest (time range, region of interest, collection, etc. - see below). There is one *`getUrl`* function for each product (e.g. `getUrl_modis_vnp()`, `getUrl_gpm()`, etc.)
+
+The function `downloadData()` takes as input the output of a *`getUrl`* function and downloads the products.
+
+The functions of the *`getUrl`* family share the following arguments : 
+
+- `timeRange` : date or time frame of interest (eventually including hours for sub-daily resolution data) ;
+- `roi` : area of interest (either point or polygon) ;
+- `collection` {for multi-collection products only} : collection of interest (eg. `"MOD11A1.v006"`)
+- `dimensions` {for multi-dimension products only} : dimensions of the product of interest to download (eg. `c("LST_Day_1km","LST_Night_1km")`)
+
+Other optional arguments might be provided (see documentation of the functions). Absence of the `timeRange` (resp. `roi`) argument in a function means that the product of interest does not have any temporal (resp. spatial) dimension. The function returns a data.frame with the URL(s) to download the dataset(s) of interest and their destination file.
+
+Data downloaded through the *`getUrl`* functions are usually in NetCDF format. The functions of the *`importData`* family enable to import these data as ready-to-use `raster` objects, eventually pre-processing them if relevant (e.g. projection, flipping).
+
+**The *`importData`* family** : functions to import in R (usually as an object of class `raster`) a dataset that has been downnloaded *via* a function of the `getUrl` family. Similarly, there is one *`importData`* function for each product (e.g. `importData_modis_vnp()`, `importData_gpm()`, etc.)
+
+## Behind the scene... how it works
+
+As much as possible, when implemented by the data providers, `getRemoteData` uses open and standard data access protocols to download the data. These standard protocols enable to filter the data directly at the downloading phase. Filters can be spatial, temporal or dimensional. Example of widely-used standard data access protocols for geospatial timeseries are [OGC WFS](https://en.wikipedia.org/wiki/Web_Feature_Service) or [OPeNDAP](https://en.wikipedia.org/wiki/OPeNDAP). 
+If long time series are queried, `getRemoteData` enables to speed-up the downloading time by parallelizing it.
+
+-->
 </div>
 </div>
   </div>
@@ -1434,9 +394,9 @@ Not implemented
     <div class="links">
 <h2>Links</h2>
 <ul class="list-unstyled">
-<li>Browse source code at <br><a href="https://github.com/ptaconet/getData">https://​github.com/​ptaconet/​getData</a>
+<li>Browse source code at <br><a href="https://github.com/ptaconet/getremotedata">https://​github.com/​ptaconet/​getremotedata</a>
 </li>
-<li>Report a bug at <br><a href="https://github.com/ptaconet/getData/issues">https://​github.com/​ptaconet/​getData/​issues</a>
+<li>Report a bug at <br><a href="https://github.com/ptaconet/getremotedata/issues">https://​github.com/​ptaconet/​getremotedata/​issues</a>
 </li>
 </ul>
 </div>
@@ -1454,7 +414,14 @@ Not implemented
 </ul>
 </div>
 
-      </div>
+      <div class="dev-status">
+<h2>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://cran.r-project.org/package=getRemoteData"><img src="http://www.r-pkg.org/badges/version/getRemoteData" alt="CRAN_Status_Badge"></a></li>
+<li><a href="https://github.com/ptaconet/getRemoteData"><img src="https://img.shields.io/badge/Github-0.0.9007-blue.svg" alt="Github_Status_Badge"></a></li>
+</ul>
+</div>
+</div>
 
 </div>
 

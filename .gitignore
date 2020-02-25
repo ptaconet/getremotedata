@@ -6,8 +6,10 @@ inst/doc
 config.yml
 old_functions/
 R/extraFunctions_importData.R
-TAMSAT/
-MIRIADE/
-ERA5/
-SRTMGL1.003/
-VIIRS_DNB_MONTH/
+vignettes/TAMSAT/
+vignettes/MIRIADE/
+vignettes/ERA5/
+vignettes/SRTMGL1.003/
+vignettes/VIIRS_DNB_MONTH/
+doc
+Meta

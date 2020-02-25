@@ -65,7 +65,7 @@ grdVariables_internal <- read.csv("/home/ptaconet/getremotedata/.variables.csv",
 
 usethis::use_data(grdMetadata_internal,grdVariables_internal,internal = TRUE,overwrite = TRUE)
 
-
-
+devtools::build_vignettes()
+devtools::install(build_vignettes = TRUE)
 
 

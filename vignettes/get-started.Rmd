@@ -1,0 +1,170 @@
+---
+title: "1. Get started "
+author: "Paul Taconet"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Get started}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+NOT_CRAN <- identical(tolower(Sys.getenv("NOT_CRAN")), "true") # vignette will not be executed when tested on the cran
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  message = FALSE,
+  warning = FALSE,
+  purl = NOT_CRAN
+  )
+```
+
+The example below is a full time-series data download, import and plot workflow in 4 steps : get the URL with the package `getremotedata`, download with the package `httr`, import and plot with the package `raster`. Packages `purrr` and `sf` are also used.
+
+Data of interest are : 
+
+* Elevation ([SRTM DEM](https://dx.doi.org/10.5067/MEASURES/SRTM/SRTMGL1.003)) ;
+* Daily rainfall ([TAMSAT](http://doi.org/10.1038/sdata.2017.63))
+* Monthly nighttime lights ([VIIRS_DNB_MONTH](https://doi.org/10.5067/VIIRS/VNP46A1.001))
+* Daily moonlight ([MIRIADE](http://vo.imcce.fr/webservices/miriade/))
+* Hourly wind speed and direction ([ERA5](https://doi.org/10.24381/cds.adbb2d47))
+
+Region of interest : 
+
+```{r, echo=F, fig.height=5, fig.width=3, eval=T }
+require(mapview)
+roi <- sf::st_as_sf(data.frame(geom="POLYGON ((-5.82 9.54, -5.42 9.55, -5.41 8.84, -5.81 8.84, -5.82 9.54))"),wkt="geom",crs = 4326)
+mapview::mapview(roi,legend=F)
+```
+
+**Preliminary step : call the packages and set-up the region and the time range of interest**
+
+```{r setup, message=F}
+require(getremotedata)
+require(sf)
+require(raster)
+require(magrittr)
+require(purrr)
+require(httr)
+```
+
+```{r example_setup, eval=T ,message=F, warning=F}
+roi <- st_as_sf(data.frame(geom = "POLYGON ((-5.82 9.54, -5.42 9.55, -5.41 8.84, -5.81 8.84, -5.82 9.54))"), wkt = "geom", crs = 4326)
+time_range <- as.Date(c("2017-01-01","2017-01-30"))
+```
+
+**1. Get the URLs of the data for a given ROI and time frame** 
+
+```{r example_geturl, eval=T ,message=F, warning=F}
+roi <- st_as_sf(data.frame(geom = "POLYGON ((-5.82 9.54, -5.42 9.55, -5.41 8.84, -5.81 8.84, -5.82 9.54))"), wkt = "geom", crs = 4326)
+time_range <- as.Date(c("2017-01-01","2017-01-30"))
+
+# SRTM
+strm_urls <- grd_get_url(collection = "SRTMGL1.003", roi = roi)
+print(str(strm_urls))
+
+# TAMSAT
+tamsat_urls <- grd_get_url(collection = "TAMSAT",variables = c("daily_rainfall_estimate"), time_range = time_range)
+print(str(tamsat_urls))
+
+# VIIRS_DNB_MONTH
+viirsdnb_urls <- grd_get_url(collection = "VIIRS_DNB_MONTH",variables = c("Monthly_AvgRadiance"), roi = roi, time_range = time_range)
+print(str(viirsdnb_urls))
+
+# MIRIADE
+imcce_urls <- grd_get_url(collection = "MIRIADE", roi = roi, time_range = time_range)
+print(str(imcce_urls))
+
+# ERA5
+# ERA5 is an hourly database, so we keep only 1 day (i.e. not the whole month)
+era5_urls <- grd_get_url(collection = "ERA5", variables = c("10m_u_component_of_wind","10m_v_component_of_wind"), roi = roi, time_range = as.Date(c("2017-01-01","2017-01-02")))
+```
+
+**2. Download the data**
+
+```{r example_download, eval=F ,message=F, warning=F}
+# Create directories if they do not exist
+unique(dirname(data_to_dl$destfile)) %>% lapply(dir.create,recursive = TRUE)
+
+# SRTM
+# Login to Earthdata servers is needed to download STRM data. To create an account go to : https://urs.earthdata.nasa.gov/.
+# Here we have stored our credentials in local environment variables
+username <- Sys.getenv("earthdata_un")
+password <- Sys.getenv("earthdata_pw")
+srtm_dl <- map2(strm_urls$url,strm_urls$destfile,~GET(url = .x, write_disk(.y), progress() , authenticate(username,password)))
+
+# TAMSAT
+tamsat_dl <- map2(tamsat_urls$url,tamsat_urls$destfile,~GET(url = .x, write_disk(.y), progress()))
+
+# VIIRS_DNB_MONTH
+viirsdnb_dl <- map2(viirsdnb_urls$url,viirsdnb_urls$destfile,~GET(url = .x, write_disk(.y), progress()))
+
+# MIRIADE
+imcce_dl <- map2(imcce_urls$url,imcce_urls$destfile,~GET(url = .x, write_disk(.y), progress()))
+
+# ERA5
+# For ERA5 we must use a specific function to download the data
+era5_dl <- grd_download_data_era5(era5_urls)
+```
+
+**3. Import the data in R**
+
+```{r example_import, eval=T ,message=F, warning=F}
+# SRTM 
+rast_srtm <- strm_urls$destfile %>%
+  map(~unzip(., exdir = dirname(.))) %>%
+  map(~raster(.)) %>%
+  do.call(merge,.) %>%
+  crop(roi)
+
+# TAMSAT
+rast_tamsat <- tamsat_urls$destfile %>%
+  map(~raster(.)) %>%
+  map(~crop(.,roi)) %>%
+  brick()
+names(rast_tamsat) <- tamsat_urls$time_start
+
+# VIIRS_DNB_MONTH
+rasts_viirs <- viirsdnb_urls$destfile %>%
+  map(~raster(.)) %>%
+  brick(.)
+names(rasts_viirs) <- viirsdnb_urls$time_start
+
+# MIRIADE
+miriade_dfs <- imcce_urls$destfile %>%
+  map(~read.csv(.,skip=10))
+
+# ERA5
+rasts_era5 <- era5_urls$destfile %>%
+  map(~raster(., varname = "u10")) %>%
+  brick(.)
+names(rasts_era5) <- era5_urls$time_start
+
+
+rast_srtm
+rast_tamsat
+rasts_viirs
+print(str(miriade_dfs[1:3]))
+rasts_era5
+```
+
+**4. Display / Plot**
+
+```{r plot , fig.fullwidth = TRUE, fig.height = 10, fig.width = 9,fig.align = 'center', eval=T}
+# SRTM 
+plot(rast_srtm)
+
+# TAMSAT
+plot(rast_tamsat)
+
+# VIIRS_DNB_MONTH
+plot(rasts_viirs)
+
+# MIRIADE
+print(str(miriade_dfs[1:3]))
+
+# ERA5
+plot(rasts_era5)
+```
+
