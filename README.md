@@ -441,9 +441,9 @@ print(str(strm_urls))
 #> NULL
 
 # TAMSAT
-tamsat_urls <- grd_get_url(collection = "TAMSAT",variables = c("daily_rainfall_estimate","monthly_rainfall_estimate","monthly_anomaly"), time_range = time_range)
+tamsat_urls <- grd_get_url(collection = "TAMSAT",variables = c("daily_rainfall_estimate"), time_range = time_range)
 print(str(tamsat_urls))
-#> 'data.frame':    32 obs. of  4 variables:
+#> 'data.frame':    30 obs. of  4 variables:
 #>  $ time_start: Date, format: "2017-01-30" "2017-01-29" ...
 #>  $ name      : chr  "rfe2017_01_30.v3.nc" "rfe2017_01_29.v3.nc" "rfe2017_01_28.v3.nc" "rfe2017_01_27.v3.nc" ...
 #>  $ url       : chr  "https://www.tamsat.org.uk/public_data/TAMSAT3/2017/01/rfe2017_01_30.v3.nc" "https://www.tamsat.org.uk/public_data/TAMSAT3/2017/01/rfe2017_01_29.v3.nc" "https://www.tamsat.org.uk/public_data/TAMSAT3/2017/01/rfe2017_01_28.v3.nc" "https://www.tamsat.org.uk/public_data/TAMSAT3/2017/01/rfe2017_01_27.v3.nc" ...
@@ -451,13 +451,13 @@ print(str(tamsat_urls))
 #> NULL
 
 # VIIRS_DNB_MONTH
-viirsdnb_urls <- grd_get_url(collection = "VIIRS_DNB_MONTH",variables = c("Monthly_AvgRadiance","Monthly_CloudFreeCoverage"), roi = roi, time_range = time_range)
+viirsdnb_urls <- grd_get_url(collection = "VIIRS_DNB_MONTH",variables = c("Monthly_AvgRadiance"), roi = roi, time_range = time_range)
 print(str(viirsdnb_urls))
-#> 'data.frame':    2 obs. of  4 variables:
-#>  $ time_start: chr  "2017-01-01" "2017-01-01"
-#>  $ name      : chr  "Monthly_AvgRadiance_201701.tif" "Monthly_CloudFreeCoverage_201701.tif"
-#>  $ url       : chr  "https://gis.ngdc.noaa.gov/arcgis/rest/services/NPP_VIIRS_DNB/Monthly_AvgRadiance/ImageServer/exportImage?bbox=-"| __truncated__ "https://gis.ngdc.noaa.gov/arcgis/rest/services/NPP_VIIRS_DNB/Monthly_CloudFreeCoverage/ImageServer/exportImage?"| __truncated__
-#>  $ destfile  : chr  "VIIRS_DNB_MONTH/Monthly_AvgRadiance_201701.tif" "VIIRS_DNB_MONTH/Monthly_CloudFreeCoverage_201701.tif"
+#> 'data.frame':    1 obs. of  4 variables:
+#>  $ time_start: chr "2017-01-01"
+#>  $ name      : chr "Monthly_AvgRadiance_201701.tif"
+#>  $ url       : chr "https://gis.ngdc.noaa.gov/arcgis/rest/services/NPP_VIIRS_DNB/Monthly_AvgRadiance/ImageServer/exportImage?bbox=-"| __truncated__
+#>  $ destfile  : chr "VIIRS_DNB_MONTH/Monthly_AvgRadiance_201701.tif"
 #> NULL
 
 # MIRIADE
@@ -517,17 +517,17 @@ rast_srtm <- strm_urls$destfile %>%
   crop(roi)
 
 # TAMSAT
-rast_tamsat <- tamsat_urls$destfile[1:30] %>%
+rast_tamsat <- tamsat_urls$destfile %>%
   map(~raster(.)) %>%
   map(~crop(.,roi)) %>%
   brick()
-names(rast_tamsat) <- tamsat_urls$time_start[1:30]
+names(rast_tamsat) <- tamsat_urls$time_start
 
 # VIIRS_DNB_MONTH
-rasts_viirs <- viirsdnb_urls$destfile[which(grepl("Monthly_AvgRadiance",viirsdnb_urls$name))] %>%
+rasts_viirs <- viirsdnb_urls$destfile %>%
   map(~raster(.)) %>%
   brick(.)
-names(rasts_viirs) <- viirsdnb_urls$time_start[which(grepl("Monthly_AvgRadiance",viirsdnb_urls$name))]
+names(rasts_viirs) <- viirsdnb_urls$time_start
 
 # MIRIADE
 miriade_dfs <- imcce_urls$destfile %>%

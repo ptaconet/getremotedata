@@ -80,11 +80,11 @@ strm_urls <- grd_get_url(collection = "SRTMGL1.003", roi = roi)
 print(str(strm_urls))
 
 # TAMSAT
-tamsat_urls <- grd_get_url(collection = "TAMSAT",variables = c("daily_rainfall_estimate","monthly_rainfall_estimate","monthly_anomaly"), time_range = time_range)
+tamsat_urls <- grd_get_url(collection = "TAMSAT",variables = c("daily_rainfall_estimate"), time_range = time_range)
 print(str(tamsat_urls))
 
 # VIIRS_DNB_MONTH
-viirsdnb_urls <- grd_get_url(collection = "VIIRS_DNB_MONTH",variables = c("Monthly_AvgRadiance","Monthly_CloudFreeCoverage"), roi = roi, time_range = time_range)
+viirsdnb_urls <- grd_get_url(collection = "VIIRS_DNB_MONTH",variables = c("Monthly_AvgRadiance"), roi = roi, time_range = time_range)
 print(str(viirsdnb_urls))
 
 # MIRIADE
@@ -138,17 +138,17 @@ rast_srtm <- strm_urls$destfile %>%
   crop(roi)
 
 # TAMSAT
-rast_tamsat <- tamsat_urls$destfile[1:30] %>%
+rast_tamsat <- tamsat_urls$destfile %>%
   map(~raster(.)) %>%
   map(~crop(.,roi)) %>%
   brick()
-names(rast_tamsat) <- tamsat_urls$time_start[1:30]
+names(rast_tamsat) <- tamsat_urls$time_start
 
 # VIIRS_DNB_MONTH
-rasts_viirs <- viirsdnb_urls$destfile[which(grepl("Monthly_AvgRadiance",viirsdnb_urls$name))] %>%
+rasts_viirs <- viirsdnb_urls$destfile %>%
   map(~raster(.)) %>%
   brick(.)
-names(rasts_viirs) <- viirsdnb_urls$time_start[which(grepl("Monthly_AvgRadiance",viirsdnb_urls$name))]
+names(rasts_viirs) <- viirsdnb_urls$time_start
 
 # MIRIADE
 miriade_dfs <- imcce_urls$destfile %>%

@@ -341,13 +341,15 @@
     dplyr::mutate(time_start=as.integer(difftime(date_start ,"1970-01-01" , units = c("secs")))*1000) %>%
     dplyr::mutate(time_end=as.integer(difftime(date_end ,"1970-01-01" , units = c("secs")))*1000)
 
+  variables=c(variables,"")
   table_urls<-datesToRetrieve %>%
     dplyr::select(year,month,time_start,time_end) %>%
     dplyr::slice(rep(1:dplyr::n(), each = length(variables))) %>%
     dplyr::mutate(date=as.character(paste(year,month,"01",sep="-"))) %>%
     dplyr::mutate(variables=rep(variables,dplyr::n()/2)) %>%
     dplyr::mutate(url=paste0(url_noaa_nighttime_webservice,variables,"/ImageServer/exportImage?bbox=",roi_bbox$xmin,",",roi_bbox$ymin,",",roi_bbox$xmax,",",roi_bbox$ymax,"&time=",format(time_start,scientific=FALSE),",",format(time_end,scientific=FALSE),"&format=tiff&f=image")) %>%
-    dplyr::mutate(name=paste0(variables,"_",year,month,".tif"))
+    dplyr::mutate(name=paste0(variables,"_",year,month,".tif")) %>%
+    dplyr::filter(variables!="")
   #dplyr::mutate(destfile=file.path(dest_folder,paste0(name,".tif")))
 
   res<-data.frame(time_start=table_urls$date,name=table_urls$name,url=table_urls$url,stringsAsFactors = F)
