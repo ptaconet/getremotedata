@@ -218,15 +218,15 @@
     dplyr::mutate(day=format(date,'%d'))
 
   urls<-datesToRetrieve %>%
-    dplyr::mutate(product_name_daily_rain_individual=paste0("rfe",year,"_",month,"_",day,".v3.nc")) %>%
+    dplyr::mutate(product_name_daily_rain_individual=paste0("daily_rainfall_estimate_",year,"_",month,"_",day,".v3.nc")) %>%
     dplyr::mutate(url_product_daily_rain_individual=paste0(url_tamsat_data,"/",year,"/",month,"/",product_name_daily_rain_individual)) %>%
     dplyr::mutate(product_name_daily_rain_yearly=paste0("TAMSATv3.0_rfe_daily_",year,".zip")) %>%
     dplyr::mutate(url_product_daily_rain_yearly=paste0(url_tamsat_data,"/zip/",product_name_daily_rain_yearly)) %>%
-    dplyr::mutate(product_name_monthly_rain_individual=paste0("rfe",year,"_",month,".v3.nc")) %>%
+    dplyr::mutate(product_name_monthly_rain_individual=paste0("monthly_rainfall_estimate_",year,"_",month,".v3.nc")) %>%
     dplyr::mutate(url_product_monthly_rain_individual=paste0(url_tamsat_data,"/",year,"/",month,"/",product_name_monthly_rain_individual)) %>%
     dplyr::mutate(product_name_monthly_rain_yearly=paste0("TAMSATv3.0_rfe_monthly_",year,".zip")) %>%
     dplyr::mutate(url_product_monthly_rain_yearly=paste0(url_tamsat_data,"/zip/",product_name_monthly_rain_yearly)) %>%
-    dplyr::mutate(product_name_monthly_anomaly_individual=paste0("rfe",year,"_",month,"_anom.v3.nc")) %>%
+    dplyr::mutate(product_name_monthly_anomaly_individual=paste0("monthly_anomaly_",year,"_",month,"_anom.v3.nc")) %>%
     dplyr::mutate(url_product_monthly_anomaly_individual=paste0(url_tamsat_data,"/",year,"/",month,"/",product_name_monthly_anomaly_individual)) #%>%
   #mutate(product_name_monthly_climatology_individual=paste0("rfe",year,"-",year,"_",month,"_clim.v3.nc")) %>%
   #mutate(url_product_monthly_climatology_individual=paste0(url_tamsat_data,"/clim","/",month,"/",product_name_monthly_climatology_individual))

@@ -27,10 +27,15 @@ Imports:
     sf,
     stringr,
     curl,
-    magrittr
+    magrittr,
+    ncdf4,
+    raster
 Suggests: 
     knitr,
-    rmarkdown
+    rmarkdown,
+    mapview,
+    velox,
+    stars
 VignetteBuilder: 
     knitr
 Encoding: UTF-8

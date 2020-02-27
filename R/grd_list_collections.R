@@ -6,13 +6,7 @@
 #'
 #' @usage grd_list_collections()
 #'
-#' @return a data.frame with the data sources / collections dealt by getdata, along with details on each data collection
-#'
-#' @details The output data.frame columns are:
-#' \itemize{
-#' \item{"source": }{The source acronym}
-#' \item{"collection": }{The collection}
-#' }
+#' @return a data.frame with the data sources / collections dealt by grd_list_collections, along with details on each data collection
 #'
 #' @export
 #' @examples

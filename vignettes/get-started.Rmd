@@ -56,20 +56,19 @@ time_range <- as.Date(c("2017-01-01","2017-01-30"))
 
 **1. Get the URLs of the data for a given ROI and time frame** 
 
-```{r example_geturl, eval=T ,message=F, warning=F}
-roi <- st_as_sf(data.frame(geom = "POLYGON ((-5.82 9.54, -5.42 9.55, -5.41 8.84, -5.81 8.84, -5.82 9.54))"), wkt = "geom", crs = 4326)
-time_range <- as.Date(c("2017-01-01","2017-01-30"))
+We use the function `grd_get_url()`
 
+```{r example_geturl, eval=T ,message=F, warning=F}
 # SRTM
 strm_urls <- grd_get_url(collection = "SRTMGL1.003", roi = roi)
 print(str(strm_urls))
 
 # TAMSAT
-tamsat_urls <- grd_get_url(collection = "TAMSAT",variables = c("daily_rainfall_estimate"), time_range = time_range)
+tamsat_urls <- grd_get_url(collection = "TAMSAT",variables = c("daily_rainfall_estimate","monthly_rainfall_estimate"), time_range = time_range)
 print(str(tamsat_urls))
 
 # VIIRS_DNB_MONTH
-viirsdnb_urls <- grd_get_url(collection = "VIIRS_DNB_MONTH",variables = c("Monthly_AvgRadiance"), roi = roi, time_range = time_range)
+viirsdnb_urls <- grd_get_url(collection = "VIIRS_DNB_MONTH",variables = c("Monthly_AvgRadiance","Monthly_CloudFreeCoverage"), roi = roi, time_range = time_range)
 print(str(viirsdnb_urls))
 
 # MIRIADE
@@ -85,7 +84,11 @@ era5_urls <- grd_get_url(collection = "ERA5", variables = c("10m_u_component_of_
 
 ```{r example_download, eval=F ,message=F, warning=F}
 # Create directories if they do not exist
-unique(dirname(data_to_dl$destfile)) %>% lapply(dir.create,recursive = TRUE)
+dir.create(unique(strm_urls$destfile))
+dir.create(unique(tamsat_urls$destfile))
+dir.create(unique(viirsdnb_urls$destfile))
+dir.create(unique(imcce_urls$destfile))
+dir.create(unique(era5_urls$destfile))
 
 # SRTM
 # Login to Earthdata servers is needed to download STRM data. To create an account go to : https://urs.earthdata.nasa.gov/.
@@ -110,37 +113,23 @@ era5_dl <- grd_download_data_era5(era5_urls)
 
 **3. Import the data in R**
 
+We use the function `grd_import_data()`
+
 ```{r example_import, eval=T ,message=F, warning=F}
 # SRTM 
-rast_srtm <- strm_urls$destfile %>%
-  map(~unzip(., exdir = dirname(.))) %>%
-  map(~raster(.)) %>%
-  do.call(merge,.) %>%
-  crop(roi)
+rast_srtm <- grd_import_data(df_data_to_import = strm_urls, collection = "SRTMGL1.003", roi = roi, output = "RasterBrick")
 
 # TAMSAT
-rast_tamsat <- tamsat_urls$destfile %>%
-  map(~raster(.)) %>%
-  map(~crop(.,roi)) %>%
-  brick()
-names(rast_tamsat) <- tamsat_urls$time_start
+rast_tamsat <- grd_import_data(df_data_to_import = tamsat_urls, collection = "TAMSAT", variable = "daily_rainfall_estimate", roi = roi, output = "RasterBrick")
 
 # VIIRS_DNB_MONTH
-rasts_viirs <- viirsdnb_urls$destfile %>%
-  map(~raster(.)) %>%
-  brick(.)
-names(rasts_viirs) <- viirsdnb_urls$time_start
+rasts_viirs <- grd_import_data(df_data_to_import = viirsdnb_urls, collection = "VIIRS_DNB_MONTH", variable = "Monthly_AvgRadiance", roi = roi, output = "RasterBrick")
 
 # MIRIADE
-miriade_dfs <- imcce_urls$destfile %>%
-  map(~read.csv(.,skip=10))
+miriade_dfs <- grd_import_data(df_data_to_import = imcce_urls, collection = "MIRIADE", roi = roi, output = "RasterBrick")
 
 # ERA5
-rasts_era5 <- era5_urls$destfile %>%
-  map(~raster(., varname = "u10")) %>%
-  brick(.)
-names(rasts_era5) <- era5_urls$time_start
-
+rasts_era5 <- grd_import_data(df_data_to_import = era5_urls, collection = "ERA5", variable = "u10", roi = roi, output = "RasterBrick")
 
 rast_srtm
 rast_tamsat
