@@ -7,9 +7,11 @@
 #' @param collection character string the name of a collection
 #' @param variable character string the name of a variables
 #' @param roi sf the ROI. Mandatory for SMAP collection, else, not necessary
-#' @param output character string the output. "RasterBrick" or "velox".
+#' @param output character string the output. "RasterBrick" .
 #'
-#' @import raster ncdf4 purrr magrittr
+#' @importFrom raster raster brick crop merge
+#' @importFrom magrittr %>%
+#' @import purrr
 #'
 #' @export
 
@@ -46,10 +48,6 @@ grd_import_data <- function(df_data_to_import,
 
     rasts <- .import_miriade(df_data_to_import)
 
-  }
-
-  if(output=="velox"){
-    rasts <- velox::velox(rasts)
   }
 
   return(rasts)

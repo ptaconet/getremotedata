@@ -13,7 +13,8 @@
 #'
 #' @export
 #'
-#' @import reticulate magrittr
+#' @import reticulate
+#' @importFrom magrittr %>%
 #'
 #' @examples
 #' \dontrun{

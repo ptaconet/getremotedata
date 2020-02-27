@@ -5,7 +5,8 @@
 #'
 #' @author Paul Taconet, IRD \email{paul.taconet@ird.fr}
 #'
-#' @import reticulate sf purrr dplyr magrittr
+#' @import reticulate sf purrr dplyr
+#' @importFrom magrittr %>%
 #'
 #' @noRd
 #'
@@ -89,7 +90,8 @@
 #'
 #' @author Paul Taconet, IRD \email{paul.taconet@ird.fr}
 #'
-#' @import sf dplyr magrittr
+#' @import sf dplyr
+#' @importFrom magrittr %>%
 #' @noRd
 #'
 
@@ -279,7 +281,7 @@
 #'
 #' @noRd
 #'
-#' @import lubridate
+#' @importFrom lubridate %m+% days
 #'
 #' @examples
 #'

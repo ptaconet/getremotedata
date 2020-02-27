@@ -71,7 +71,7 @@
   if(output=="RasterBrick"){
 
     rasts <- df_data_to_import$destfile %>%
-      map(~raster(.,varname = variable)) %>%
+      map(~raster(.)) %>%
       map(~crop(.,roi)) %>%
       brick()
     names(rasts) <- df_data_to_import$time_start

@@ -16,7 +16,7 @@ grd_import_data(df_data_to_import, collection, variable = NULL,
 
 \item{roi}{sf the ROI. Mandatory for SMAP collection, else, not necessary}
 
-\item{output}{character string the output. "RasterBrick" or "velox".}
+\item{output}{character string the output. "RasterBrick" .}
 }
 \description{
 Function to import a data / time series that was downloaded with the package \code{getremotedata}

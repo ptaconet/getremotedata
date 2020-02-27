@@ -28,14 +28,11 @@ Imports:
     stringr,
     curl,
     magrittr,
-    ncdf4,
     raster
 Suggests: 
     knitr,
     rmarkdown,
-    mapview,
-    velox,
-    stars
+    mapview
 VignetteBuilder: 
     knitr
 Encoding: UTF-8
