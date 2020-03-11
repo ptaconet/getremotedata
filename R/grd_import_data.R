@@ -26,7 +26,6 @@ grd_import_data <- function(df_data_to_import,
   if(is.null(variable) && output=="RasterBrick" && !(collection %in% c("SRTMGL1.003","MIRIADE"))){stop("for RasterBrick output you must provide one variables")}
   if(!is.null(variable) && length(variable)>1){stop("you must provide only one variable")}
   if(!("destfile" %in% colnames(df_data_to_import))){stop("df_data_to_import must contain a 'destfile' column")}
-  if(!("time_start" %in% colnames(df_data_to_import)) && (collection=="GPM" || collection=="SMAP")){stop("for SMAP and GPM collections, df_data_to_import must contain a 'time_start' column")}
 
   if (collection=="SRTMGL1.003"){
 

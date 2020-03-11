@@ -8,6 +8,7 @@
 #' @param roi object of class \code{sf} or \code{sfc}. mandatory. Region of interest. Must be POLYGON-type geometry composed of one single feature.
 #' @param time_range date(s) / POSIXlt of interest . mandatory. Single date/datetime or time frame : vector with start and end dates/times (see details).
 #' @param credentials vector string of length 2 with username and password. optional.
+#' @param verbose verbose
 #'
 #' @return a data.frame with one row for each dataset to download and 4 columns  :
 #'  \describe{
@@ -63,7 +64,8 @@ grd_get_url<-function(collection,
                       variables=NULL,
                       roi=NULL,
                       time_range=NULL,
-                      credentials=NULL){
+                      credentials=NULL,
+                      verbose=TRUE){
 
   # tests
   .testIfCollExists(collection)

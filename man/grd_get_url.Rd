@@ -5,7 +5,7 @@
 \title{Build the URL(s) of the data to download}
 \usage{
 grd_get_url(collection, variables = NULL, roi = NULL,
-  time_range = NULL, credentials = NULL)
+  time_range = NULL, credentials = NULL, verbose = TRUE)
 }
 \arguments{
 \item{collection}{string. mandatory. Collection of interest (see details).}
@@ -17,6 +17,8 @@ grd_get_url(collection, variables = NULL, roi = NULL,
 \item{time_range}{date(s) / POSIXlt of interest . mandatory. Single date/datetime or time frame : vector with start and end dates/times (see details).}
 
 \item{credentials}{vector string of length 2 with username and password. optional.}
+
+\item{verbose}{verbose}
 }
 \value{
 a data.frame with one row for each dataset to download and 4 columns  :

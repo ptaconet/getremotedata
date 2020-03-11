@@ -44,10 +44,13 @@ grd_download_data_era5 <- function(output_grd_get_url_era5){
   ##for this step there must exist the file .cdsapirc in the root directory of the computer (e.g. "/home/ptaconet")
     server = cdsapi$Client() #start the connection
     for (i in 1:nrow(output_grd_get_url_era5)){
+      if(!file.exists(output_grd_get_url_era5$destfile[[i]])){
       cat("Downloading data n° ",i," over ",nrow(output_grd_get_url_era5),"\n")
       server$retrieve("reanalysis-era5-single-levels",
                       output_grd_get_url_era5$url[[i]],
                       output_grd_get_url_era5$destfile[[i]])
+      }
+      cat("OK\n")
     }
 
     return(NULL)

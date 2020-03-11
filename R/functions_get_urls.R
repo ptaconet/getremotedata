@@ -332,7 +332,7 @@
     time_range=c(time_range,time_range %m+% lubridate::days(1))
   }
 
-  datesToRetrieve<-seq(from=time_range[2],to=time_range[1],by="-1 month") %>%
+  datesToRetrieve<-seq(from=time_range[2],to=time_range[1],by="-31 days") %>%
     data.frame(stringsAsFactors = F) %>%
     purrr::set_names("date") %>%
     dplyr::mutate(date_character=as.character(as.Date(date))) %>%
@@ -343,7 +343,6 @@
     dplyr::mutate(time_start=as.integer(difftime(date_start ,"1970-01-01" , units = c("secs")))*1000) %>%
     dplyr::mutate(time_end=as.integer(difftime(date_end ,"1970-01-01" , units = c("secs")))*1000)
 
-  variables=c(variables,"")
   table_urls<-datesToRetrieve %>%
     dplyr::select(year,month,time_start,time_end) %>%
     dplyr::slice(rep(1:dplyr::n(), each = length(variables))) %>%
